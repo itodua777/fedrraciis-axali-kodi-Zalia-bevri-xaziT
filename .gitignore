@@ -1,0 +1,9 @@
+total_federation_v2/storage/federation.db
+total_federation_v2/scratch/
+total_federation_v2/*.bak
+total_federation_v2/*.broken
+total_federation_v2/*.corrupted
+.DS_Store
+node_modules/
+dist/
+.env*

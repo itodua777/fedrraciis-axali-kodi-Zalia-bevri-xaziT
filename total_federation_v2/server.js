@@ -1,0 +1,778 @@
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const { execFileSync } = require('child_process');
+
+const PORT = 8080;
+
+// Database query helpers using execFileSync for absolute safety against shell injection / space splitting
+function queryDb(sql) {
+    const dbPath = path.join(__dirname, 'storage', 'federation.db');
+    // Ensure directory exists
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    try {
+        const output = execFileSync('sqlite3', ['-json', dbPath], { input: sql }).toString().trim();
+        return output ? JSON.parse(output) : [];
+    } catch (err) {
+        console.error("SQL Query error:", err.message);
+        return [];
+    }
+}
+
+function executeSql(sql) {
+    const dbPath = path.join(__dirname, 'storage', 'federation.db');
+    // Ensure directory exists
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    try {
+        execFileSync('sqlite3', [dbPath], { input: sql });
+    } catch (err) {
+        console.error("SQL Execute error:", err.message);
+    }
+}
+
+// Synchronously initialize database schemas and seed default records
+function initializeDatabase() {
+    console.log("Initializing SQLite database...");
+    const dbPath = path.join(__dirname, 'storage', 'federation.db');
+    if (fs.existsSync(dbPath)) {
+        console.log("Database file already exists.");
+        return;
+    }
+    
+    const schemaSql = `
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS athletes (
+            id TEXT PRIMARY KEY,
+            first_name TEXT,
+            last_name TEXT,
+            personal_id TEXT,
+            status TEXT,
+            member_since TEXT,
+            is_federation_member INTEGER,
+            is_national_team_member INTEGER,
+            mountaineer_rank TEXT,
+            location_status TEXT,
+            points INTEGER,
+            achievements TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS warehouse_items (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            category TEXT,
+            qty_total INTEGER,
+            qty_left INTEGER,
+            qr TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS warehouse_transactions (
+            id TEXT PRIMARY KEY,
+            type TEXT,
+            item_id TEXT,
+            item_name TEXT,
+            athlete_id TEXT,
+            athlete_name TEXT,
+            issue_date TEXT,
+            expected_return_date TEXT,
+            status TEXT,
+            qty INTEGER,
+            expedition_name TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS incidents (
+            id TEXT PRIMARY KEY,
+            athlete_id TEXT,
+            date TEXT,
+            time TEXT,
+            location TEXT,
+            severity TEXT,
+            description TEXT,
+            status TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS expeditions (
+            id TEXT PRIMARY KEY,
+            peak TEXT,
+            difficulty TEXT,
+            team_size INTEGER,
+            status TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS partnerships (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            type TEXT,
+            status TEXT,
+            description TEXT,
+            start_date TEXT,
+            end_date TEXT,
+            contract_file_url TEXT,
+            partnership_form TEXT
+        );
+    `;
+    
+    executeSql(schemaSql);
+    
+    // Create Views
+    const viewsSql = `
+        CREATE VIEW IF NOT EXISTS view_warehouse_pulse AS
+        SELECT
+            (SELECT COUNT(*) FROM warehouse_transactions WHERE status = 'issued' AND expected_return_date < '2026-05-23') AS overdue_count,
+            (SELECT COUNT(*) FROM incidents WHERE severity = 'მაღალი') AS recent_incidents,
+            (SELECT COALESCE(SUM(qty), 0) FROM warehouse_transactions WHERE status = 'issued') AS active_gear_outside;
+
+        CREATE VIEW IF NOT EXISTS view_overdue_items AS
+        SELECT
+            athlete_name,
+            item_name AS item,
+            CAST(julianday('2026-05-23') - julianday(expected_return_date) AS INTEGER) AS days_overdue
+        FROM warehouse_transactions
+        WHERE status = 'issued' AND expected_return_date < '2026-05-23';
+
+        CREATE VIEW IF NOT EXISTS view_member_analytics AS
+        SELECT
+            (SELECT COUNT(*) FROM athletes) AS total_active_members,
+            (SELECT COUNT(*) FROM athletes WHERE location_status = 'მთაშია') AS in_the_mountains,
+            (SELECT COUNT(*) FROM athletes WHERE location_status = 'ბაზაზეა') AS at_base,
+            (SELECT COUNT(*) FROM athletes WHERE mountaineer_rank IN ('BADGE', 'RANK_3', 'RANK_2')) AS beginner,
+            (SELECT COUNT(*) FROM athletes WHERE mountaineer_rank = 'RANK_1') AS first_rank,
+            (SELECT COUNT(*) FROM athletes WHERE mountaineer_rank IN ('CANDIDATE', 'MASTER', 'INT_MASTER')) AS master;
+
+        CREATE VIEW IF NOT EXISTS view_active_expeditions AS
+        SELECT peak, difficulty AS route_difficulty, team_size
+        FROM expeditions
+        WHERE status = 'active';
+
+        CREATE VIEW IF NOT EXISTS view_partnership_pipeline AS
+        SELECT COUNT(*) AS active_partners_count
+        FROM partnerships
+        WHERE type = 'PARTNER' AND status = 'active';
+
+        CREATE VIEW IF NOT EXISTS view_active_sponsors AS
+        SELECT
+            name,
+            CAST(julianday(end_date) - julianday('2026-05-23') AS INTEGER) AS days_left
+        FROM partnerships
+        WHERE type = 'SPONSOR' AND status = 'active';
+    `;
+    
+    executeSql(viewsSql);
+    
+    console.log("Seeding database...");
+    
+    // Seed initial records
+    let seedSql = `
+        BEGIN TRANSACTION;
+        INSERT INTO settings (key, value) VALUES ('ratingCalculationEnabled', 'true');
+        INSERT INTO settings (key, value) VALUES ('ranksEnabled', 'true');
+        
+        INSERT INTO expeditions (id, peak, difficulty, team_size, status) VALUES ('1', 'მყინვარწვერი', '2B', 4, 'active');
+        
+        INSERT INTO incidents (id, athlete_id, date, time, location, severity, description, status) VALUES ('1', '860642', '2026-05-15', '10:30', 'ცენტრალური მოედანი', 'მაღალი', 'მძიმე ტრავმა', 'მიმდინარე');
+        INSERT INTO incidents (id, athlete_id, date, time, location, severity, description, status) VALUES ('2', '860640', '2026-05-16', '14:00', 'ყინულვარდნილი', 'მაღალი', 'ფეხის მოტეხილობა', 'მიმდინარე');
+    `;
+    
+    // Seed partnerships
+    const defaultPartnerships = [
+      { id: "PTN-2026-01", type: "SPONSOR", name: "Red Bull Georgia", start: "2026-01-01", end: "2026-07-04", desc: "ზამთრის ჩემპიონატის გენერალური სპონსორი.", file: "/storage/contracts/redbull_2026.pdf", form: null },
+      { id: "PTN-2026-02", type: "PARTNER", name: "Alta", start: "2026-01-01", end: "2026-12-31", desc: "ტექნიკური მხარდაჭერა და ეკიპირების უზრუნველყოფა.", file: null, form: "ეკიპირების პარტნიორი" },
+      { id: "PTN-2026-03", type: "PARTNER", name: "Aversi", start: "2026-01-01", end: "2026-12-31", desc: "სამედიცინო მხარდაჭერა და უფასო დაზღვევა სპორტსმენებისთვის.", file: null, form: "სამედიცინო მხარდაჭერა" },
+      { id: "PTN-2026-04", type: "PARTNER", name: "Silknet", start: "2026-01-01", end: "2026-12-31", desc: "საკომუნიკაციო მხარდაჭერა და ინტერნეტი ბაზებზე.", file: null, form: "კავშირგაბმულობის პარტნიორი" },
+      { id: "PTN-2026-05", type: "PARTNER", name: "Guda", start: "2026-02-01", end: "2026-12-31", desc: "ლოჯისტიკა და ტრანსპორტირება ექსპედიციებისთვის.", file: null, form: "ლოჯისტიკის პარტნიორი" },
+      { id: "PTN-2026-06", type: "PARTNER", name: "Lilo Mall", start: "2026-01-10", end: "2026-12-31", desc: "ინვენტარის პარტნიორი და ფასდაკლებები საწყობისთვის.", file: null, form: "ინვენტარის პარტნიორი" },
+      { id: "PTN-2026-07", type: "PARTNER", name: "Water Co", start: "2026-03-01", end: "2026-12-31", desc: "სასმელი წყლის მიწოდება მთაში მყოფი წევრებისთვის.", file: null, form: "წყლის მიწოდება" },
+      { id: "PTN-2026-08", type: "PARTNER", name: "Active Life", start: "2026-01-01", end: "2026-12-31", desc: "ფიტნეს პარტნიორი და საწვრთნელი დარბაზი.", file: null, form: "საწვრთნელი პარტნიორი" },
+      { id: "PTN-2026-09", type: "PARTNER", name: "Mountain Rescue", start: "2026-01-01", end: "2026-12-31", desc: "სამაშველო კავშირი და უსაფრთხოების მემორანდუმი.", file: null, form: "სამაშველო პარტნიორი" }
+    ];
+    for (const p of defaultPartnerships) {
+        seedSql += `INSERT INTO partnerships (id, name, type, status, description, start_date, end_date, contract_file_url, partnership_form) VALUES (` +
+            `'${p.id}', '${p.name}', '${p.type}', 'active', '${p.desc}', '${p.start}', '${p.end}', ` +
+            `${p.file ? `'${p.file}'` : 'NULL'}, ${p.form ? `'${p.form}'` : 'NULL'});\n`;
+    }
+
+    // Seed transactions
+    const defaultTransactions = [
+      { id: "t1", type: "item", itemId: "1", itemName: "თოკი ალპინისტური 60მ", athleteId: "860640", athleteName: "გიორგი ლეკიშვილი", issueDate: "2026-05-10", expectedReturnDate: "2026-05-19", status: "issued", qty: 5 },
+      { id: "t2", type: "item", itemId: "2", itemName: "კარაბინი სიმეტრიული", athleteId: "860641", athleteName: "დავით მაისურაძე", issueDate: "2026-05-05", expectedReturnDate: "2026-05-20", status: "issued", qty: 10 },
+      { id: "t3", type: "item", itemId: "3", itemName: "ალპინისტური წერაყინი", athleteId: "860644", athleteName: "ნიკოლოზ ყიფიანი", issueDate: "2026-05-01", expectedReturnDate: "2026-05-18", status: "issued", qty: 3 },
+      { id: "t4", type: "item", itemId: "4", itemName: "ჩაფხუტი დამცავი", athleteId: "860645", athleteName: "ირაკლი გელოვანი", issueDate: "2026-05-08", expectedReturnDate: "2026-05-21", status: "issued", qty: 4 },
+      { id: "t5", type: "item", itemId: "5", itemName: "საძილე ტომარა მინუს 20", athleteId: "860643", athleteName: "ლუკა ლომიძე", issueDate: "2026-05-01", expectedReturnDate: "2026-05-15", status: "issued", qty: 2 },
+      { id: "t6", type: "item", itemId: "6", itemName: "დინამიკური თოკი (Edelrid Swift 8.9mm)", athleteId: "860642", athleteName: "არჩილ ბადრიაშვილი", issueDate: "2026-05-15", expectedReturnDate: "2026-05-28", status: "issued", qty: 18 }
+    ];
+    for (const t of defaultTransactions) {
+        seedSql += `INSERT INTO warehouse_transactions (id, type, item_id, item_name, athlete_id, athlete_name, issue_date, expected_return_date, status, qty, expedition_name) VALUES (` +
+            `'${t.id}', '${t.type}', '${t.itemId}', '${t.itemName}', '${t.athleteId}', '${t.athleteName}', '${t.issueDate}', '${t.expectedReturnDate}', '${t.status}', ${t.qty}, '');\n`;
+    }
+    
+    // Seed 148 athletes programmatically to keep file small
+    const firstNames = [
+      "დავით", "გიორგი", "ლუკა", "ირაკლი", "ნიკოლოზ", "ალექსანდრე", "შალვა", "ლევან", "მიხეილ", "ზურაბ",
+      "ანდრია", "ოთარ", "თეიმურაზ", "ზვიად", "მერაბ", "აკაკი", "კონსტანტინე", "ვაჟა", "ნოდარ", "ემზარ",
+      "თორნიკე", "გიგა", "ბექა", "საბა", "ილია", "თამაზ", "ჯაბა", "გელა", "რეზო", "ბაჩო",
+      "ანზორ", "ვახტანგ", "ნუკრი", "მალხაზ", "რევაზ", "თენგიზ", "ოთარი", "ზაზა", "გოჩა"
+    ];
+    const lastNames = [
+      "ბადრიაშვილი", "ბერიძე", "მაისურაძე", "ლეკიშვილი", "ყიფიანი", "გელოვანი", "ლომიძე", "მარგიანი",
+      "ნემსაძე", "კოხრეიძე", "კიკნაძე", "დევდარიანი", "აფრასიძე", "ჭელიძე", "გვენეტაძე", "აბაშიძე",
+      "ჩხეიძე", "გაბუნია", "ქარდავა", "კვარაცხელია", "გორგაძე", "შენგელია", "მჟავანაძე", "ჯაფარიძე",
+      "თვალავაძე", "ახალკაცი", "გოგიჩაიშვილი", "თოდუა", "ცინცაძე", "კალანდაძე", "მესხი", "გაბრიჩიძე"
+    ];
+    
+    const remainingRanks = [
+      ...Array(14).fill("BADGE"), ...Array(14).fill("RANK_3"), ...Array(9).fill("RANK_2"),
+      ...Array(14).fill("RANK_1"), ...Array(2).fill("CANDIDATE"), ...Array(1).fill("MASTER"),
+      ...Array(88).fill("NONE")
+    ];
+    for (let i = remainingRanks.length - 1; i > 0; i--) {
+      const j = (i * 9301 + 49297) % 233280 % (i + 1);
+      const temp = remainingRanks[i];
+      remainingRanks[i] = remainingRanks[j];
+      remainingRanks[j] = temp;
+    }
+    
+    for (let i = 0; i < 148; i++) {
+      const locationStatus = i < 12 ? "მთაშია" : "ბაზაზეა";
+      const firstName = firstNames[i % firstNames.length];
+      const lastName = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
+      
+      let finalFirstName = firstName;
+      let finalLastName = lastName;
+      let finalRank;
+      
+      if (i === 0) {
+        finalFirstName = "გიორგი";
+        finalLastName = "ლეკიშვილი";
+        finalRank = "RANK_3";
+      } else if (i === 1) {
+        finalFirstName = "დავით";
+        finalLastName = "მაისურაძე";
+        finalRank = "MASTER";
+      } else if (i === 2) {
+        finalFirstName = "არჩილ";
+        finalLastName = "ბადრიაშვილი";
+        finalRank = "INT_MASTER";
+      } else if (i === 3) {
+        finalFirstName = "ლუკა";
+        finalLastName = "ლომიძე";
+        finalRank = "RANK_1";
+      } else if (i === 4) {
+        finalFirstName = "ნიკოლოზ";
+        finalLastName = "ყიფიანი";
+        finalRank = "RANK_2";
+      } else if (i === 5) {
+        finalFirstName = "ირაკლი";
+        finalLastName = "გელოვანი";
+        finalRank = "BADGE";
+      } else {
+        finalRank = remainingRanks[i - 6];
+      }
+      
+      const athleteId = String(860640 + i);
+      const personalId = "010" + String(10000000 + i);
+      let points = 50 + (i % 20) * 10;
+      if (finalFirstName === "დავით" && finalLastName === "მაისურაძე") points = 450;
+      else if (finalFirstName === "გიორგი" && finalLastName === "ლეკიშვილი") points = 310;
+      else if (finalFirstName === "ლუკა" && finalLastName === "ლომიძე") points = 380;
+      
+      seedSql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements) VALUES (` +
+          `'${athleteId}', '${finalFirstName}', '${finalLastName}', '${personalId}', 'აქტიური', '15/01/2020', 1, ${finalRank !== 'NONE' ? 1 : 0}, ` +
+          `'${finalRank}', '${locationStatus}', ${points}, '[]');\n`;
+    }
+    
+    seedSql += 'COMMIT;\n';
+    
+    executeSql(seedSql);
+    console.log("Database seeding completed.");
+}
+
+// Synchronize database state with client-side state
+function syncDatabase(data) {
+    let sql = 'BEGIN TRANSACTION;\n';
+
+    if (data.settings) {
+        const ratingEnabled = data.settings.ratingCalculationEnabled !== false ? 'true' : 'false';
+        const ranksEnabled = data.settings.ranksEnabled !== false ? 'true' : 'false';
+        sql += `INSERT OR REPLACE INTO settings (key, value) VALUES ('ratingCalculationEnabled', '${ratingEnabled}');\n`;
+        sql += `INSERT OR REPLACE INTO settings (key, value) VALUES ('ranksEnabled', '${ranksEnabled}');\n`;
+    }
+
+    if (Array.isArray(data.athletes)) {
+        sql += 'DELETE FROM athletes;\n';
+        for (const a of data.athletes) {
+            const isFed = a.isFederationMember ? 1 : 0;
+            const isNat = a.isNationalTeamMember ? 1 : 0;
+            const points = a.points || 0;
+            const achievementsStr = a.achievements ? JSON.stringify(a.achievements).replace(/'/g, "''") : '[]';
+            
+            sql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements) VALUES (` +
+                `'${a.id.replace(/'/g, "''")}', ` +
+                `'${(a.firstName || '').replace(/'/g, "''")}', ` +
+                `'${(a.lastName || '').replace(/'/g, "''")}', ` +
+                `'${(a.personalId || '').replace(/'/g, "''")}', ` +
+                `'${(a.status || '').replace(/'/g, "''")}', ` +
+                `'${(a.memberSince || '').replace(/'/g, "''")}', ` +
+                `${isFed}, ${isNat}, ` +
+                `'${(a.mountaineerRank || 'NONE').replace(/'/g, "''")}', ` +
+                `'${(a.locationStatus || 'ბაზაზეა').replace(/'/g, "''")}', ` +
+                `${points}, ` +
+                `'${achievementsStr}'` +
+                `);\n`;
+        }
+    }
+
+    if (Array.isArray(data.transactions)) {
+        sql += 'DELETE FROM warehouse_transactions;\n';
+        for (const t of data.transactions) {
+            sql += `INSERT INTO warehouse_transactions (id, type, item_id, item_name, athlete_id, athlete_name, issue_date, expected_return_date, status, qty, expedition_name) VALUES (` +
+                `'${t.id.replace(/'/g, "''")}', ` +
+                `'${(t.type || 'item').replace(/'/g, "''")}', ` +
+                `'${(t.itemId || '').replace(/'/g, "''")}', ` +
+                `'${(t.itemName || '').replace(/'/g, "''")}', ` +
+                `'${(t.athleteId || '').replace(/'/g, "''")}', ` +
+                `'${(t.athleteName || '').replace(/'/g, "''")}', ` +
+                `'${(t.issueDate || '').replace(/'/g, "''")}', ` +
+                `'${(t.expectedReturnDate || '').replace(/'/g, "''")}', ` +
+                `'${(t.status || 'issued').replace(/'/g, "''")}', ` +
+                `${t.qty || 1}, ` +
+                `'${(t.expeditionName || '').replace(/'/g, "''")}'` +
+                `);\n`;
+        }
+    }
+
+    if (Array.isArray(data.incidents)) {
+        sql += 'DELETE FROM incidents;\n';
+        for (const inc of data.incidents) {
+            sql += `INSERT INTO incidents (id, athlete_id, date, time, location, severity, description, status) VALUES (` +
+                `'${inc.id.replace(/'/g, "''")}', ` +
+                `'${(inc.athleteId || '').replace(/'/g, "''")}', ` +
+                `'${(inc.date || '').replace(/'/g, "''")}', ` +
+                `'${(inc.time || '').replace(/'/g, "''")}', ` +
+                `'${(inc.location || '').replace(/'/g, "''")}', ` +
+                `'${(inc.severity || '').replace(/'/g, "''")}', ` +
+                `'${(inc.description || '').replace(/'/g, "''")}', ` +
+                `'${(inc.status || '').replace(/'/g, "''")}'` +
+                `);\n`;
+        }
+    }
+
+    if (Array.isArray(data.partnerships)) {
+        sql += 'DELETE FROM partnerships;\n';
+        for (const p of data.partnerships) {
+            const pId = p.partnership_id || p.id;
+            sql += `INSERT INTO partnerships (id, name, type, status, description, start_date, end_date, contract_file_url, partnership_form) VALUES (` +
+                `'${pId.replace(/'/g, "''")}', ` +
+                `'${(p.name || '').replace(/'/g, "''")}', ` +
+                `'${(p.type || '').replace(/'/g, "''")}', ` +
+                `'active', ` +
+                `'${(p.description || '').replace(/'/g, "''")}', ` +
+                `'${(p.valid_from || '').replace(/'/g, "''")}', ` +
+                `'${(p.valid_to || '').replace(/'/g, "''")}', ` +
+                `${p.contract_file_url ? `'${p.contract_file_url.replace(/'/g, "''")}'` : 'NULL'}, ` +
+                `${p.partnership_form ? `'${p.partnership_form.replace(/'/g, "''")}'` : 'NULL'}` +
+                `);\n`;
+        }
+    }
+
+    sql += 'COMMIT;\n';
+    executeSql(sql);
+}
+
+// Perform boot sequence
+initializeDatabase();
+
+// Ensure mentors table exists
+executeSql(`
+    CREATE TABLE IF NOT EXISTS mentors (
+        id TEXT PRIMARY KEY,
+        status TEXT,
+        first_name TEXT,
+        last_name TEXT,
+        personal_id TEXT,
+        birth_date TEXT,
+        gender TEXT,
+        nationality TEXT,
+        phone TEXT,
+        email TEXT,
+        address TEXT,
+        height INTEGER,
+        weight INTEGER,
+        blood_type TEXT,
+        sport_types TEXT,
+        category TEXT,
+        biography TEXT,
+        photo TEXT
+    );
+`);
+
+// Seed default mentor M-101 if table is empty
+const existingMentors = queryDb("SELECT COUNT(*) as count FROM mentors;");
+if (existingMentors.length === 0 || existingMentors[0].count === 0) {
+    executeSql(`
+        INSERT INTO mentors (id, status, first_name, last_name, personal_id, birth_date, gender, nationality, phone, email, address, height, weight, blood_type, sport_types, category, biography, photo)
+        VALUES ('M-101', 'მწვრთნელი', 'ზურაბ', 'კიკნაძე', '01010101011', '1975-04-12', 'male', 'GE', '+995555112233', 'z.k@example.com', 'თბილისი', 182, 80, 'O+', 'ალპინიზმი', 'I კატეგორია', 'სპორტის დამსახურებული მწვრთნელი. მრავალწლიანი გამოცდილება მაღალმთიან ექსპედიციებში.', 'https://i.pravatar.cc/150?img=33');
+    `);
+}
+
+
+http.createServer((req, res) => {
+    // Enable CORS and OPTIONS handler globally
+    if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        });
+        res.end();
+        return;
+    }
+
+    // GET /api/v1/dashboard/summary
+    if (req.url === '/api/v1/dashboard/summary' && req.method === 'GET') {
+        const warehouseRaw = queryDb('SELECT * FROM view_warehouse_pulse;');
+        const warehousePulse = warehouseRaw[0] || { overdue_count: 0, recent_incidents: 0, active_gear_outside: 0 };
+        
+        const overdueItems = queryDb('SELECT * FROM view_overdue_items;');
+        
+        const memberRaw = queryDb('SELECT * FROM view_member_analytics;');
+        const memberAnalytics = memberRaw[0] || { total_active_members: 0, in_the_mountains: 0, at_base: 0, beginner: 0, first_rank: 0, master: 0 };
+        
+        // Settings checks
+        const settingsRaw = queryDb("SELECT value FROM settings WHERE key = 'ratingCalculationEnabled';");
+        const isRatingEnabledSetting = settingsRaw[0] ? settingsRaw[0].value === 'true' : true;
+        
+        const expeditions = queryDb('SELECT * FROM view_active_expeditions;');
+        
+        let topAthletes = [];
+        if (isRatingEnabledSetting) {
+            const athletesRaw = queryDb('SELECT first_name || " " || last_name AS name, points FROM athletes ORDER BY points DESC LIMIT 3;');
+            topAthletes = athletesRaw.map((ath, idx) => ({
+                position: idx + 1,
+                name: ath.name,
+                points: ath.points
+            }));
+        }
+        
+        const partnershipRaw = queryDb('SELECT * FROM view_partnership_pipeline;');
+        const activePartnersCount = partnershipRaw[0] ? partnershipRaw[0].active_partners_count : 0;
+        
+        const activeSponsors = queryDb('SELECT * FROM view_active_sponsors;');
+        
+        const summary = {
+            warehouse_pulse: {
+                overdue_count: warehousePulse.overdue_count,
+                overdue_items: overdueItems,
+                recent_incidents: warehousePulse.recent_incidents,
+                active_gear_outside: warehousePulse.active_gear_outside
+            },
+            member_analytics: {
+                total_active_members: memberAnalytics.total_active_members,
+                in_the_mountains: memberAnalytics.in_the_mountains,
+                at_base: memberAnalytics.at_base,
+                rank_distribution: {
+                    beginner: memberAnalytics.beginner,
+                    first_rank: memberAnalytics.first_rank,
+                    master: memberAnalytics.master
+                }
+            },
+            routes_and_ranking: {
+                is_rating_engine_enabled: isRatingEnabledSetting,
+                active_expeditions: expeditions,
+                top_peaks: ["მყინვარწვერი", "უშბა", "თეთნულდი"],
+                top_athletes: topAthletes
+            },
+            partnership_pipeline: {
+                active_sponsors: activeSponsors,
+                active_partners_count: activePartnersCount
+            }
+        };
+        
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(summary));
+        return;
+    }
+
+    // POST /api/v1/dashboard/sync
+    if (req.url === '/api/v1/dashboard/sync' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                syncDatabase(data);
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: true }));
+            } catch (err) {
+                console.error("Sync error:", err);
+                res.writeHead(400, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // Handle File Upload API
+    if (req.url.startsWith('/api/upload') && req.method === 'POST') {
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        const filename = urlObj.searchParams.get('filename') || 'file_' + Date.now();
+        const storageDir = path.join(__dirname, 'storage');
+        const contractsDir = path.join(storageDir, 'contracts');
+        
+        try {
+            if (!fs.existsSync(storageDir)) {
+                fs.mkdirSync(storageDir);
+            }
+            if (!fs.existsSync(contractsDir)) {
+                fs.mkdirSync(contractsDir);
+            }
+            
+            const targetPath = path.join(contractsDir, filename);
+            const writeStream = fs.createWriteStream(targetPath);
+            
+            req.pipe(writeStream);
+            
+            req.on('end', () => {
+                res.writeHead(200, { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ 
+                    success: true, 
+                    file_url: `/storage/contracts/${filename}` 
+                }));
+            });
+            
+            req.on('error', (err) => {
+                console.error("Upload stream error:", err);
+                res.writeHead(500);
+                res.end('Upload stream error');
+            });
+        } catch (err) {
+            console.error("Upload error:", err);
+            res.writeHead(500);
+            res.end('Upload exception');
+        }
+        return;
+    }
+
+    // Handle Partnership PUT/PATCH API
+    if (req.url.startsWith('/api/partnerships') && (req.method === 'PUT' || req.method === 'PATCH')) {
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        const id = urlObj.searchParams.get('id');
+        
+        if (!id) {
+            res.writeHead(400, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: 'Missing partnership ID' }));
+            return;
+        }
+
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                
+                // Calculate status based on current date (2026-05-24)
+                const today = new Date('2026-05-24');
+                today.setHours(0, 0, 0, 0);
+                const startDate = new Date(data.valid_from);
+                const endDate = new Date(data.valid_to);
+                const statusVal = (today >= startDate && today <= endDate) ? 'active' : 'inactive';
+
+                const nameEscaped = (data.name || '').replace(/'/g, "''");
+                const descEscaped = (data.description || '').replace(/'/g, "''");
+                const validFromEscaped = (data.valid_from || '').replace(/'/g, "''");
+                const validToEscaped = (data.valid_to || '').replace(/'/g, "''");
+                const contractUrlEscaped = data.contract_file_url ? `'${data.contract_file_url.replace(/'/g, "''")}'` : 'NULL';
+                const formEscaped = data.partnership_form ? `'${data.partnership_form.replace(/'/g, "''")}'` : 'NULL';
+
+                const sql = `
+                    UPDATE partnerships SET
+                        name = '${nameEscaped}',
+                        description = '${descEscaped}',
+                        start_date = '${validFromEscaped}',
+                        end_date = '${validToEscaped}',
+                        contract_file_url = ${contractUrlEscaped},
+                        partnership_form = ${formEscaped},
+                        status = '${statusVal}'
+                    WHERE id = '${id.replace(/'/g, "''")}';
+                `;
+                
+                executeSql(sql);
+                
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ 
+                    success: true, 
+                    partnership: {
+                        partnership_id: id,
+                        type: data.type,
+                        name: data.name,
+                        valid_from: data.valid_from,
+                        valid_to: data.valid_to,
+                        description: data.description,
+                        contract_file_url: data.contract_file_url,
+                        partnership_form: data.partnership_form,
+                        status: statusVal
+                    }
+                }));
+            } catch (err) {
+                console.error("Partnership update error:", err);
+                res.writeHead(400, { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // GET /api/mentors
+    if (req.url === '/api/mentors' && req.method === 'GET') {
+        const mentors = queryDb('SELECT * FROM mentors;');
+        const mapped = mentors.map(m => ({
+            id: m.id,
+            status: m.status,
+            firstName: m.first_name,
+            lastName: m.last_name,
+            personalId: m.personal_id,
+            birthDate: m.birth_date,
+            gender: m.gender,
+            nationality: m.nationality,
+            phone: m.phone,
+            email: m.email,
+            address: m.address,
+            height: m.height,
+            weight: m.weight,
+            bloodType: m.blood_type,
+            sportTypes: m.sport_types ? m.sport_types.split(',') : [],
+            sportType: m.sport_types ? m.sport_types.split(',')[0] : '',
+            category: m.category,
+            biography: m.biography,
+            photo: m.photo,
+            certificates: [],
+            awards: []
+        }));
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(mapped));
+        return;
+    }
+
+    // POST /api/mentors
+    if (req.url === '/api/mentors' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                const id = data.id || 'M-' + Date.now();
+                const status = (data.status || '').replace(/'/g, "''");
+                const first_name = (data.firstName || '').replace(/'/g, "''");
+                const last_name = (data.lastName || '').replace(/'/g, "''");
+                const personal_id = (data.personalId || '').replace(/'/g, "''");
+                const birth_date = (data.birthDate || '').replace(/'/g, "''");
+                const gender = (data.gender || '').replace(/'/g, "''");
+                const nationality = (data.nationality || '').replace(/'/g, "''");
+                const phone = (data.phone || '').replace(/'/g, "''");
+                const email = (data.email || '').replace(/'/g, "''");
+                const address = (data.address || '').replace(/'/g, "''");
+                const height = parseInt(data.height) || 0;
+                const weight = parseInt(data.weight) || 0;
+                const blood_type = (data.bloodType || '').replace(/'/g, "''");
+                const sport_types = (Array.isArray(data.sportTypes) ? data.sportTypes.join(',') : '').replace(/'/g, "''");
+                const category = (data.category || '').replace(/'/g, "''");
+                const biography = (data.biography || '').replace(/'/g, "''");
+                const photo = (data.photo || '').replace(/'/g, "''");
+
+                const sql = `INSERT OR REPLACE INTO mentors (id, status, first_name, last_name, personal_id, birth_date, gender, nationality, phone, email, address, height, weight, blood_type, sport_types, category, biography, photo) VALUES (` +
+                    `'${id}', '${status}', '${first_name}', '${last_name}', '${personal_id}', '${birth_date}', '${gender}', '${nationality}', '${phone}', '${email}', '${address}', ${height}, ${weight}, '${blood_type}', '${sport_types}', '${category}', '${biography}', '${photo}'` +
+                    `);`;
+                executeSql(sql);
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: true, id }));
+            } catch (err) {
+                console.error("Save mentor error:", err);
+                res.writeHead(400, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    let filePath = '.' + req.url.split('?')[0];
+    if (filePath === './') {
+        filePath = './index.html';
+    }
+
+    const extname = path.extname(filePath);
+    let contentType = 'text/html';
+    switch (extname) {
+        case '.js':
+            contentType = 'text/javascript';
+            break;
+        case '.css':
+            contentType = 'text/css';
+            break;
+        case '.json':
+            contentType = 'application/json';
+            break;
+        case '.png':
+            contentType = 'image/png';
+            break;      
+        case '.jpg':
+            contentType = 'image/jpg';
+            break;
+    }
+
+    fs.readFile(filePath, (error, content) => {
+        if (error) {
+            if(error.code == 'ENOENT'){
+                res.writeHead(404);
+                res.end('File not found');
+            }
+            else {
+                res.writeHead(500);
+                res.end('Server error: '+error.code);
+            }
+        }
+        else {
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(content, 'utf-8');
+        }
+    });
+}).listen(PORT, '127.0.0.1');
+
+console.log(`Server running at http://127.0.0.1:${PORT}/`);

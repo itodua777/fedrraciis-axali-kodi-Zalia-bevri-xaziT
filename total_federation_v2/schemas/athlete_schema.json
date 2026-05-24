@@ -1,0 +1,78 @@
+{
+  "type": "object",
+  "title": "Athlete",
+  "properties": {
+    "firstName": {
+      "type": "string",
+      "description": "Athlete's first name"
+    },
+    "lastName": {
+      "type": "string",
+      "description": "Athlete's last name"
+    },
+    "personalId": {
+      "type": "string",
+      "description": "Athlete's personal identification number"
+    },
+    "birthDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Athlete's date of birth"
+    },
+    "nationality": {
+      "type": "string",
+      "description": "Athlete's citizenship"
+    },
+    "contact_info": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "pattern": "^\\+?[0-9]{9,15}$",
+          "description": "Phone number with optional country code"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address"
+        },
+        "address": {
+          "type": "string",
+          "description": "Physical address"
+        }
+      }
+    },
+    "biometrics": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "number",
+          "description": "Height in cm"
+        },
+        "weight": {
+          "type": "number",
+          "description": "Weight in kg"
+        },
+        "bloodType": {
+          "type": "string",
+          "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+          "description": "Blood type"
+        }
+      },
+      "required": ["bloodType"]
+    },
+    "sportsDiscipline": {
+      "type": "string",
+      "description": "Specific sport discipline or direction of the athlete"
+    },
+    "isClubMember": {
+      "type": "boolean",
+      "description": "Whether the athlete is a member of a club"
+    },
+    "clubId": {
+      "type": ["string", "null"],
+      "description": "ID of the club the athlete is associated with"
+    }
+  },
+  "required": ["firstName", "lastName", "personalId", "birthDate"]
+}

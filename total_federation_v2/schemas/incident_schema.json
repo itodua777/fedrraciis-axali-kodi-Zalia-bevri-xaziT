@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Incident",
+  "type": "object",
+  "properties": {
+    "ID": {
+      "type": "string"
+    },
+    "Date": {
+      "type": "string",
+      "format": "date"
+    },
+    "Time": {
+      "type": "string",
+      "format": "time"
+    },
+    "Location": {
+      "type": "string"
+    },
+    "Athlete_ID": {
+      "type": "string"
+    },
+    "Severity": {
+      "type": "string",
+      "enum": ["დაბალი", "საშუალო", "მაღალი"]
+    },
+    "Description": {
+      "type": "string"
+    },
+    "Status": {
+      "type": "string"
+    },
+    "Attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": ["filename", "type", "path"]
+      }
+    }
+  },
+  "required": ["ID", "Date", "Location", "Athlete_ID", "Severity", "Description"]
+}
