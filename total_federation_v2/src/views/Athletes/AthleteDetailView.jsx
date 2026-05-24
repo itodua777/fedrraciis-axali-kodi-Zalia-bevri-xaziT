@@ -1,0 +1,146 @@
+import React from '../../utils/react-shim.js';
+import AthleteSidePanel from './components/AthleteSidePanel.jsx';
+import AthleteFullscreen from './components/AthleteFullscreen.jsx';
+import AthletePrintDoc from './components/AthletePrintDoc.jsx';
+
+const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubClick }) => {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editForm, setEditForm] = React.useState(null);
+  const [isFullscreenOpen, setIsFullscreenOpen] = React.useState(false);
+  const prevAthleteIdRef = React.useRef(null);
+
+  const initializeForm = React.useCallback((ath) => {
+    if (!ath) return null;
+    return {
+      ...ath,
+      isFederationMember: ath.isFederationMember ?? false,
+      membershipStatus: ath.membershipStatus ?? 'Active',
+      membershipFeePaid: ath.membershipFeePaid ?? true,
+      isFounder: ath.isFounder ?? false,
+      hasVotingRight: ath.hasVotingRight ?? false,
+      isNationalTeamMember: ath.isNationalTeamMember ?? false,
+      isVeteran: ath.isVeteran ?? false,
+      isMentor: ath.isMentor ?? false,
+      achievements: ath.achievements ? [...ath.achievements] : [],
+      biography: ath.biography ?? '',
+      deathYear: ath.deathYear ?? '',
+      height: ath.height ?? '',
+      weight: ath.weight ?? '',
+      bloodType: ath.bloodType ?? '',
+      asthma: ath.asthma ?? false,
+      diabetes: ath.diabetes ?? false,
+      allergies: ath.allergies ?? '',
+      phone: ath.phone ?? '',
+      email: ath.email ?? '',
+      emergencyContactRelation: ath.emergencyContactRelation ?? '',
+      emergencyContactName: ath.emergencyContactName ?? '',
+      emergencyContactPhone: ath.emergencyContactPhone ?? '',
+      sportsDiscipline: ath.sportsDiscipline ?? '',
+      isClubMember: ath.isClubMember ?? false,
+      clubId: ath.clubId ?? null,
+    };
+  }, []);
+
+  const handleMinimize = React.useCallback(() => {
+    setIsFullscreenOpen(false);
+    setIsEditing(false);
+    if (athlete) {
+      setEditForm(initializeForm(athlete));
+    }
+  }, [athlete, initializeForm]);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleMinimize();
+      }
+    };
+    if (isFullscreenOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isFullscreenOpen, handleMinimize]);
+
+  React.useEffect(() => {
+    if (athlete) {
+      setEditForm(initializeForm(athlete));
+      setIsEditing(false);
+      if (prevAthleteIdRef.current !== athlete.id) {
+        setIsFullscreenOpen(false);
+        prevAthleteIdRef.current = athlete.id;
+      }
+    } else {
+      setEditForm(null);
+      setIsFullscreenOpen(false);
+      prevAthleteIdRef.current = null;
+    }
+  }, [athlete, initializeForm]);
+
+  const handleSave = () => {
+    if (onUpdateAthlete && editForm) {
+      onUpdateAthlete(editForm);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    if (athlete) {
+      setEditForm(initializeForm(athlete));
+    }
+    setIsEditing(false);
+  };
+
+  if (!athlete) {
+    return (
+      <div style={{ width: "420px", minWidth: "420px", backgroundColor: "#121418", border: "1px solid rgba(34, 211, 238, 0.15)", borderRadius: "12px", padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(226, 232, 240, 0.5)" }}>
+        აირჩიეთ სპორტსმენი დეტალების სანახავად
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <AthleteSidePanel
+        athlete={athlete}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        editForm={editForm}
+        setEditForm={setEditForm}
+        setIsFullscreenOpen={setIsFullscreenOpen}
+        onClose={onClose}
+        clubs={clubs}
+        onClubClick={onClubClick}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
+
+      <AthleteFullscreen
+        athlete={athlete}
+        editForm={editForm}
+        setEditForm={setEditForm}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        isFullscreenOpen={isFullscreenOpen}
+        setIsFullscreenOpen={setIsFullscreenOpen}
+        clubs={clubs}
+        onClubClick={onClubClick}
+        onUpdateAthlete={onUpdateAthlete}
+        handleMinimize={handleMinimize}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
+
+      {isFullscreenOpen && (
+        <AthletePrintDoc athlete={athlete} clubs={clubs} />
+      )}
+    </>
+  );
+};
+
+export default AthleteDetailView;

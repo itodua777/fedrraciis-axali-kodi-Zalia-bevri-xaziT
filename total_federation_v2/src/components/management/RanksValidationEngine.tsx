@@ -356,26 +356,6 @@ const RanksValidationEngine: React.FC<RanksValidationEngineProps> = ({ athletes,
               მთამსვლელთა სპორტული თანრიგების მექანიკური მინიჭება და მართვის ცენტრი.
             </p>
           </div>
-          
-          {/* Modular Toggle Switch */}
-          <button 
-            onClick={() => ratingStore.toggleRanksEnabled()}
-            style={{
-              backgroundColor: ranksEnabled ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.1)',
-              border: `2px solid ${ranksEnabled ? '#10b981' : '#ef4444'}`,
-              borderRadius: '8px',
-              padding: '12px 24px',
-              cursor: 'pointer',
-              color: ranksEnabled ? '#10b981' : '#f87171',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              boxShadow: ranksEnabled ? '0 0 15px rgba(16, 185, 129, 0.3)' : '0 0 10px rgba(239, 68, 68, 0.2)',
-              transition: 'all 0.3s ease',
-              outline: 'none'
-            }}
-          >
-            {ranksEnabled ? '🟢 ჩართულია' : '🔴 გამორთულია'}
-          </button>
         </div>
 
         {/* Global Module status indicator */}

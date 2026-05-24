@@ -1,0 +1,11 @@
+const React = window.React;
+export default React;
+export const useState = React.useState;
+export const useEffect = React.useEffect;
+export const useRef = React.useRef;
+export const useCallback = React.useCallback;
+export const useMemo = React.useMemo;
+export const createContext = React.createContext;
+export const useContext = React.useContext;
+export const useReducer = React.useReducer;
+export const useLayoutEffect = React.useLayoutEffect;

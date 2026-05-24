@@ -423,6 +423,7 @@ if (existingMentors.length === 0 || existingMentors[0].count === 0) {
     `);
 }
 
+const compiledCache = new Map(); // filePath -> { mtime, code }
 
 http.createServer((req, res) => {
     // Enable CORS and OPTIONS handler globally
@@ -741,6 +742,7 @@ http.createServer((req, res) => {
     let contentType = 'text/html';
     switch (extname) {
         case '.js':
+        case '.jsx':
             contentType = 'text/javascript';
             break;
         case '.css':
@@ -755,6 +757,51 @@ http.createServer((req, res) => {
         case '.jpg':
             contentType = 'image/jpg';
             break;
+    }
+
+    if (extname === '.jsx') {
+        fs.stat(filePath, (err, stats) => {
+            if (err) {
+                if (err.code === 'ENOENT') {
+                    res.writeHead(404);
+                    res.end('File not found');
+                } else {
+                    res.writeHead(500);
+                    res.end('Server error: ' + err.code);
+                }
+                return;
+            }
+            const mtime = stats.mtimeMs;
+            const cached = compiledCache.get(filePath);
+            if (cached && cached.mtime === mtime) {
+                res.writeHead(200, { 'Content-Type': 'text/javascript' });
+                res.end(cached.code, 'utf-8');
+                return;
+            }
+
+            fs.readFile(filePath, 'utf8', (readErr, content) => {
+                if (readErr) {
+                    res.writeHead(500);
+                    res.end('Server error reading file');
+                    return;
+                }
+                try {
+                    const Babel = require('./scratch/babel.min.js');
+                    const compiled = Babel.transform(content, {
+                        presets: ['react'],
+                        filename: path.basename(filePath)
+                    }).code;
+                    compiledCache.set(filePath, { mtime, code: compiled });
+                    res.writeHead(200, { 'Content-Type': 'text/javascript' });
+                    res.end(compiled, 'utf-8');
+                } catch (compileErr) {
+                    console.error("Transpilation error for", filePath, compileErr);
+                    res.writeHead(500);
+                    res.end('Compilation error: ' + compileErr.message);
+                }
+            });
+        });
+        return;
     }
 
     fs.readFile(filePath, (error, content) => {

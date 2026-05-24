@@ -18,7 +18,7 @@ export interface StaffMember {
   role: string;
 }
 
-export const ROLE_MAP: Record<string, string> = {
+const ROLE_MAP: Record<string, string> = {
   president: "პრეზიდენტი",
   vice_president: "ვიცე-პრეზიდენტი",
   exec_director_gen_sec: "აღმასრულებელი დირექტორი / გენერალური მდივანი",
