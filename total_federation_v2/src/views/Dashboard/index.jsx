@@ -1,6 +1,183 @@
 import React from 'react';
 import StatCard from '../../components/ui/StatCard.jsx';
 
+const CardSkeleton = ({ variant }) => {
+  return (
+    <div style={{
+      backgroundColor: "rgba(15, 23, 42, 0.4)",
+      border: "1px solid rgba(34, 211, 238, 0.05)",
+      borderRadius: "12px",
+      padding: "20px",
+      minHeight: "125px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      boxSizing: "border-box"
+    }}>
+      <div className="skeleton-loading" style={{ height: "12px", width: "40%", borderRadius: "4px" }}></div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px 0" }}>
+        <div className="skeleton-loading" style={{ height: "30px", width: "35%", borderRadius: "4px" }}></div>
+        {variant === 'gauge' && (
+          <div className="skeleton-loading" style={{ height: "45px", width: "45px", borderRadius: "50%" }}></div>
+        )}
+        {(variant === 'sparkline' || variant === 'status' || variant === 'bars') && (
+          <div className="skeleton-loading" style={{ height: "20px", width: "65px", borderRadius: "4px" }}></div>
+        )}
+      </div>
+      <div className="skeleton-loading" style={{ height: "10px", width: "60%", borderRadius: "4px" }}></div>
+    </div>
+  );
+};
+
+const DashboardCard = ({ 
+  title, 
+  value, 
+  subtitle, 
+  loading, 
+  variant = 'default',
+  valueColor = '#ffffff'
+}) => {
+  const [hovered, setHovered] = React.useState(false);
+
+  if (loading) {
+    return <CardSkeleton variant={variant} />;
+  }
+
+  const numericValue = parseFloat(String(value).replace(/[^0-9.-]/g, '')) || 0;
+  let cardClass = "dashboard-card";
+  let textShadow = "0 0 10px rgba(255, 255, 255, 0.2)";
+  let finalValueColor = valueColor;
+
+  if (variant === 'incident' && numericValue > 0) {
+    cardClass += " incident-card-active";
+    finalValueColor = "#ef4444";
+    textShadow = "0 0 12px rgba(239, 68, 68, 0.6)";
+  } else if (variant === 'returnable' && numericValue > 0) {
+    cardClass += " warning-card-active";
+    finalValueColor = "#fbbf24";
+    textShadow = "0 0 12px rgba(251, 191, 36, 0.6)";
+  } else if (variant === 'status') {
+    finalValueColor = "#22d3ee";
+    textShadow = "0 0 10px rgba(34, 211, 238, 0.5)";
+  }
+
+  const renderVisual = () => {
+    if (variant === 'gauge') {
+      const radius = 22;
+      const circumference = 2 * Math.PI * radius;
+      const strokeDashoffset = circumference - (numericValue / 100) * circumference;
+      return (
+        <div className="card-visual-container">
+          <svg width="56" height="56" viewBox="0 0 56 56" style={{ transform: "rotate(-90deg)" }}>
+            <circle cx="28" cy="28" r={radius} fill="transparent" stroke="rgba(34, 211, 238, 0.05)" strokeWidth="4" />
+            <circle 
+              cx="28" 
+              cy="28" 
+              r={radius} 
+              fill="transparent" 
+              stroke="#22d3ee" 
+              strokeWidth="4" 
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              style={{ transition: "stroke-dashoffset 0.8s ease-in-out" }}
+            />
+          </svg>
+        </div>
+      );
+    }
+
+    if (variant === 'sparkline') {
+      const baseRatio = [0.85, 0.82, 0.9, 0.88, 0.94, 0.97, 1];
+      const dataPoints = baseRatio.map(r => numericValue * r);
+      const min = Math.min(...dataPoints);
+      const max = Math.max(...dataPoints);
+      const range = max - min || 1;
+      
+      const width = 80;
+      const height = 24;
+      const points = dataPoints.map((val, idx) => {
+        const x = idx * (width / (dataPoints.length - 1));
+        const y = height - ((val - min) / range) * (height - 6) - 3;
+        return `${x},${y}`;
+      }).join(' ');
+
+      const fillPoints = `0,${height} ${points} ${width},${height}`;
+
+      return (
+        <div className="card-visual-container">
+          <svg width={width} height={height} style={{ overflow: 'visible' }}>
+            <defs>
+              <linearGradient id="sparklineGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <polygon points={fillPoints} fill="url(#sparklineGrad)" />
+            <polyline points={points} fill="none" stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <circle 
+              cx={width} 
+              cy={height - ((dataPoints[6] - min) / range) * (height - 6) - 3} 
+              r="2.5" 
+              fill="#22d3ee" 
+              className="pulse-dot" 
+            />
+          </svg>
+        </div>
+      );
+    }
+
+    if (variant === 'status') {
+      return (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <span className="status-dot-active" />
+        </div>
+      );
+    }
+
+    if (variant === 'bars') {
+      return (
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: "20px" }}>
+          <div style={{ width: "3px", height: "35%", backgroundColor: "rgba(34, 211, 238, 0.25)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "55%", backgroundColor: "rgba(34, 211, 238, 0.45)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "45%", backgroundColor: "rgba(34, 211, 238, 0.35)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "75%", backgroundColor: "rgba(34, 211, 238, 0.65)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "90%", backgroundColor: "#22d3ee", borderRadius: "1px", boxShadow: "0 0 4px rgba(34, 211, 238, 0.5)" }}></div>
+        </div>
+      );
+    }
+
+    if (variant === 'incident' && numericValue > 0) {
+      return (
+        <div className="incident-radar-container">
+          <span className="incident-radar" />
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <div 
+      className={cardClass}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="card-top">
+        <div className="card-title">{title}</div>
+        {renderVisual()}
+      </div>
+      <div className="card-bottom">
+        <div className="card-value" style={{ color: finalValueColor, textShadow }}>
+          {value}
+        </div>
+        {subtitle && <div className="card-subtitle">{subtitle}</div>}
+      </div>
+    </div>
+  );
+};
+
 const Dashboard = ({ incidents = [] }) => {
   const containerStyle = {
     flex: 1,
@@ -329,7 +506,7 @@ const Dashboard = ({ incidents = [] }) => {
       <style>{`
         @keyframes skeleton-pulse {
           0% { background-color: rgba(255, 255, 255, 0.05); }
-          50% { background-color: rgba(255, 255, 255, 0.18); }
+          50% { background-color: rgba(255, 255, 255, 0.15); }
           100% { background-color: rgba(255, 255, 255, 0.05); }
         }
         .skeleton-loading {
@@ -338,15 +515,15 @@ const Dashboard = ({ incidents = [] }) => {
         .dashboard-sectors-container {
           display: flex;
           flex-direction: column;
-          gap: 25px;
-          margin-bottom: 25px;
+          gap: 40px;
+          margin-bottom: 40px;
         }
         .dashboard-sector {
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-          padding-bottom: 25px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 35px;
           display: flex;
           flex-direction: column;
-          gap: 15px;
+          gap: 20px;
         }
         .dashboard-sector:last-child {
           border-bottom: none;
@@ -374,11 +551,147 @@ const Dashboard = ({ incidents = [] }) => {
           grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
           gap: 20px;
         }
+        .dashboard-card {
+          background-color: rgba(15, 23, 42, 0.6);
+          border: 1px solid rgba(34, 211, 238, 0.1);
+          border-radius: 12px;
+          padding: 20px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(34, 211, 238, 0.05);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          min-height: 125px;
+          box-sizing: border-box;
+        }
+        .dashboard-card:hover {
+          border-color: rgba(34, 211, 238, 0.3);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(34, 211, 238, 0.1), inset 0 0 15px rgba(34, 211, 238, 0.08);
+          transform: translateY(-2px);
+        }
+        .card-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          width: 100%;
+        }
+        .card-title {
+          color: #22d3ee;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 8px;
+        }
+        .card-value {
+          font-size: 28px;
+          font-weight: bold;
+          margin-bottom: 4px;
+        }
+        .card-subtitle {
+          color: rgba(226, 232, 240, 0.5);
+          font-size: 11px;
+          margin-top: 2px;
+        }
+        .card-bottom {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+        }
+        .card-visual-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        @keyframes status-pulse {
+          0% { transform: scale(0.95); opacity: 0.6; }
+          50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px #10b981; }
+          100% { transform: scale(0.95); opacity: 0.6; }
+        }
+        .status-dot-active {
+          width: 8px;
+          height: 8px;
+          background-color: #10b981;
+          border-radius: 50%;
+          display: inline-block;
+          box-shadow: 0 0 8px #10b981;
+          animation: status-pulse 2s infinite ease-in-out;
+        }
+        @keyframes red-neon-glow {
+          0% {
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(239, 68, 68, 0.05);
+          }
+          50% {
+            border-color: rgba(239, 68, 68, 0.6);
+            box-shadow: 0 4px 30px rgba(239, 68, 68, 0.25), 0 0 15px rgba(239, 68, 68, 0.2), inset 0 0 15px rgba(239, 68, 68, 0.15);
+          }
+          100% {
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(239, 68, 68, 0.05);
+          }
+        }
+        .incident-card-active {
+          animation: red-neon-glow 2s infinite ease-in-out;
+          background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(239, 68, 68, 0.04) 100%) !important;
+        }
+        .incident-card-active:hover {
+          border-color: rgba(239, 68, 68, 0.7) !important;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(239, 68, 68, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.2) !important;
+        }
+        .warning-card-active {
+          border-color: rgba(245, 158, 11, 0.2) !important;
+          background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(245, 158, 11, 0.02) 100%) !important;
+        }
+        .warning-card-active:hover {
+          border-color: rgba(245, 158, 11, 0.5) !important;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(245, 158, 11, 0.12), inset 0 0 15px rgba(245, 158, 11, 0.08) !important;
+        }
+        @keyframes spark-pulse {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.5); opacity: 0.6; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .pulse-dot {
+          animation: spark-pulse 1.8s infinite ease-in-out;
+          transform-origin: center;
+        }
+        @keyframes radar-ping {
+          0% { transform: scale(0.8); opacity: 0.5; }
+          100% { transform: scale(2.2); opacity: 0; }
+        }
+        .incident-radar-container {
+          position: relative;
+          width: 12px;
+          height: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .incident-radar {
+          width: 8px;
+          height: 8px;
+          background-color: #ef4444;
+          border-radius: 50%;
+          position: relative;
+        }
+        .incident-radar::after {
+          content: '';
+          position: absolute;
+          top: -4px;
+          left: -4px;
+          width: 16px;
+          height: 16px;
+          border: 2px solid #ef4444;
+          border-radius: 50%;
+          animation: radar-ping 1.5s infinite ease-out;
+        }
       `}</style>
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "15px" }}>
         <h2 style={{ color: "#22d3ee", margin: 0, textShadow: "0 0 10px rgba(34, 211, 238, 0.5)" }}>
-          Dashboard Overview
+          პანელის მიმოხილვა
         </h2>
       </div>
 
@@ -400,7 +713,7 @@ const Dashboard = ({ incidents = [] }) => {
           width: "fit-content"
         }}>
           <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: "14px" }}></i>
-          <span><strong>Critical Alert:</strong> ფიქსირდება მაღალი სიმძიმის ინციდენტი! გთხოვთ გადახვიდეთ ინციდენტების პანელში.</span>
+          <span><strong>კრიტიკული შეტყობინება:</strong> ფიქსირდება მაღალი სიმძიმის ინციდენტი! გთხოვთ გადახვიდეთ ინციდენტების პანელში.</span>
         </div>
       )}
 
@@ -409,30 +722,29 @@ const Dashboard = ({ incidents = [] }) => {
         <div className="dashboard-sector">
           <div className="sector-header">
             <i className="fa-solid fa-chart-pie sector-icon"></i>
-            <h3 className="sector-title">1. მიმოხილვა და სტატუსი (Overview & Status)</h3>
+            <h3 className="sector-title">1. მიმოხილვა და სტატუსი</h3>
           </div>
           <div className="sector-grid">
-            <StatCard 
-              title="Pending Requests" 
+            <DashboardCard 
+              title="მომლოდინე მოთხოვნები" 
               value="38" 
               subtitle="აქტიური მოთხოვნები" 
-              loading={false} 
+              loading={false}
+              variant="bars" 
             />
-            <StatCard 
-              title="System Status" 
-              value="Online" 
+            <DashboardCard 
+              title="სისტემის სტატუსი" 
+              value="ონლაინ" 
               subtitle="სისტემის სტატუსი" 
               loading={false} 
-              valueColor="#22d3ee" 
-              textShadow="0 0 10px rgba(34, 211, 238, 0.5)"
+              variant="status"
             />
-            <StatCard 
-              title="Active Incidents" 
+            <DashboardCard 
+              title="აქტიური ინციდენტები" 
               value={stats.activeIncidents} 
               subtitle="აქტიური ინციდენტები" 
               loading={loading.activeIncidents} 
-              valueColor={!loading.activeIncidents && stats.activeIncidents > 0 ? "#ef4444" : "#ffffff"}
-              textShadow={!loading.activeIncidents && stats.activeIncidents > 0 ? "0 0 10px rgba(239, 68, 68, 0.4)" : "0 0 10px rgba(255, 255, 255, 0.3)"}
+              variant="incident"
             />
           </div>
         </div>
@@ -441,26 +753,29 @@ const Dashboard = ({ incidents = [] }) => {
         <div className="dashboard-sector">
           <div className="sector-header">
             <i className="fa-solid fa-users sector-icon"></i>
-            <h3 className="sector-title">2. მომხმარებელთა და წევრთა ანალიტიკა (User & Member Analytics)</h3>
+            <h3 className="sector-title">2. მომხმარებელთა და წევრთა ანალიტიკა</h3>
           </div>
           <div className="sector-grid">
-            <StatCard 
-              title="Active Members" 
+            <DashboardCard 
+              title="აქტიური წევრები" 
               value="1,204" 
               subtitle="აქტიური წევრები" 
               loading={false} 
+              variant="sparkline"
             />
-            <StatCard 
-              title="Athletes Stats" 
+            <DashboardCard 
+              title="სპორტსმენთა სტატისტიკა" 
               value={stats.athletesCount} 
               subtitle="სპორტსმენთა სტატისტიკა" 
               loading={loading.athletesCount} 
+              variant="sparkline"
             />
-            <StatCard 
-              title="Active Mentors" 
+            <DashboardCard 
+              title="აქტიური მენტორები" 
               value={stats.activeMentors} 
               subtitle="აქტიური მენტორები" 
               loading={loading.activeMentors} 
+              variant="sparkline"
             />
           </div>
         </div>
@@ -469,20 +784,22 @@ const Dashboard = ({ incidents = [] }) => {
         <div className="dashboard-sector">
           <div className="sector-header">
             <i className="fa-solid fa-warehouse sector-icon"></i>
-            <h3 className="sector-title">3. საწყობი და აქტივები (Warehouse & Assets)</h3>
+            <h3 className="sector-title">3. საწყობი და აქტივები</h3>
           </div>
           <div className="sector-grid">
-            <StatCard 
-              title="Issued Gear" 
+            <DashboardCard 
+              title="გაცემული ინვენტარი" 
               value={stats.issuedInventory} 
               subtitle="გაცემული ინვენტარი" 
               loading={loading.issuedInventory} 
+              variant="sparkline"
             />
-            <StatCard 
-              title="Returnable Gear" 
+            <DashboardCard 
+              title="დასაბრუნებელი ინვენტარი" 
               value={stats.returnableInventory} 
               subtitle="დასაბრუნებელი ინვენტარი" 
               loading={loading.returnableInventory} 
+              variant="returnable"
             />
           </div>
         </div>
@@ -491,31 +808,34 @@ const Dashboard = ({ incidents = [] }) => {
         <div className="dashboard-sector">
           <div className="sector-header">
             <i className="fa-solid fa-handshake sector-icon"></i>
-            <h3 className="sector-title">4. ფინანსები და პარტნიორობა (Finance & Partnership)</h3>
+            <h3 className="sector-title">4. ფინანსები და პარტნიორობა</h3>
           </div>
           <div className="sector-grid">
-            <StatCard 
-              title="Membership Status" 
+            <DashboardCard 
+              title="წევრობის სტატუსი" 
               value={stats.membershipStatus} 
               subtitle="წევრობის სტატუსი" 
               loading={loading.membershipStatus} 
+              variant="gauge"
             />
-            <StatCard 
-              title="Active Partners" 
+            <DashboardCard 
+              title="აქტიური ხელშეკრულებები" 
               value={stats.activePartners} 
               subtitle="აქტიური ხელშეკრულებები" 
               loading={loading.activePartners} 
+              variant="sparkline"
             />
           </div>
         </div>
       </div>
 
       <div style={cardStyle}>
-        <div style={statTitleStyle}>Recent Activity</div>
-        <p style={{ color: "rgba(226, 232, 240, 0.7)", marginTop: "10px" }}>No recent activity to display.</p>
+        <div style={statTitleStyle}>ბოლო აქტივობები</div>
+        <p style={{ color: "rgba(226, 232, 240, 0.7)", marginTop: "10px" }}>ბოლო აქტივობები არ ფიქსირდება.</p>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
+

@@ -27,6 +27,13 @@ const menuItems = [
     icon: 'fa-solid fa-box'
   },
   {
+    id: 'spaces',
+    node: '570',
+    label: 'სავარჯიშო სივრცე',
+    icon: 'fa-solid fa-map-location-dot',
+    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
+  },
+  {
     id: 'medianews',
     node: '570',
     label: 'მედიანიუსი',
@@ -55,16 +62,16 @@ const menuItems = [
     icon: 'fa-solid fa-person-running'
   },
   {
-    id: 'memorial',
-    node: '8849',
-    label: 'ლეგენდარული სპორტსმენები',
-    icon: 'fa-solid fa-award'
-  },
-  {
     id: 'mentors',
     node: '8849',
     label: 'მენტორები',
     icon: 'fa-solid fa-user-graduate'
+  },
+  {
+    id: 'memorial',
+    node: '8849',
+    label: 'ლეგენდარული სპორტსმენები',
+    icon: 'fa-solid fa-award'
   },
   {
     id: 'clubs',
@@ -73,13 +80,7 @@ const menuItems = [
     icon: 'fa-solid fa-building-flag',
     iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
   },
-  {
-    id: 'spaces',
-    node: '8849',
-    label: 'სავარჯიშო სივრცე',
-    icon: 'fa-solid fa-map-location-dot',
-    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
-  },
+
   {
     id: 'routes',
     node: '8849',

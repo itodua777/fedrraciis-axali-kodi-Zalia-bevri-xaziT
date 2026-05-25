@@ -5,9 +5,11 @@ export interface Founder {
   type: 'physical' | 'legal';
   name: string;
   identifier: string; // 11-digit personal ID or 9-digit identification code
-  share: number; // percentage
   isActiveMember: boolean;
   hasVotingRight: boolean;
+  share?: number; // optional, backward compatibility
+  leaderName?: string;
+  leaderIdentifier?: string;
 }
 
 export const FoundersRegistry: React.FC = () => {
@@ -26,7 +28,6 @@ export const FoundersRegistry: React.FC = () => {
         type: "physical",
         name: "ალექსანდრე ასათიანი",
         identifier: "01012345678",
-        share: 40,
         isActiveMember: true,
         hasVotingRight: true
       },
@@ -35,16 +36,16 @@ export const FoundersRegistry: React.FC = () => {
         type: "legal",
         name: "შპს ალპური ალიანსი",
         identifier: "200987654",
-        share: 35,
         isActiveMember: true,
-        hasVotingRight: true
+        hasVotingRight: true,
+        leaderName: "გიორგი მელაძე",
+        leaderIdentifier: "01024681357"
       },
       {
         id: "3",
         type: "physical",
         name: "ირაკლი კოხრეიძე",
         identifier: "01087654321",
-        share: 25,
         isActiveMember: false,
         hasVotingRight: false
       }
@@ -55,9 +56,10 @@ export const FoundersRegistry: React.FC = () => {
     type: 'physical' as 'physical' | 'legal',
     name: '',
     identifier: '',
-    share: '',
     isActiveMember: true,
-    hasVotingRight: true
+    hasVotingRight: true,
+    leaderName: '',
+    leaderIdentifier: ''
   });
 
   const [error, setError] = React.useState('');
@@ -66,8 +68,12 @@ export const FoundersRegistry: React.FC = () => {
     localStorage.setItem('management_founders', JSON.stringify(founders));
   }, [founders]);
 
-  const totalShare = React.useMemo(() => {
-    return founders.reduce((sum, f) => sum + f.share, 0);
+  const physicalCount = React.useMemo(() => {
+    return founders.filter(f => f.type === 'physical').length;
+  }, [founders]);
+
+  const legalCount = React.useMemo(() => {
+    return founders.filter(f => f.type === 'legal').length;
   }, [founders]);
 
   const votingCount = React.useMemo(() => {
@@ -85,7 +91,9 @@ export const FoundersRegistry: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       type,
-      identifier: '' // Reset identifier as length requirement changes
+      identifier: '', // Reset identifier as length requirement changes
+      leaderName: '',
+      leaderIdentifier: ''
     }));
   };
 
@@ -97,9 +105,12 @@ export const FoundersRegistry: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    const parsedShare = parseFloat(formData.share);
-    if (!formData.name.trim()) return setError('გთხოვთ მიუთითოთ სახელი / კომპანიის დასახელება');
-    if (!formData.identifier.trim()) return setError('გთხოვთ მიუთითოთ საიდენტიფიკაციო კოდი ან პირადი ნომერი');
+    if (!formData.name.trim()) {
+      return setError(formData.type === 'physical' ? 'გთხოვთ მიუთითოთ სახელი და გვარი' : 'გთხოვთ მიუთითოთ კომპანიის დასახელება');
+    }
+    if (!formData.identifier.trim()) {
+      return setError(formData.type === 'physical' ? 'გთხოვთ მიუთითოთ პირადი ნომერი' : 'გთხოვთ მიუთითოთ საიდენტიფიკაციო კოდი');
+    }
     
     if (formData.type === 'physical') {
       if (formData.identifier.trim().length !== 11) {
@@ -109,14 +120,12 @@ export const FoundersRegistry: React.FC = () => {
       if (formData.identifier.trim().length !== 9) {
         return setError('იურიდიული პირის საიდენტიფიკაციო კოდი უნდა შედგებოდეს 9 ციფრისგან');
       }
-    }
-
-    if (isNaN(parsedShare) || parsedShare <= 0 || parsedShare > 100) {
-      return setError('წილობრივი მონაწილეობა უნდა იყოს 0-დან 100-მდე პროცენტული მაჩვენებელი');
-    }
-
-    if (totalShare + parsedShare > 100) {
-      return setError(`შეცდომა: ჯამური წილი გადააჭარბებს 100%-ს (ამჟამად: ${totalShare}%, დარჩენილი თავისუფალი წილი: ${100 - totalShare}%)`);
+      if (!formData.leaderName.trim()) {
+        return setError('გთხოვთ მიუთითოთ ორგანიზაციის ხელმძღვანელის სახელი და გვარი');
+      }
+      if (formData.leaderIdentifier.trim().length !== 11) {
+        return setError('ორგანიზაციის ხელმძღვანელის პირადი ნომერი უნდა შედგებოდეს 11 ციფრისგან');
+      }
     }
 
     const newFounder: Founder = {
@@ -124,9 +133,12 @@ export const FoundersRegistry: React.FC = () => {
       type: formData.type,
       name: formData.name,
       identifier: formData.identifier,
-      share: parsedShare,
       isActiveMember: formData.isActiveMember,
-      hasVotingRight: formData.hasVotingRight
+      hasVotingRight: formData.hasVotingRight,
+      ...(formData.type === 'legal' ? {
+        leaderName: formData.leaderName,
+        leaderIdentifier: formData.leaderIdentifier
+      } : {})
     };
 
     setFounders(prev => [...prev, newFounder]);
@@ -134,9 +146,10 @@ export const FoundersRegistry: React.FC = () => {
       type: 'physical',
       name: '',
       identifier: '',
-      share: '',
       isActiveMember: true,
-      hasVotingRight: true
+      hasVotingRight: true,
+      leaderName: '',
+      leaderIdentifier: ''
     });
   };
 
@@ -204,7 +217,7 @@ export const FoundersRegistry: React.FC = () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-      {/* Quorum and Shares Statistics */}
+      {/* Quorum and Founders Structure Statistics */}
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
@@ -217,15 +230,14 @@ export const FoundersRegistry: React.FC = () => {
           padding: "20px",
           boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
         }}>
-          <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "5px" }}>წილების ჯამური გადანაწილება</div>
+          <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "5px" }}>სუბიექტების სტრუქტურა</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-            <span style={{ fontSize: "28px", color: "#fff", fontWeight: "bold" }}>{totalShare}%</span>
-            <span style={{ fontSize: "14px", color: totalShare === 100 ? "#22c55e" : "#ffb703" }}>
-              {totalShare === 100 ? "სრულად შევსებული" : `დარჩენილია ${100 - totalShare}%`}
-            </span>
+            <span style={{ fontSize: "28px", color: "#fff", fontWeight: "bold" }}>{totalFoundersCount}</span>
+            <span style={{ fontSize: "14px", color: "#22d3ee" }}>სუბიექტი</span>
           </div>
-          <div style={{ height: "6px", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "3px", overflow: "hidden", marginTop: "12px" }}>
-            <div style={{ height: "100%", width: `${totalShare}%`, backgroundColor: totalShare === 100 ? "#22c55e" : "#22d3ee" }}></div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "12px" }}>
+            <span>ფიზიკური პირი: <strong>{physicalCount}</strong></span>
+            <span>იურიდიული პირი: <strong>{legalCount}</strong></span>
           </div>
         </div>
 
@@ -291,18 +303,26 @@ export const FoundersRegistry: React.FC = () => {
               <input type="text" name="name" value={formData.name} onChange={handleInputChange} style={inputStyle} placeholder={formData.type === 'physical' ? "მაგ. ალექსანდრე ასათიანი" : "მაგ. სს ექსტრემალური ტურიზმი"} />
             </div>
 
-            <div style={{ ...inputGroupStyle, minWidth: "180px" }}>
+            <div style={{ ...inputGroupStyle, minWidth: "180px", flex: 1 }}>
               <label style={labelStyle}>
                 {formData.type === 'physical' ? 'პირადი ნომერი * (11-ნიშნა)' : 'საიდენტიფიკაციო კოდი * (9-ნიშნა)'}
               </label>
               <input type="text" name="identifier" value={formData.identifier} onChange={handleInputChange} maxLength={formData.type === 'physical' ? 11 : 9} style={inputStyle} placeholder={formData.type === 'physical' ? "01012345678" : "200987654"} />
             </div>
-
-            <div style={{ ...inputGroupStyle, minWidth: "120px" }}>
-              <label style={labelStyle}>წილობრივი მონაწილეობა * (%)</label>
-              <input type="number" name="share" value={formData.share} onChange={handleInputChange} min={0.1} max={100} step={0.01} style={inputStyle} placeholder="მაგ. 25" />
-            </div>
           </div>
+
+          {formData.type === 'legal' && (
+            <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "15px" }}>
+              <div style={{ ...inputGroupStyle, minWidth: "250px", flex: 2 }}>
+                <label style={labelStyle}>ორგანიზაციის ხელმძღვანელის სახელი და გვარი *</label>
+                <input type="text" name="leaderName" value={formData.leaderName} onChange={handleInputChange} style={inputStyle} placeholder="მაგ. გიორგი მელაძე" />
+              </div>
+              <div style={{ ...inputGroupStyle, minWidth: "180px", flex: 1 }}>
+                <label style={labelStyle}>ორგანიზაციის ხელმძღვანელის პირადი ნომერი * (11-ნიშნა)</label>
+                <input type="text" name="leaderIdentifier" value={formData.leaderIdentifier} onChange={handleInputChange} maxLength={11} style={inputStyle} placeholder="01024681357" />
+              </div>
+            </div>
+          )}
 
           <div style={{ display: "flex", gap: "40px", flexWrap: "wrap", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -365,7 +385,7 @@ export const FoundersRegistry: React.FC = () => {
               <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>ტიპი</th>
               <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>დასახელება / სახელი</th>
               <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>საიდენტიფიკაციო ნომერი</th>
-              <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>წილობრივი მონაწილეობა</th>
+              <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>ხელმძღვანელი</th>
               <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>აქტიური წევრი</th>
               <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>ხმის უფლება</th>
               <th style={{ padding: "12px 8px", color: "rgba(255,255,255,0.5)", fontSize: "12px", textAlign: "right" }}>მოქმედება</th>
@@ -392,12 +412,14 @@ export const FoundersRegistry: React.FC = () => {
                   {founder.identifier}
                 </td>
                 <td style={{ padding: "12px 8px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span style={{ color: "#22d3ee", fontWeight: "bold", fontSize: "14px" }}>{founder.share}%</span>
-                    <div style={{ width: "60px", height: "4px", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "2px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${founder.share}%`, backgroundColor: "#22d3ee" }}></div>
+                  {founder.type === 'legal' && founder.leaderName ? (
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <span style={{ color: "#fff", fontSize: "13px", fontWeight: "500" }}>{founder.leaderName}</span>
+                      <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", fontFamily: "monospace" }}>{founder.leaderIdentifier}</span>
                     </div>
-                  </div>
+                  ) : (
+                    <span style={{ color: "rgba(255,255,255,0.2)" }}>-</span>
+                  )}
                 </td>
                 <td style={{ padding: "12px 8px" }}>
                   {founder.isActiveMember ? (
