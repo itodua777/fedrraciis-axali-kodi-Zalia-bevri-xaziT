@@ -240,6 +240,20 @@ body {
 .animate-slide-down {
   animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+@keyframes pulseEmerald {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+.animate-pulse-emerald {
+  animation: pulseEmerald 3s ease-in-out infinite;
+  transform-origin: center;
+}
 .profile-dual-grid {
   display: grid;
   grid-template-columns: 1fr;

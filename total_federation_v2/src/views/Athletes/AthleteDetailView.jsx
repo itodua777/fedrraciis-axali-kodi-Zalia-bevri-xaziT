@@ -107,13 +107,53 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
         backgroundColor: "#121418", 
         border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", 
         borderRadius: "12px", 
-        padding: "20px", 
+        padding: "32px", 
         display: "flex", 
+        flexDirection: "column",
         alignItems: "center", 
         justifyContent: "center", 
-        color: "rgba(226, 232, 240, 0.5)" 
+        userSelect: "none",
+        pointerEvents: "none"
       }}>
-        აირჩიეთ სპორტსმენი დეტალების სანახავად
+        {/* 3x3 Ennea Core გრიდის მინიმალისტური SVG ილუსტრაცია */}
+        <div style={{
+          width: "96px",
+          height: "96px",
+          marginBottom: "16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: 0.2
+        }}>
+          <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", fill: "var(--color-silver-structure)" }}>
+            {/* რიგი 1 */}
+            <circle cx="20" cy="20" r="5" />
+            <circle cx="50" cy="20" r="5" />
+            <circle cx="80" cy="20" r="5" />
+            {/* რიგი 2 */}
+            <circle cx="20" cy="50" r="5" />
+            <circle cx="50" cy="50" r="5" fill="var(--color-emerald-core)" className="animate-pulse-emerald" /> {/* ცენტრალური ზურმუხტისფერი ბირთვი */}
+            <circle cx="80" cy="50" r="5" />
+            {/* რიგი 3 */}
+            <circle cx="20" cy="80" r="5" />
+            <circle cx="50" cy="80" r="5" />
+            <circle cx="80" cy="80" r="5" />
+          </svg>
+        </div>
+
+        {/* საინფორმაციო ტექსტი */}
+        <p style={{
+          margin: 0,
+          fontSize: "14px",
+          fontWeight: "500",
+          color: "var(--color-silver-structure)",
+          letterSpacing: "0.025em",
+          textAlign: "center",
+          maxWidth: "250px",
+          lineHeight: "1.5"
+        }}>
+          აირჩიეთ სპორტსმენი დეტალების სანახავად
+        </p>
       </div>
     );
   }

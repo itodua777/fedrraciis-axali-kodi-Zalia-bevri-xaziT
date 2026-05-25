@@ -4,6 +4,7 @@ import ReactDOM from '../../../utils/react-dom-shim.js';
 const WarehousePrintPortals = ({
   activePrintDoc,
   lastIssuedTransaction,
+  printTransaction,
   prePrintFilteredInflows,
   prePrintFilteredDisposals,
   prePrintStartDate,
@@ -15,6 +16,55 @@ const WarehousePrintPortals = ({
   disposalsTotalGELForLedger
 }) => {
   if (!activePrintDoc) return null;
+
+  const transaction = printTransaction || lastIssuedTransaction;
+
+  const formatDateDDMMYYYY = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+    return dateStr;
+  };
+
+  const parseComponents = (componentsStr, transactionQty) => {
+    if (!componentsStr) return [];
+    return componentsStr.split(',').map((part) => {
+      const trimmed = part.trim();
+      const match = trimmed.match(/^(\d+)x\s+(.+)$/);
+      if (match) {
+        return {
+          name: match[2],
+          qty: parseInt(match[1]) * transactionQty
+        };
+      }
+      return { name: trimmed, qty: transactionQty };
+    });
+  };
+
+  const getItemsList = (tx) => {
+    if (!tx) return [];
+    if (tx.type === 'bundle') {
+      return parseComponents(tx.components, tx.qty || 1);
+    }
+    return [{ name: tx.itemName, qty: tx.qty || 1 }];
+  };
+
+  const getTotalItemsCount = (tx) => {
+    if (!tx) return 0;
+    return getItemsList(tx).reduce((sum, i) => sum + i.qty, 0);
+  };
+
+  const getProtocolNumber = (tx) => {
+    if (!tx) return '';
+    const dateStr = tx.issueDate || tx.issue_date || '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `WH-${parts[0]}-${parts[1]}${parts[2]}`;
+    }
+    return `WH-${tx.id}`;
+  };
 
   const printableAccountingDoc = (
     <div className="warehouse-print-doc" style={{ padding: "40px", fontFamily: "DejaVu Sans, Sylfaen, sans-serif", color: "#000", backgroundColor: "#fff" }}>
@@ -172,7 +222,7 @@ const WarehousePrintPortals = ({
               <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>საინვენტარო კოდი (QR/Serial)</th>
               <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>დასახელება</th>
               <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "center" }}>რაოდენობა</th>
-              <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>შენიშვნა</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>შენიშვნა</th>
             </tr>
           </thead>
           <tbody>
@@ -277,11 +327,80 @@ const WarehousePrintPortals = ({
     </div>
   );
 
+  const printableInvoiceDoc = transaction ? (
+    <div className="warehouse-print-doc" style={{ padding: "40px", fontFamily: "DejaVu Sans, Sylfaen, sans-serif", color: "#000", backgroundColor: "#fff" }}>
+      {/* Header section */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "30px", borderBottom: "2px solid #000", paddingBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <img 
+            src="/logo.jpg" 
+            alt="Federation Logo" 
+            style={{ width: "65px", height: "65px", filter: "grayscale(100%)", objectFit: "contain" }} 
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: "11px", fontWeight: "bold", textTransform: "uppercase" }}>ანტიგრავიტის ექსტრემალური</span>
+            <span style={{ fontSize: "11px", fontWeight: "bold", textTransform: "uppercase" }}>სპორტის ფედერაცია</span>
+          </div>
+        </div>
+        <div style={{ textAlign: "right", fontSize: "12px" }}>
+          <div style={{ fontWeight: "bold" }}>ოქმი #{getProtocolNumber(transaction)}</div>
+          <div style={{ color: "#555", marginTop: "4px" }}>თარიღი: {formatDateDDMMYYYY(transaction.issueDate)}</div>
+        </div>
+      </div>
+
+      {/* Central Block */}
+      <div style={{ textAlign: "center", marginBottom: "25px" }}>
+        <h2 style={{ fontSize: "20px", fontWeight: "bold", margin: "0 0 15px 0", letterSpacing: "0.5px" }}>ინვენტარის მიღება-ჩაბარების აქტი</h2>
+        <p style={{ fontSize: "13px", lineHeight: "1.6", textAlign: "justify", margin: 0, textIndent: "15px" }}>
+          წინამდებარე აქტით დასტურდება, რომ ფედერაციის მატერიალური საწყობიდან სპორტსმენმა/წევრმა: <strong>{transaction.athleteName}</strong> (ID: {transaction.athleteId}) ჩაიბარა {getTotalItemsCount(transaction)} ნივთი კონკრეტული დასახელებებით (ქვემოთ ჩამოთვლილი ამუნიცია და აღჭურვილობა).
+        </p>
+      </div>
+
+      {/* Items Table */}
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", marginTop: "20px", marginBottom: "30px" }}>
+        <thead>
+          <tr style={{ borderBottom: "2px solid #000" }}>
+            <th style={{ border: "1px solid #000", padding: "8px", width: "40px", textAlign: "center" }}>№</th>
+            <th style={{ border: "1px solid #000", padding: "8px", textAlign: "left" }}>ნივთის დასახელება</th>
+            <th style={{ border: "1px solid #000", padding: "8px", width: "80px", textAlign: "center" }}>რაოდენობა</th>
+            <th style={{ border: "1px solid #000", padding: "8px", width: "140px", textAlign: "left" }}>სერიული ნომერი / ID</th>
+            <th style={{ border: "1px solid #000", padding: "8px", width: "120px", textAlign: "left" }}>დაბრუნების მაქსიმალური ვადა</th>
+          </tr>
+        </thead>
+        <tbody>
+          {getItemsList(transaction).map((item, idx) => (
+            <tr key={idx} style={{ borderBottom: "1px solid #000" }}>
+              <td style={{ border: "1px solid #000", padding: "8px", textAlign: "center" }}>{idx + 1}</td>
+              <td style={{ border: "1px solid #000", padding: "8px", fontWeight: "bold" }}>{item.name}</td>
+              <td style={{ border: "1px solid #000", padding: "8px", textAlign: "center" }}>{item.qty}</td>
+              <td style={{ border: "1px solid #000", padding: "8px" }}>{transaction.itemCode || transaction.item_code || '—'}</td>
+              <td style={{ border: "1px solid #000", padding: "8px" }}>{formatDateDDMMYYYY(transaction.expectedReturnDate)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Signatures block */}
+      <div style={{ marginTop: "60px", display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
+        <div style={{ width: "240px" }}>
+          <div style={{ marginBottom: "6px" }}>ჩამბარებელი (მენეჯერი):</div>
+          <div style={{ borderBottom: "1px solid #000", height: "24px" }}></div>
+        </div>
+        <div style={{ width: "240px" }}>
+          <div style={{ marginBottom: "6px" }}>მიმღები (სპორტსმენი):</div>
+          <div style={{ borderBottom: "1px solid #000", height: "24px" }}></div>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <>
       {activePrintDoc === 'disposal' && ReactDOM.createPortal(printableDisposalDoc, document.body)}
       {activePrintDoc === 'ledger' && ReactDOM.createPortal(printableAccountingDoc, document.body)}
       {activePrintDoc === 'handover' && ReactDOM.createPortal(printableHandoverAct, document.body)}
+      {activePrintDoc === 'invoice' && ReactDOM.createPortal(printableInvoiceDoc, document.body)}
     </>
   );
 };

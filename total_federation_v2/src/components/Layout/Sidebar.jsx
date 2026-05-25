@@ -15,6 +15,13 @@ const menuItems = [
     icon: 'fa-solid fa-sitemap'
   },
   {
+    id: 'calendar',
+    node: '570',
+    label: 'აქტივობის კალენდარი',
+    icon: 'fa-solid fa-calendar-days',
+    iconStyle: { textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", color: "var(--color-emerald-core)" }
+  },
+  {
     id: 'partnerships',
     node: '570',
     label: 'პარტნიორობა',

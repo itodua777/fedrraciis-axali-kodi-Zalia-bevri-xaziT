@@ -1,6 +1,6 @@
 import React from 'react';
 
-const WarehouseTransactions = ({ transactions, openReturn }) => {
+const WarehouseTransactions = ({ transactions, openReturn, onPrintInvoice }) => {
   const isExpired = (expiry) => {
     if (!expiry || expiry === "უვადო") return false;
     const expiryDate = new Date(expiry);
@@ -81,16 +81,23 @@ const WarehouseTransactions = ({ transactions, openReturn }) => {
                       </span>
                     )}
                   </td>
-                  <td style={{ padding: "12px", textAlign: "right" }}>
-                    {trans.status === 'issued' ? (
+                  <td style={{ padding: "12px", textAlign: "right", display: "flex", gap: "8px", justifyContent: "flex-end", alignItems: "center" }}>
+                    <button 
+                      onClick={() => onPrintInvoice(trans.id)}
+                      style={{ backgroundColor: "rgba(59, 130, 246, 0.2)", border: "1px solid #3b82f6", color: "#3b82f6", padding: "6px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", transition: "all 0.2s", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                      title="ოქმის გენერირება / ბეჭდვა"
+                      onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#3b82f6"; e.currentTarget.style.color = "#fff"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(59, 130, 246, 0.2)"; e.currentTarget.style.color = "#3b82f6"; }}
+                    >
+                      <i className="fa-solid fa-print"></i> ბეჭდვა
+                    </button>
+                    {trans.status === 'issued' && (
                       <button 
                         onClick={() => openReturn(trans)}
                         style={{ backgroundColor: "#10b981", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", transition: "all 0.2s" }}
                       >
                         დაბრუნება
                       </button>
-                    ) : (
-                      <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>-</span>
                     )}
                   </td>
                 </tr>

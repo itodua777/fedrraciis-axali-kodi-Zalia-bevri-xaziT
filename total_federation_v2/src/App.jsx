@@ -20,6 +20,7 @@ import TrainingSpacesDashboard from './views/Spaces/index.jsx';
 import RoutePlanningDashboard from './views/RoutePlanning/index.jsx';
 import PeaksDashboard from './views/Peaks/index.jsx';
 import SettingsDashboard from './views/Settings/index.jsx';
+import CalendarDashboard from './views/Calendar/index.jsx';
 
 import { MOCK_ATHLETES, MOCK_CLUBS, MOCK_INCIDENTS } from './utils/mockData.js';
 
@@ -85,6 +86,7 @@ const App = () => {
         {currentView === 'routes' && <RoutePlanningDashboard />}
         {currentView === 'peaks' && <PeaksDashboard athletes={athletes} onUpdateAthlete={handleUpdateAthlete} />}
         {currentView === 'settings' && <SettingsDashboard athletes={athletes} onUpdateAthlete={handleUpdateAthlete} />}
+        {currentView === 'calendar' && <CalendarDashboard />}
       </div>
     </div>
   );

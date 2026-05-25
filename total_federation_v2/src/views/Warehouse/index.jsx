@@ -8,6 +8,7 @@ import CheckoutModal from './components/CheckoutModal.jsx';
 import ReturnModal from './components/ReturnModal.jsx';
 import CreateKitModal from './components/CreateKitModal.jsx';
 import AccountingModal from './components/AccountingModal.jsx';
+import PrintPreviewModal from './components/PrintPreviewModal.jsx';
 
 const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
   // 1. Initial Mock Data
@@ -94,6 +95,8 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
   const [isCreateKitOpen, setIsCreateKitOpen] = React.useState(false);
   const [isAccountingOpen, setIsAccountingOpen] = React.useState(false);
   const [activePrintDoc, setActivePrintDoc] = React.useState(null);
+  const [isPrintPreviewOpen, setIsPrintPreviewOpen] = React.useState(false);
+  const [printTransaction, setPrintTransaction] = React.useState(null);
 
   // Pre-Print Filter Suite States
   const [prePrintStartDate, setPrePrintStartDate] = React.useState('');
@@ -211,7 +214,62 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
 
   React.useEffect(() => {
     localStorage.setItem('warehouse_transactions', JSON.stringify(transactions));
-  }, [transactions]);
+    // Sync to SQLite database
+    const syncData = {
+      transactions: transactions,
+      athletes: athletes
+    };
+    fetch('/api/v1/dashboard/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(syncData)
+    }).catch(err => console.error("Database sync failed:", err));
+  }, [transactions, athletes]);
+
+  const handlePrintInvoice = async (transactionId) => {
+    try {
+      const res = await fetch(`/api/v1/warehouse/invoice?id=${encodeURIComponent(transactionId)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPrintTransaction(data);
+        setIsPrintPreviewOpen(true);
+      } else {
+        throw new Error("API return not OK");
+      }
+    } catch (err) {
+      console.warn("Could not fetch invoice from server, using local fallback:", err);
+      // Local fallback
+      const tx = transactions.find(t => t.id === transactionId);
+      if (tx) {
+        const mappedTx = {
+          id: tx.id,
+          type: tx.type,
+          itemId: tx.itemId,
+          itemName: tx.itemName,
+          athleteId: tx.athleteId,
+          athleteName: tx.athleteName,
+          issueDate: tx.issueDate,
+          expectedReturnDate: tx.expectedReturnDate,
+          status: tx.status,
+          qty: tx.qty,
+          expeditionName: tx.expeditionName,
+          components: tx.components || '',
+          itemCode: tx.itemCode || ''
+        };
+        setPrintTransaction(mappedTx);
+        setIsPrintPreviewOpen(true);
+      } else {
+        alert("ტრანზაქცია ვერ მოიძებნა!");
+      }
+    }
+  };
+
+  const triggerPrint = (tx) => {
+    setPrintTransaction(tx);
+    setActivePrintDoc('invoice');
+  };
 
   // Initialize dataset syncing on component mount
   React.useEffect(() => {
@@ -1170,6 +1228,7 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
         <WarehouseTransactions 
           transactions={transactions}
           openReturn={openReturn}
+          onPrintInvoice={handlePrintInvoice}
         />
       )}
 
@@ -1272,10 +1331,19 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
         setPrePrintReason={setPrePrintReason}
       />
 
+      {/* Print Preview Modal */}
+      <PrintPreviewModal 
+        isOpen={isPrintPreviewOpen}
+        onClose={() => setIsPrintPreviewOpen(false)}
+        transaction={printTransaction}
+        onPrintTrigger={triggerPrint}
+      />
+
       {/* Print Portals */}
       <WarehousePrintPortals 
         activePrintDoc={activePrintDoc}
         lastIssuedTransaction={lastIssuedTransaction}
+        printTransaction={printTransaction}
         prePrintFilteredInflows={prePrintFilteredInflows}
         prePrintFilteredDisposals={prePrintFilteredDisposals}
         prePrintStartDate={prePrintStartDate}

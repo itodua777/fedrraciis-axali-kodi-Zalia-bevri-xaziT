@@ -86,7 +86,9 @@ function initializeDatabase() {
             expected_return_date TEXT,
             status TEXT,
             qty INTEGER,
-            expedition_name TEXT
+            expedition_name TEXT,
+            components TEXT,
+            item_code TEXT
         );
 
         CREATE TABLE IF NOT EXISTS incidents (
@@ -127,7 +129,7 @@ function initializeDatabase() {
     const viewsSql = `
         CREATE VIEW IF NOT EXISTS view_warehouse_pulse AS
         SELECT
-            (SELECT COUNT(*) FROM warehouse_transactions WHERE status = 'issued' AND expected_return_date < '2026-05-23') AS overdue_count,
+            (SELECT COUNT(*) FROM warehouse_transactions WHERE status = 'issued' AND expected_return_date < '2026-05-25') AS overdue_count,
             (SELECT COUNT(*) FROM incidents WHERE severity = 'მაღალი') AS recent_incidents,
             (SELECT COALESCE(SUM(qty), 0) FROM warehouse_transactions WHERE status = 'issued') AS active_gear_outside;
 
@@ -135,9 +137,9 @@ function initializeDatabase() {
         SELECT
             athlete_name,
             item_name AS item,
-            CAST(julianday('2026-05-23') - julianday(expected_return_date) AS INTEGER) AS days_overdue
+            CAST(julianday('2026-05-25') - julianday(expected_return_date) AS INTEGER) AS days_overdue
         FROM warehouse_transactions
-        WHERE status = 'issued' AND expected_return_date < '2026-05-23';
+        WHERE status = 'issued' AND expected_return_date < '2026-05-25';
 
         CREATE VIEW IF NOT EXISTS view_member_analytics AS
         SELECT
@@ -161,7 +163,7 @@ function initializeDatabase() {
         CREATE VIEW IF NOT EXISTS view_active_sponsors AS
         SELECT
             name,
-            CAST(julianday(end_date) - julianday('2026-05-23') AS INTEGER) AS days_left
+            CAST(julianday(end_date) - julianday('2026-05-25') AS INTEGER) AS days_left
         FROM partnerships
         WHERE type = 'SPONSOR' AND status = 'active';
     `;
@@ -202,16 +204,16 @@ function initializeDatabase() {
 
     // Seed transactions
     const defaultTransactions = [
-      { id: "t1", type: "item", itemId: "1", itemName: "თოკი ალპინისტური 60მ", athleteId: "860640", athleteName: "გიორგი ლეკიშვილი", issueDate: "2026-05-10", expectedReturnDate: "2026-05-19", status: "issued", qty: 5 },
-      { id: "t2", type: "item", itemId: "2", itemName: "კარაბინი სიმეტრიული", athleteId: "860641", athleteName: "დავით მაისურაძე", issueDate: "2026-05-05", expectedReturnDate: "2026-05-20", status: "issued", qty: 10 },
-      { id: "t3", type: "item", itemId: "3", itemName: "ალპინისტური წერაყინი", athleteId: "860644", athleteName: "ნიკოლოზ ყიფიანი", issueDate: "2026-05-01", expectedReturnDate: "2026-05-18", status: "issued", qty: 3 },
-      { id: "t4", type: "item", itemId: "4", itemName: "ჩაფხუტი დამცავი", athleteId: "860645", athleteName: "ირაკლი გელოვანი", issueDate: "2026-05-08", expectedReturnDate: "2026-05-21", status: "issued", qty: 4 },
-      { id: "t5", type: "item", itemId: "5", itemName: "საძილე ტომარა მინუს 20", athleteId: "860643", athleteName: "ლუკა ლომიძე", issueDate: "2026-05-01", expectedReturnDate: "2026-05-15", status: "issued", qty: 2 },
-      { id: "t6", type: "item", itemId: "6", itemName: "დინამიკური თოკი (Edelrid Swift 8.9mm)", athleteId: "860642", athleteName: "არჩილ ბადრიაშვილი", issueDate: "2026-05-15", expectedReturnDate: "2026-05-28", status: "issued", qty: 18 }
+      { id: "t1", type: "item", itemId: "1", itemName: "თოკი ალპინისტური 60მ", athleteId: "860640", athleteName: "გიორგი ლეკიშვილი", issueDate: "2026-05-10", expectedReturnDate: "2026-05-19", status: "issued", qty: 5, itemCode: "QR-ER89-001" },
+      { id: "t2", type: "item", itemId: "2", itemName: "კარაბინი სიმეტრიული", athleteId: "860641", athleteName: "დავით მაისურაძე", issueDate: "2026-05-05", expectedReturnDate: "2026-05-20", status: "issued", qty: 10, itemCode: "QR-PA-091" },
+      { id: "t3", type: "item", itemId: "3", itemName: "ალპინისტური წერაყინი", athleteId: "860644", athleteName: "ნიკოლოზ ყიფიანი", issueDate: "2026-05-01", expectedReturnDate: "2026-05-18", status: "issued", qty: 3, itemCode: "QR-MSR-004" },
+      { id: "t4", type: "item", itemId: "4", itemName: "ჩაფხუტი დამცავი", athleteId: "860645", athleteName: "ირაკლი გელოვანი", issueDate: "2026-05-08", expectedReturnDate: "2026-05-21", status: "issued", qty: 4, itemCode: "QR-PM-042" },
+      { id: "t5", type: "item", itemId: "5", itemName: "საძილე ტომარა მინუს 20", athleteId: "860643", athleteName: "ლუკა ლომიძე", issueDate: "2026-05-01", expectedReturnDate: "2026-05-15", status: "issued", qty: 2, itemCode: "QR-SB-115" },
+      { id: "t6", type: "item", itemId: "6", itemName: "დინამიკური თოკი (Edelrid Swift 8.9mm)", athleteId: "860642", athleteName: "არჩილ ბადრიაშვილი", issueDate: "2026-05-15", expectedReturnDate: "2026-05-28", status: "issued", qty: 18, itemCode: "QR-ER89-001" }
     ];
     for (const t of defaultTransactions) {
-        seedSql += `INSERT INTO warehouse_transactions (id, type, item_id, item_name, athlete_id, athlete_name, issue_date, expected_return_date, status, qty, expedition_name) VALUES (` +
-            `'${t.id}', '${t.type}', '${t.itemId}', '${t.itemName}', '${t.athleteId}', '${t.athleteName}', '${t.issueDate}', '${t.expectedReturnDate}', '${t.status}', ${t.qty}, '');\n`;
+        seedSql += `INSERT INTO warehouse_transactions (id, type, item_id, item_name, athlete_id, athlete_name, issue_date, expected_return_date, status, qty, expedition_name, components, item_code) VALUES (` +
+            `'${t.id}', '${t.type}', '${t.itemId}', '${t.itemName}', '${t.athleteId}', '${t.athleteName}', '${t.issueDate}', '${t.expectedReturnDate}', '${t.status}', ${t.qty}, '', '', '${t.itemCode || ''}');\n`;
     }
     
     // Seed 148 athletes programmatically to keep file small
@@ -333,7 +335,7 @@ function syncDatabase(data) {
     if (Array.isArray(data.transactions)) {
         sql += 'DELETE FROM warehouse_transactions;\n';
         for (const t of data.transactions) {
-            sql += `INSERT INTO warehouse_transactions (id, type, item_id, item_name, athlete_id, athlete_name, issue_date, expected_return_date, status, qty, expedition_name) VALUES (` +
+            sql += `INSERT INTO warehouse_transactions (id, type, item_id, item_name, athlete_id, athlete_name, issue_date, expected_return_date, status, qty, expedition_name, components, item_code) VALUES (` +
                 `'${t.id.replace(/'/g, "''")}', ` +
                 `'${(t.type || 'item').replace(/'/g, "''")}', ` +
                 `'${(t.itemId || '').replace(/'/g, "''")}', ` +
@@ -344,7 +346,9 @@ function syncDatabase(data) {
                 `'${(t.expectedReturnDate || '').replace(/'/g, "''")}', ` +
                 `'${(t.status || 'issued').replace(/'/g, "''")}', ` +
                 `${t.qty || 1}, ` +
-                `'${(t.expeditionName || '').replace(/'/g, "''")}'` +
+                `'${(t.expeditionName || '').replace(/'/g, "''")}', ` +
+                `'${(t.components || '').replace(/'/g, "''")}', ` +
+                `'${(t.itemCode || '').replace(/'/g, "''")}'` +
                 `);\n`;
         }
     }
@@ -382,6 +386,23 @@ function syncDatabase(data) {
                 `);\n`;
         }
     }
+    if (Array.isArray(data.calendar_events)) {
+        sql += 'DELETE FROM calendar_events;\n';
+        for (const e of data.calendar_events) {
+            const event_date = (e.event_date || e.eventDate || '').replace(/'/g, "''");
+            const event_title = (e.event_title || e.eventTitle || '').replace(/'/g, "''");
+            const event_description = (e.event_description || e.eventDescription || '').replace(/'/g, "''");
+            sql += `INSERT INTO calendar_events (event_date, event_title, event_description) VALUES ('${event_date}', '${event_title}', '${event_description}');\n`;
+        }
+    } else if (Array.isArray(data.calendarEvents)) {
+        sql += 'DELETE FROM calendar_events;\n';
+        for (const e of data.calendarEvents) {
+            const event_date = (e.event_date || e.eventDate || '').replace(/'/g, "''");
+            const event_title = (e.event_title || e.eventTitle || '').replace(/'/g, "''");
+            const event_description = (e.event_description || e.eventDescription || '').replace(/'/g, "''");
+            sql += `INSERT INTO calendar_events (event_date, event_title, event_description) VALUES ('${event_date}', '${event_title}', '${event_description}');\n`;
+        }
+    }
 
     sql += 'COMMIT;\n';
     executeSql(sql);
@@ -389,6 +410,50 @@ function syncDatabase(data) {
 
 // Perform boot sequence
 initializeDatabase();
+
+// Re-create views dynamically to update hardcoded date to 2026-05-25 for existing databases
+try {
+    executeSql(`
+        DROP VIEW IF EXISTS view_warehouse_pulse;
+        DROP VIEW IF EXISTS view_overdue_items;
+        DROP VIEW IF EXISTS view_active_sponsors;
+        
+        CREATE VIEW view_warehouse_pulse AS
+        SELECT
+            (SELECT COUNT(*) FROM warehouse_transactions WHERE status = 'issued' AND expected_return_date < '2026-05-25') AS overdue_count,
+            (SELECT COUNT(*) FROM incidents WHERE severity = 'მაღალი') AS recent_incidents,
+            (SELECT COALESCE(SUM(qty), 0) FROM warehouse_transactions WHERE status = 'issued') AS active_gear_outside;
+
+        CREATE VIEW view_overdue_items AS
+        SELECT
+            athlete_name,
+            item_name AS item,
+            CAST(julianday('2026-05-25') - julianday(expected_return_date) AS INTEGER) AS days_overdue
+        FROM warehouse_transactions
+        WHERE status = 'issued' AND expected_return_date < '2026-05-25';
+
+        CREATE VIEW view_active_sponsors AS
+        SELECT
+            name,
+            CAST(julianday(end_date) - julianday('2026-05-25') AS INTEGER) AS days_left
+        FROM partnerships
+        WHERE type = 'SPONSOR' AND status = 'active';
+    `);
+} catch (e) {
+    console.error("Failed to re-create views:", e);
+}
+
+// Ensure components and item_code columns exist in warehouse_transactions (migration)
+try {
+    executeSql("ALTER TABLE warehouse_transactions ADD COLUMN components TEXT;");
+} catch (e) {
+    // Column already exists, safe to ignore
+}
+try {
+    executeSql("ALTER TABLE warehouse_transactions ADD COLUMN item_code TEXT;");
+} catch (e) {
+    // Column already exists, safe to ignore
+}
 
 // Ensure mentors table exists
 executeSql(`
@@ -421,6 +486,23 @@ if (existingMentors.length === 0 || existingMentors[0].count === 0) {
         INSERT INTO mentors (id, status, first_name, last_name, personal_id, birth_date, gender, nationality, phone, email, address, height, weight, blood_type, sport_types, category, biography, photo)
         VALUES ('M-101', 'მწვრთნელი', 'ზურაბ', 'კიკნაძე', '01010101011', '1975-04-12', 'male', 'GE', '+995555112233', 'z.k@example.com', 'თბილისი', 182, 80, 'O+', 'ალპინიზმი', 'I კატეგორია', 'სპორტის დამსახურებული მწვრთნელი. მრავალწლიანი გამოცდილება მაღალმთიან ექსპედიციებში.', 'https://i.pravatar.cc/150?img=33');
     `);
+}
+
+// Ensure calendar_events table exists
+executeSql(`
+    CREATE TABLE IF NOT EXISTS calendar_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_date TEXT NOT NULL,
+        event_title TEXT NOT NULL,
+        event_description TEXT NOT NULL DEFAULT '',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
+try {
+    executeSql("ALTER TABLE calendar_events ADD COLUMN event_description TEXT NOT NULL DEFAULT '';");
+} catch (e) {
+    // Column already exists, safe to ignore
 }
 
 const compiledCache = new Map(); // filePath -> { mtime, code }
@@ -505,6 +587,41 @@ http.createServer((req, res) => {
         return;
     }
 
+    // GET /api/v1/notifications
+    if (req.url === '/api/v1/notifications' && req.method === 'GET') {
+        const overdue = queryDb('SELECT athlete_name, item, days_overdue FROM view_overdue_items;');
+        const sponsors = queryDb('SELECT name, days_left FROM view_active_sponsors WHERE days_left >= 0 AND days_left <= 7;');
+        
+        const notifications = [];
+        
+        // Critical alerts (overdue items)
+        overdue.forEach((row, idx) => {
+            notifications.push({
+                id: `overdue-${idx}-${row.athlete_name}-${row.item}`.replace(/\s+/g, '-'),
+                type: 'critical',
+                text: `ყურადღება: ${row.athlete_name}-ის მიერ წაღებული ${row.item}-ის დაბრუნების ვადა გადაცილებულია!`,
+                timestamp: Date.now() - idx * 1000
+            });
+        });
+        
+        // Warning alerts (sponsors expiring within 7 days)
+        sponsors.forEach((row, idx) => {
+            notifications.push({
+                id: `sponsor-${idx}-${row.name}`.replace(/\s+/g, '-'),
+                type: 'warning',
+                text: `ყურადღება: ${row.name}-ის სპონსორობის ხელშეკრულებას ვადა ${row.days_left} დღეში ეწურება!`,
+                timestamp: Date.now() - (idx + overdue.length) * 1000
+            });
+        });
+        
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(notifications));
+        return;
+    }
+
     // POST /api/v1/dashboard/sync
     if (req.url === '/api/v1/dashboard/sync' && req.method === 'POST') {
         let body = '';
@@ -520,6 +637,66 @@ http.createServer((req, res) => {
                 res.end(JSON.stringify({ success: true }));
             } catch (err) {
                 console.error("Sync error:", err);
+                res.writeHead(400, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // GET /api/v1/calendar
+    if (req.url.startsWith('/api/v1/calendar') && req.method === 'GET') {
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        const dateParam = urlObj.searchParams.get('date');
+        let sql = 'SELECT * FROM calendar_events';
+        if (dateParam) {
+            sql += ` WHERE event_date = '${dateParam.replace(/'/g, "''")}'`;
+        }
+        sql += ' ORDER BY id ASC;';
+        const events = queryDb(sql);
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(events));
+        return;
+    }
+
+    // POST /api/v1/calendar
+    if (req.url === '/api/v1/calendar' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                const event_date = (data.event_date || data.eventDate || '').replace(/'/g, "''");
+                const event_title = (data.event_title || data.eventTitle || '').replace(/'/g, "''");
+                const event_description = (data.event_description || data.eventDescription || '').replace(/'/g, "''");
+                
+                if (!event_date || !event_title) {
+                    res.writeHead(400, {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify({ success: false, error: 'Missing date or title' }));
+                    return;
+                }
+
+                const sql = `INSERT INTO calendar_events (event_date, event_title, event_description) VALUES ('${event_date}', '${event_title}', '${event_description}');`;
+                executeSql(sql);
+                
+                const lastInserted = queryDb("SELECT * FROM calendar_events WHERE rowid = last_insert_rowid();");
+                
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: true, event: lastInserted[0] }));
+            } catch (err) {
+                console.error("Save calendar event error:", err);
                 res.writeHead(400, {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
@@ -733,6 +910,63 @@ http.createServer((req, res) => {
         return;
     }
 
+    // GET /api/v1/warehouse/invoice
+    if (req.url.startsWith('/api/v1/warehouse/invoice') && req.method === 'GET') {
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        const id = urlObj.searchParams.get('id');
+        
+        if (!id) {
+            res.writeHead(400, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: 'Missing transaction ID' }));
+            return;
+        }
+
+        const transactionIdEscaped = id.replace(/'/g, "''");
+        const sql = `
+            SELECT 
+                t.id, 
+                t.type, 
+                t.item_id AS itemId, 
+                t.item_name AS itemName, 
+                t.athlete_id AS athleteId, 
+                t.athlete_name AS athleteName, 
+                t.issue_date AS issueDate, 
+                t.expected_return_date AS expectedReturnDate, 
+                t.status, 
+                t.qty, 
+                t.expedition_name AS expeditionName,
+                t.components,
+                t.item_code AS itemCode,
+                e.event_title AS eventTitle,
+                e.event_date AS eventDate
+            FROM warehouse_transactions t
+            LEFT JOIN calendar_events e ON (t.issue_date = e.event_date OR t.expedition_name = e.event_title)
+            WHERE t.id = '${transactionIdEscaped}'
+            LIMIT 1;
+        `;
+        
+        const results = queryDb(sql);
+        
+        if (results.length === 0) {
+            res.writeHead(404, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: 'Transaction not found' }));
+            return;
+        }
+
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(results[0]));
+        return;
+    }
+
     let filePath = '.' + req.url.split('?')[0];
     if (filePath === './') {
         filePath = './index.html';
@@ -820,6 +1054,6 @@ http.createServer((req, res) => {
             res.end(content, 'utf-8');
         }
     });
-}).listen(PORT, '127.0.0.1');
+}).listen(PORT);
 
-console.log(`Server running at http://127.0.0.1:${PORT}/`);
+console.log(`Server running at http://localhost:${PORT}/`);
