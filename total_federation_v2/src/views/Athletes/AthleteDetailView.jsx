@@ -98,7 +98,21 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
 
   if (!athlete) {
     return (
-      <div style={{ width: "420px", minWidth: "420px", backgroundColor: "#121418", border: "1px solid rgba(34, 211, 238, 0.15)", borderRadius: "12px", padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(226, 232, 240, 0.5)" }}>
+      <div style={{ 
+        gridColumn: "span 4", 
+        width: "100%", 
+        maxWidth: "420px", 
+        height: "100%", 
+        boxSizing: "border-box",
+        backgroundColor: "#121418", 
+        border: "1px solid rgba(34, 211, 238, 0.15)", 
+        borderRadius: "12px", 
+        padding: "20px", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        color: "rgba(226, 232, 240, 0.5)" 
+      }}>
         აირჩიეთ სპორტსმენი დეტალების სანახავად
       </div>
     );

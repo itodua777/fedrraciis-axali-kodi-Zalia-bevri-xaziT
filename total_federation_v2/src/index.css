@@ -262,3 +262,23 @@ body {
   right: 20px !important;
   transition: all 0.3s ease;
 }
+
+.inner-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Webkit ბრაუზერებისთვის (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px; /* ძალიან თხელი სქროლი */
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0b111e; /* დეშბორდის ფონის ფერი */
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1e293b; /* ოდნავ ღია ნაცრისფერი/ლურჯი ზოლი */
+  border-radius: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8; /* მაუსის მიტანისას ხდება ნეონისფერი ლურჯი */
+}

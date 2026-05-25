@@ -19,7 +19,21 @@ const AthleteSidePanel = ({
 }) => {
   if (!athlete) {
     return (
-      <div style={{ width: "420px", minWidth: "420px", backgroundColor: "#121418", border: "1px solid rgba(34, 211, 238, 0.15)", borderRadius: "12px", padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(226, 232, 240, 0.5)" }}>
+      <div style={{ 
+        gridColumn: "span 4", 
+        width: "100%", 
+        maxWidth: "420px", 
+        height: "100%", 
+        boxSizing: "border-box",
+        backgroundColor: "#121418", 
+        border: "1px solid rgba(34, 211, 238, 0.15)", 
+        borderRadius: "12px", 
+        padding: "20px", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        color: "rgba(226, 232, 240, 0.5)" 
+      }}>
         აირჩიეთ სპორტსმენი დეტალების სანახავად
       </div>
     );
@@ -31,7 +45,23 @@ const AthleteSidePanel = ({
   const isVotingDisabled = isMinor || editForm?.membershipStatus !== 'Active' || !editForm?.membershipFeePaid;
 
   return (
-    <div style={{ width: "420px", minWidth: "420px", backgroundColor: "#121418", border: "1px solid rgba(34, 211, 238, 0.15)", borderRadius: "12px", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(34, 211, 238, 0.02)", maxHeight: "90vh", overflowY: "auto" }}>
+    <div style={{ 
+      gridColumn: "span 4", 
+      width: "100%", 
+      maxWidth: "420px", 
+      backgroundColor: "#121418", 
+      border: "1px solid rgba(34, 211, 238, 0.15)", 
+      borderRadius: "12px", 
+      padding: "16px", 
+      display: "flex", 
+      flexDirection: "column", 
+      gap: "12px", 
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(34, 211, 238, 0.02)", 
+      height: "100%", 
+      maxHeight: "100%", 
+      overflowY: "auto",
+      boxSizing: "border-box"
+    }}>
       {/* Header Panel */}
       <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", borderBottom: "1px solid rgba(30, 41, 59, 0.8)", paddingBottom: "12px" }}>
         {!isEditing && (

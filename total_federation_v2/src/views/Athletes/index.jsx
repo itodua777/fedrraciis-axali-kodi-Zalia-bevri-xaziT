@@ -206,8 +206,28 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
   };
 
   return (
-    <div style={{ flex: 1, padding: "30px", backgroundColor: "#121418", color: "#e2e8f0", fontFamily: "sans-serif", overflowY: "auto", display: "flex", flexDirection: "row", gap: "20px" }}>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div style={{ 
+      height: "calc(100vh - 70px)", 
+      boxSizing: "border-box", 
+      padding: "30px", 
+      backgroundColor: "#121418", 
+      color: "#e2e8f0", 
+      fontFamily: "sans-serif", 
+      overflow: "hidden", 
+      display: "grid", 
+      gridTemplateColumns: "repeat(12, 1fr)", 
+      gap: "20px" 
+    }}>
+      <div style={{ 
+        gridColumn: "span 8", 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: "20px", 
+        height: "100%", 
+        overflowY: "auto", 
+        minWidth: 0,
+        boxSizing: "border-box"
+      }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h2 style={{ color: "#22d3ee", margin: 0, textShadow: "0 0 10px rgba(34, 211, 238, 0.5)" }}>
             სპორტსმენები
@@ -414,7 +434,17 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
           </div>
         )}
         
-        <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)", borderRadius: "12px", padding: "20px", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)" }}>
+        <div style={{ 
+          backgroundColor: "rgba(15, 23, 42, 0.6)", 
+          border: "1px solid rgba(34, 211, 238, 0.1)", 
+          borderRadius: "12px", 
+          padding: "20px", 
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
+          width: "100%",
+          overflowX: "auto",
+          display: "block",
+          boxSizing: "border-box"
+        }}>
           <AthletesTable
             filteredAthletes={filteredAthletes}
             selectedAthlete={selectedAthlete}
