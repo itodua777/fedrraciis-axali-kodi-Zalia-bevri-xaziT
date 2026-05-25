@@ -18,7 +18,7 @@ const AthleteSidePanelEdit = ({
     <>
       {/* Card 1: Physical & Medical Profile */}
       <div style={{ backgroundColor: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "15px", display: "flex", flexDirection: "column", gap: "12px" }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           🩸 ფიზიკური და სამედიცინო
         </h4>
         
@@ -33,7 +33,7 @@ const AthleteSidePanelEdit = ({
                 value={editForm.height || ''}
                 onChange={e => setEditForm(prev => ({ ...prev, height: e.target.value }))}
                 style={inputStyle}
-                onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+                onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
                 onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
               />
               <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>სმ</span>
@@ -44,7 +44,7 @@ const AthleteSidePanelEdit = ({
                 value={editForm.weight || ''}
                 onChange={e => setEditForm(prev => ({ ...prev, weight: e.target.value }))}
                 style={inputStyle}
-                onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+                onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
                 onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
               />
               <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>კგ</span>
@@ -57,7 +57,7 @@ const AthleteSidePanelEdit = ({
               value={editForm.bloodType || ''}
               onChange={e => setEditForm(prev => ({ ...prev, bloodType: e.target.value }))}
               style={{ ...inputStyle, cursor: isDeceased ? "not-allowed" : "pointer" }}
-              onFocus={e => { if (!isDeceased) e.target.style.borderColor = '#22d3ee'; }}
+              onFocus={e => { if (!isDeceased) e.target.style.borderColor = 'var(--color-emerald-core)'; }}
               onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
             >
               <option value="">აირჩიეთ</option>
@@ -109,7 +109,7 @@ const AthleteSidePanelEdit = ({
             onChange={e => setEditForm(prev => ({ ...prev, allergies: e.target.value }))}
             style={inputStyle}
             placeholder="მაგ: თხილის ალერგია"
-            onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+            onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
             onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
           />
         </div>
@@ -117,7 +117,7 @@ const AthleteSidePanelEdit = ({
 
       {/* Card 2: Contact Card */}
       <div style={{ backgroundColor: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           📞 საკონტაქტო მონაცემები
         </h4>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(30, 41, 59, 0.8)", paddingTop: "8px" }}>
@@ -129,7 +129,7 @@ const AthleteSidePanelEdit = ({
               value={editForm.phone || ''}
               onChange={e => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
               style={inputStyle}
-              onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+              onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
               onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
             />
           </div>
@@ -141,7 +141,7 @@ const AthleteSidePanelEdit = ({
               value={editForm.email || ''}
               onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
               style={inputStyle}
-              onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+              onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
               onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
             />
           </div>
@@ -198,7 +198,7 @@ const AthleteSidePanelEdit = ({
 
       {/* Card 4: Federation status & checkboxes */}
       <div style={{ backgroundColor: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "15px", display: "flex", flexDirection: "column", gap: "12px" }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           🛡️ ფედერაციული სტატუსი & უფლებამოსილება
         </h4>
         
@@ -229,9 +229,9 @@ const AthleteSidePanelEdit = ({
                 style={{
                   padding: "5px 12px",
                   borderRadius: "6px",
-                  border: editForm.isFederationMember ? "1px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)",
-                  backgroundColor: editForm.isFederationMember ? "rgba(34, 211, 238, 0.15)" : "transparent",
-                  color: editForm.isFederationMember ? "#22d3ee" : "rgba(255,255,255,0.6)",
+                  border: editForm.isFederationMember ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)",
+                  backgroundColor: editForm.isFederationMember ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "transparent",
+                  color: editForm.isFederationMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.6)",
                   cursor: isDeceased ? "not-allowed" : "pointer",
                   fontWeight: "bold",
                   fontSize: "12px",
@@ -276,9 +276,9 @@ const AthleteSidePanelEdit = ({
                 style={{
                   padding: "5px 12px",
                   borderRadius: "6px",
-                  border: editForm.isClubMember ? "1px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)",
-                  backgroundColor: editForm.isClubMember ? "rgba(34, 211, 238, 0.15)" : "transparent",
-                  color: editForm.isClubMember ? "#22d3ee" : "rgba(255,255,255,0.6)",
+                  border: editForm.isClubMember ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)",
+                  backgroundColor: editForm.isClubMember ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "transparent",
+                  color: editForm.isClubMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.6)",
                   cursor: "pointer",
                   fontWeight: "bold",
                   fontSize: "12px",
@@ -351,7 +351,7 @@ const AthleteSidePanelEdit = ({
                       });
                     }}
                     style={{ ...inputStyle, cursor: "pointer", opacity: 1 }}
-                    onFocus={e => e.target.style.borderColor = '#22d3ee'}
+                    onFocus={e => e.target.style.borderColor = 'var(--color-emerald-core)'}
                     onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                   >
                     <option value="Active">მოქმედი</option>
@@ -388,7 +388,7 @@ const AthleteSidePanelEdit = ({
                       ...inputStyle,
                       cursor: isDeceased ? "not-allowed" : "pointer"
                     }}
-                    onFocus={e => { if (!isDeceased) e.target.style.borderColor = '#22d3ee'; }}
+                    onFocus={e => { if (!isDeceased) e.target.style.borderColor = 'var(--color-emerald-core)'; }}
                     onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
                   >
                     <option value="paid">გადახდილი</option>
@@ -419,7 +419,7 @@ const AthleteSidePanelEdit = ({
                       });
                     }}
                     style={inputStyle}
-                    onFocus={e => { if (!isDeceased) e.target.style.borderColor = '#22d3ee'; }}
+                    onFocus={e => { if (!isDeceased) e.target.style.borderColor = 'var(--color-emerald-core)'; }}
                     onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
                   />
                 </div>
@@ -517,7 +517,7 @@ const AthleteSidePanelEdit = ({
 
       {/* Card 5: Biography */}
       <div style={{ backgroundColor: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "15px", display: "flex", flexDirection: "column", gap: "12px" }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           📝 ბიოგრაფია & Timeline ნარატივი
         </h4>
         
@@ -534,7 +534,7 @@ const AthleteSidePanelEdit = ({
               lineHeight: "1.5"
             }}
             placeholder="აღწერეთ სპორტსმენის გზა..."
-            onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+            onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
             onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
           />
         </div>
@@ -564,7 +564,7 @@ const AthleteSidePanelEdit = ({
           type="button"
           onClick={handleSave}
           style={{
-            backgroundColor: "#22d3ee",
+            backgroundColor: "var(--color-emerald-core)",
             border: "none",
             color: "#121418",
             padding: "8px 16px",
@@ -573,10 +573,10 @@ const AthleteSidePanelEdit = ({
             fontSize: "13px",
             fontWeight: "bold",
             transition: "all 0.3s",
-            boxShadow: "0 0 10px rgba(34, 211, 238, 0.3)"
+            boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)"
           }}
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.6)"; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 10px rgba(34, 211, 238, 0.3)"; }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 15px color-mix(in oklab, var(--color-emerald-core) 60%, transparent)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)"; }}
         >
           <i className="fa-regular fa-floppy-disk"></i> ცვლილების შენახვა
         </button>

@@ -28,7 +28,7 @@ const AthleteSidePanelRead = ({
 
       {/* Block: Federation Membership & Rights Status */}
       <div style={{ backgroundColor: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "15px", display: "flex", flexDirection: "column", gap: "12px" }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           🛡️ ფედერაციული სტატუსი & უფლებამოსილება
         </h4>
         
@@ -42,14 +42,14 @@ const AthleteSidePanelRead = ({
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "8px" }}>
             <span style={{ color: "rgba(255,255,255,0.5)" }}>ფедераციის წევრი:</span>
-            <span style={{ fontWeight: "bold", color: athlete.isFederationMember ? "#22d3ee" : "rgba(255,255,255,0.5)" }}>
+            <span style={{ fontWeight: "bold", color: athlete.isFederationMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.5)" }}>
               {athlete.isFederationMember ? "კი" : "არა"}
             </span>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "8px" }}>
             <span style={{ color: "rgba(255,255,255,0.5)" }}>კლუბის წევრი:</span>
-            <span style={{ fontWeight: "bold", color: athlete.isClubMember ? "#22d3ee" : "rgba(255,255,255,0.5)" }}>
+            <span style={{ fontWeight: "bold", color: athlete.isClubMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.5)" }}>
               {athlete.isClubMember ? "კი" : "არა"}
             </span>
           </div>
@@ -61,7 +61,7 @@ const AthleteSidePanelRead = ({
                 onClick={() => onClubClick && onClubClick(athlete.clubId)}
                 style={{ 
                   cursor: "pointer", 
-                  color: "#22d3ee", 
+                  color: "var(--color-emerald-core)", 
                   textDecoration: "underline", 
                   fontWeight: "bold",
                   display: "flex",
@@ -127,7 +127,7 @@ const AthleteSidePanelRead = ({
                   </span>
                 )}
                 {athlete.hasVotingRight ? (
-                  <span style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", border: "1px solid rgba(34, 211, 238, 0.3)", color: "#22d3ee", padding: "3px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "500" }}>
+                  <span style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", color: "var(--color-emerald-core)", padding: "3px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "500" }}>
                     ხმის უფლებით
                   </span>
                 ) : (
@@ -162,7 +162,7 @@ const AthleteSidePanelRead = ({
               </span>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2px", color: "#fff" }}>
                 <span>{athlete.representativeName || '-'}</span>
-                <span style={{ color: "#22d3ee" }}>{athlete.representativePhone || '-'}</span>
+                <span style={{ color: "var(--color-emerald-core)" }}>{athlete.representativePhone || '-'}</span>
               </div>
             </div>
           )}
@@ -215,9 +215,9 @@ const AthleteSidePanelRead = ({
                         href={doc.data} 
                         download={doc.name}
                         style={{ 
-                          background: "rgba(34, 211, 238, 0.1)", 
-                          border: "1px solid rgba(34, 211, 238, 0.3)", 
-                          color: "#22d3ee", 
+                          background: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", 
+                          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", 
+                          color: "var(--color-emerald-core)", 
                           width: "24px", 
                           height: "24px", 
                           borderRadius: "4px", 
@@ -226,8 +226,8 @@ const AthleteSidePanelRead = ({
                           justifyContent: "center", 
                           transition: "all 0.2s"
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = "rgba(34, 211, 238, 0.2)"; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = "rgba(34, 211, 238, 0.1)"; }}
+                        onMouseEnter={e => { e.currentTarget.style.background = "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"; }}
                       >
                         <i className="fa-solid fa-download" style={{ fontSize: "10px" }}></i>
                       </a>
@@ -241,8 +241,8 @@ const AthleteSidePanelRead = ({
       </div>
 
       {/* Checked-out Inventory Section */}
-      <div style={{ backgroundColor: "rgba(34, 211, 238, 0.02)", border: "1px solid rgba(34, 211, 238, 0.15)", borderRadius: "10px", padding: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+      <div style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 2%, transparent)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", borderRadius: "10px", padding: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           📦 გაცემული ინვენტარი
         </h4>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(30, 41, 59, 0.8)", paddingTop: "10px", fontSize: "13px" }}>
@@ -289,22 +289,22 @@ const AthleteSidePanelRead = ({
               alignItems: "center",
               gap: "8px",
               fontSize: "13px",
-              backgroundColor: "rgba(34, 211, 238, 0.1)",
-              border: "1px solid rgba(34, 211, 238, 0.3)",
-              color: "#22d3ee",
+              backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
+              border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
+              color: "var(--color-emerald-core)",
               padding: "8px 16px",
               borderRadius: "20px",
               cursor: "pointer",
               fontWeight: "bold",
               transition: "all 0.3s",
-              boxShadow: "0 0 10px rgba(34, 211, 238, 0.1)"
+              boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.2)";
-              e.currentTarget.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.4)";
+              e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)";
+              e.currentTarget.style.boxShadow = "0 0 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)";
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)";
+              e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)";
               e.currentTarget.style.boxShadow = "none";
             }}
           >

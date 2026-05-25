@@ -26,7 +26,7 @@ const AthleteSidePanel = ({
         height: "100%", 
         boxSizing: "border-box",
         backgroundColor: "#121418", 
-        border: "1px solid rgba(34, 211, 238, 0.15)", 
+        border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", 
         borderRadius: "12px", 
         padding: "20px", 
         display: "flex", 
@@ -50,13 +50,13 @@ const AthleteSidePanel = ({
       width: "100%", 
       maxWidth: "420px", 
       backgroundColor: "#121418", 
-      border: "1px solid rgba(34, 211, 238, 0.15)", 
+      border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", 
       borderRadius: "12px", 
       padding: "16px", 
       display: "flex", 
       flexDirection: "column", 
       gap: "12px", 
-      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(34, 211, 238, 0.02)", 
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px color-mix(in oklab, var(--color-emerald-core) 2%, transparent)", 
       height: "100%", 
       maxHeight: "100%", 
       overflowY: "auto",
@@ -87,8 +87,8 @@ const AthleteSidePanel = ({
             }}
             onMouseEnter={e => {
               e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.8)";
-              e.currentTarget.style.color = "#22d3ee";
-              e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.4)";
+              e.currentTarget.style.color = "var(--color-emerald-core)";
+              e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)";
             }}
             onMouseLeave={e => {
               e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
@@ -99,7 +99,7 @@ const AthleteSidePanel = ({
             <i className="fa-solid fa-expand" style={{ fontSize: "12px" }}></i>
           </button>
         )}
-        <span style={{ fontSize: "14px", fontWeight: "bold", color: "#22d3ee", textTransform: "uppercase", letterSpacing: "1px" }}>
+        <span style={{ fontSize: "14px", fontWeight: "bold", color: "var(--color-emerald-core)", textTransform: "uppercase", letterSpacing: "1px" }}>
           {isEditing ? "რედაქტირება" : "სპორტსმენის პროფილი"}
         </span>
       </div>

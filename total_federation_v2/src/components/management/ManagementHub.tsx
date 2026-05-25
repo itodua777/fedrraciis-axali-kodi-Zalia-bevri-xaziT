@@ -23,13 +23,13 @@ export const ManagementHub: React.FC<ManagementHubProps> = ({ athletes }) => {
   };
 
   const tabStyle = (tab: 'staff' | 'founders' | 'status') => ({
-    color: activeTab === tab ? "#22d3ee" : "rgba(255,255,255,0.5)",
+    color: activeTab === tab ? "var(--color-emerald-core)" : "rgba(255,255,255,0.5)",
     fontWeight: activeTab === tab ? "bold" : "normal",
-    borderBottom: activeTab === tab ? "2px solid #22d3ee" : "2px solid transparent",
+    borderBottom: activeTab === tab ? "2px solid var(--color-emerald-core)" : "2px solid transparent",
     padding: "12px 20px",
     cursor: "pointer",
     transition: "all 0.3s ease",
-    textShadow: activeTab === tab ? "0 0 10px rgba(34, 211, 238, 0.3)" : "none",
+    textShadow: activeTab === tab ? "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" : "none",
     backgroundColor: "transparent",
     border: "none",
     outline: "none",
@@ -42,7 +42,7 @@ export const ManagementHub: React.FC<ManagementHubProps> = ({ athletes }) => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <h2 style={{ margin: 0, color: "#fff", fontSize: "22px", fontWeight: "bold" }}>
-            <i className="fa-solid fa-sitemap" style={{ marginRight: "10px", color: "#22d3ee" }}></i>
+            <i className="fa-solid fa-sitemap" style={{ marginRight: "10px", color: "var(--color-emerald-core)" }}></i>
             მენეჯმენტი და იურიდიული რეესტრი (Node 570)
           </h2>
           <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>

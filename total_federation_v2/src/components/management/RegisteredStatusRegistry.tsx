@@ -50,7 +50,7 @@ const BrandSearchIcon: React.FC<BrandSearchIconProps> = ({ isFocused, className,
         cx="12" 
         cy="12" 
         r="2" 
-        fill="#22d3ee" 
+        fill="var(--color-emerald-core)" 
         filter={isFocused ? `url(#${filterId}-focus)` : `url(#${filterId}-blur)`}
         style={{ transition: "all 0.2s" }}
       />
@@ -120,7 +120,7 @@ export const RegisteredStatusRegistry: React.FC<RegisteredStatusRegistryProps> =
   const searchInputStyle = {
     background: "transparent",
     border: "none",
-    borderBottom: `2px solid ${searchQuery ? '#22d3ee' : 'rgba(255,255,255,0.1)'}`,
+    borderBottom: `2px solid ${searchQuery ? 'var(--color-emerald-core)' : 'rgba(255,255,255,0.1)'}`,
     color: "#fff",
     outline: "none",
     padding: "12px 10px 12px 32px",
@@ -131,16 +131,16 @@ export const RegisteredStatusRegistry: React.FC<RegisteredStatusRegistryProps> =
   };
 
   const filterBtnStyle = (active: boolean) => ({
-    backgroundColor: active ? "rgba(34, 211, 238, 0.12)" : "rgba(255, 255, 255, 0.02)",
-    color: active ? "#22d3ee" : "rgba(255,255,255,0.6)",
-    border: `1px solid ${active ? '#22d3ee' : 'rgba(255,255,255,0.1)'}`,
+    backgroundColor: active ? "color-mix(in oklab, var(--color-emerald-core) 12%, transparent)" : "rgba(255, 255, 255, 0.02)",
+    color: active ? "var(--color-emerald-core)" : "rgba(255,255,255,0.6)",
+    border: `1px solid ${active ? 'var(--color-emerald-core)' : 'rgba(255,255,255,0.1)'}`,
     padding: "8px 16px",
     borderRadius: "20px",
     fontSize: "12px",
     fontWeight: "bold" as const,
     cursor: "pointer",
     transition: "all 0.3s",
-    boxShadow: active ? "0 0 10px rgba(34, 211, 238, 0.15)" : "none"
+    boxShadow: active ? "0 0 10px color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "none"
   });
 
   return (
@@ -154,12 +154,12 @@ export const RegisteredStatusRegistry: React.FC<RegisteredStatusRegistryProps> =
           </p>
         </div>
         <div style={{
-          backgroundColor: "rgba(34, 211, 238, 0.05)",
-          border: "1px solid rgba(34, 211, 238, 0.2)",
+          backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 5%, transparent)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
           borderRadius: "8px",
           padding: "8px 16px",
           fontSize: "12px",
-          color: "#22d3ee"
+          color: "var(--color-emerald-core)"
         }}>
           <i className="fa-solid fa-folder-open" style={{ marginRight: "6px" }}></i>
           სულ ნაპოვნია: {statusHolders.length} პირი
@@ -195,7 +195,7 @@ export const RegisteredStatusRegistry: React.FC<RegisteredStatusRegistryProps> =
             placeholder="სწრაფი ძებნა სახელით, გვარით, პირადი ნომრით ან დისციპლინით..."
             style={{
               ...searchInputStyle,
-              boxShadow: searchFocused ? "0 4px 12px -4px rgba(34, 211, 238, 0.3)" : "none"
+              boxShadow: searchFocused ? "0 4px 12px -4px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" : "none"
             }}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -240,14 +240,14 @@ export const RegisteredStatusRegistry: React.FC<RegisteredStatusRegistryProps> =
                 <tr key={a.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", transition: "background-color 0.2s" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.02)"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
                   <td style={{ padding: "12px 8px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <img src={a.photo || "https://i.pravatar.cc/150?img=1"} alt={a.firstName} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(34, 211, 238, 0.3)" }} />
+                      <img src={a.photo || "https://i.pravatar.cc/150?img=1"} alt={a.firstName} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }} />
                       <div style={{ color: "#fff", fontWeight: "500", fontSize: "14px" }}>{a.firstName} {a.lastName}</div>
                     </div>
                   </td>
                   <td style={{ padding: "12px 8px", color: "#e2e8f0", fontSize: "13px", fontFamily: "monospace" }}>
                     {a.personalId}
                   </td>
-                  <td style={{ padding: "12px 8px", color: "#22d3ee", fontSize: "13px", fontWeight: "500" }}>
+                  <td style={{ padding: "12px 8px", color: "var(--color-emerald-core)", fontSize: "13px", fontWeight: "500" }}>
                     {a.sportsDiscipline || "—"}
                   </td>
                   <td style={{ padding: "12px 8px" }}>

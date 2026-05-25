@@ -91,8 +91,8 @@ const AthleteAvatarWrapper = ({ athlete, size = 56 }) => {
   const badgeFontSize = size >= 88 ? '12px' : '9px';
   const badgeOffset = size >= 88 ? '-2px' : '-2px';
 
-  const borderColor = badgeConfig ? badgeConfig.borderColor : "#22d3ee";
-  const glowColor = badgeConfig ? badgeConfig.glowColor : "rgba(34, 211, 238, 0.3)";
+  const borderColor = badgeConfig ? badgeConfig.borderColor : "var(--color-emerald-core)";
+  const glowColor = badgeConfig ? badgeConfig.glowColor : "color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
 
   return (
     <div style={{ position: "relative", flexShrink: 0, width: `${size}px`, height: `${size}px` }}>

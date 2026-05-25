@@ -17,7 +17,7 @@ const AddAthleteStep2 = ({ formData, updateData }) => {
 
   const inputStyle = {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(34, 211, 238, 0.3)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     borderRadius: "8px",
     padding: "12px",
     color: "#fff",
@@ -28,7 +28,7 @@ const AddAthleteStep2 = ({ formData, updateData }) => {
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "24px" }}>
       <div>
-        <h3 style={{ margin: "0 0 15px 0", color: "#22d3ee", fontSize: "15px", borderBottom: "1px solid rgba(34, 211, 238, 0.1)", paddingBottom: "8px" }}>
+        <h3 style={{ margin: "0 0 15px 0", color: "var(--color-emerald-core)", fontSize: "15px", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", paddingBottom: "8px" }}>
           <i className="fa-solid fa-address-book"></i> საკონტაქტო ინფორმაცია
         </h3>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 20px" }}>
@@ -53,7 +53,7 @@ const AddAthleteStep2 = ({ formData, updateData }) => {
       </div>
 
       <div>
-        <h3 style={{ margin: "0 0 15px 0", color: "#22d3ee", fontSize: "15px", borderBottom: "1px solid rgba(34, 211, 238, 0.1)", paddingBottom: "8px" }}>
+        <h3 style={{ margin: "0 0 15px 0", color: "var(--color-emerald-core)", fontSize: "15px", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", paddingBottom: "8px" }}>
           <i className="fa-solid fa-phone-volume"></i> საკონტაქტო პირი საგანგებო სიტუაციაში (ICE)
         </h3>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 20px" }}>

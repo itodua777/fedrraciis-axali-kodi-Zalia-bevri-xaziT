@@ -137,17 +137,17 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
     width: "100%",
     maxWidth: "800px",
     backgroundColor: "rgba(15, 23, 42, 0.6)",
-    border: "1px solid rgba(34, 211, 238, 0.2)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
     borderRadius: "16px",
     padding: "30px",
-    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(34, 211, 238, 0.05)"
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 15px color-mix(in oklab, var(--color-emerald-core) 5%, transparent)"
   };
 
   const stepIndicatorStyle = {
     display: "flex",
     alignItems: "center",
     marginBottom: "30px",
-    color: "#22d3ee",
+    color: "var(--color-emerald-core)",
     fontSize: "14px"
   };
 

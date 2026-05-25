@@ -1014,20 +1014,20 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
   };
 
   const tabStyle = (tab) => ({
-    color: activeTab === tab ? "#22d3ee" : "rgba(255,255,255,0.5)",
+    color: activeTab === tab ? "var(--color-emerald-core)" : "rgba(255,255,255,0.5)",
     fontWeight: activeTab === tab ? "bold" : "normal",
-    borderBottom: activeTab === tab ? "2px solid #22d3ee" : "2px solid transparent",
+    borderBottom: activeTab === tab ? "2px solid var(--color-emerald-core)" : "2px solid transparent",
     padding: "10px 0",
     cursor: "pointer",
     transition: "all 0.3s",
-    textShadow: activeTab === tab ? "0 0 10px rgba(34,211,238,0.3)" : "none"
+    textShadow: activeTab === tab ? "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" : "none"
   });
 
   return (
     <div style={containerStyle}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h2 style={{ color: "#fff", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
-          <i className="fa-solid fa-warehouse" style={{ color: "#22d3ee" }}></i> საწყობის მართვა
+          <i className="fa-solid fa-warehouse" style={{ color: "var(--color-emerald-core)" }}></i> საწყობის მართვა
         </h2>
       </div>
 
@@ -1041,7 +1041,7 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
         {/* Card A: 💰 საწყობის ჯამური ფასი */}
         <div style={{ 
           backgroundColor: "rgba(15, 23, 42, 0.6)", 
-          border: "1px solid rgba(34, 211, 238, 0.15)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)",
           borderRadius: "12px", 
           padding: "20px", 
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)", 
@@ -1055,14 +1055,14 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
               <span>💰</span> საწყობის ჯამური ფასი
             </div>
             <div style={{ fontSize: "32px", fontWeight: "bold", color: "#fff", marginTop: "10px", display: "flex", alignItems: "baseline", gap: "8px" }}>
-              {totalWarehouseGEL.toLocaleString()} <span style={{ color: "#22d3ee", fontSize: "18px" }}>GEL</span>
+              {totalWarehouseGEL.toLocaleString()} <span style={{ color: "var(--color-emerald-core)", fontSize: "18px" }}>GEL</span>
             </div>
           </div>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "12px" }}>
             {categoryValuations.map((cv, idx) => (
               <div key={idx} style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "8px", padding: "6px 12px", flex: 1, minWidth: "100px" }}>
                 <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>{cv.category}</div>
-                <div style={{ fontSize: "14px", fontWeight: "bold", color: "#22d3ee", marginTop: "2px" }}>
+                <div style={{ fontSize: "14px", fontWeight: "bold", color: "var(--color-emerald-core)", marginTop: "2px" }}>
                   {cv.val.toLocaleString()} <span style={{ fontSize: "10px", color: "#fff" }}>GEL</span>
                 </div>
               </div>
@@ -1098,7 +1098,7 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
         {/* Card C: 🖨️ ბუღალტერია & ბეჭდვა */}
         <div style={{ 
           backgroundColor: "rgba(15, 23, 42, 0.6)", 
-          border: "1px solid rgba(34, 211, 238, 0.15)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)",
           borderRadius: "12px", 
           padding: "20px", 
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)", 
@@ -1114,9 +1114,9 @@ const WarehouseDashboard = ({ athletes = [], onUpdateAthlete }) => {
             <button 
               onClick={() => setIsAccountingOpen(true)}
               style={{ 
-                backgroundColor: "rgba(34, 211, 238, 0.1)", 
-                border: "1px solid rgba(34, 211, 238, 0.3)", 
-                color: "#22d3ee", 
+                backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", 
+                border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", 
+                color: "var(--color-emerald-core)", 
                 padding: "10px 16px", 
                 borderRadius: "8px", 
                 cursor: "pointer", 

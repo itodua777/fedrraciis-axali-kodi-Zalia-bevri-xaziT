@@ -84,7 +84,7 @@ const CheckoutModal = ({ isOpen, onClose, onCheckoutConfirm, selectedItemForChec
   };
 
   const modalContentStyle = {
-    backgroundColor: "#1e293b", border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "#1e293b", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     borderRadius: "16px", padding: "30px", width: "100%", maxWidth: "600px",
     boxShadow: "0 10px 25px rgba(0,0,0,0.5)", maxHeight: "85vh", overflowY: "auto"
   };
@@ -115,7 +115,7 @@ const CheckoutModal = ({ isOpen, onClose, onCheckoutConfirm, selectedItemForChec
           <div style={{ ...formGroupStyle, position: "relative" }}>
             <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>მიმღები პირი (სპორტსმენი / მენტორი)</label>
             {selectedAthlete ? (
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", backgroundColor: "rgba(34,211,238,0.06)", border: "1px solid #22d3ee", borderRadius: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 6%, transparent)", border: "1px solid var(--color-emerald-core)", borderRadius: "8px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <img src={selectedAthlete.photo || "https://i.pravatar.cc/150"} style={{ width: "30px", height: "30px", borderRadius: "50%", objectFit: "cover" }} alt="Avatar" />
                   <div>
@@ -141,7 +141,7 @@ const CheckoutModal = ({ isOpen, onClose, onCheckoutConfirm, selectedItemForChec
                           setAthleteSearchText('');
                         }}
                         style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)", transition: "all 0.2s" }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)"}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"}
                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                       >
                         <img src={ath.photo || "https://i.pravatar.cc/150"} style={{ width: "24px", height: "24px", borderRadius: "50%" }} alt="Avatar" />

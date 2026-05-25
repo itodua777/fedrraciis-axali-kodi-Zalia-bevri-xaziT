@@ -56,7 +56,7 @@ const AddIncidentForm = ({ onViewChange, onAdd, athletes = [] }) => {
 
   return (
     <div style={{ flex: 1, padding: "30px", backgroundColor: "#121418", overflowY: "auto" }}>
-      <div style={{ margin: "0 auto", width: "100%", maxWidth: "800px", backgroundColor: "rgba(15, 23, 42, 0.8)", borderRadius: "12px", overflow: "hidden", border: "1px solid rgba(34, 211, 238, 0.1)" }}>
+      <div style={{ margin: "0 auto", width: "100%", maxWidth: "800px", backgroundColor: "rgba(15, 23, 42, 0.8)", borderRadius: "12px", overflow: "hidden", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" }}>
         
         <div style={{ backgroundColor: "#f59e0b", padding: "15px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", color: "#fff" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", fontWeight: "bold", fontSize: "18px" }}>

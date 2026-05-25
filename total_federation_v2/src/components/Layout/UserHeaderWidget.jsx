@@ -60,9 +60,9 @@ const UserHeaderWidget = ({ onLogout }) => {
     gap: "10px",
     padding: "6px 12px",
     borderRadius: "24px",
-    border: `1px solid ${isHovered || isOpen ? "rgba(34, 211, 238, 0.5)" : "rgba(255, 255, 255, 0.05)"}`,
-    backgroundColor: isOpen ? "rgba(34, 211, 238, 0.05)" : "rgba(255, 255, 255, 0.02)",
-    boxShadow: isHovered || isOpen ? "0 0 10px rgba(34, 211, 238, 0.2)" : "none",
+    border: `1px solid ${isHovered || isOpen ? "var(--color-emerald-core)" : "var(--color-iron-border)"}`,
+    backgroundColor: isOpen ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "transparent",
+    boxShadow: isHovered || isOpen ? "0 0 10px var(--color-emerald-core)" : "none",
     cursor: "pointer",
     transition: "all 0.2s ease-in-out",
     userSelect: "none"
@@ -72,8 +72,8 @@ const UserHeaderWidget = ({ onLogout }) => {
     width: "30px",
     height: "30px",
     borderRadius: "50%",
-    backgroundColor: "rgba(34, 211, 238, 0.1)",
-    border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "var(--color-iron-surface)",
+    border: "1.5px solid var(--color-iron-border)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -86,8 +86,8 @@ const UserHeaderWidget = ({ onLogout }) => {
     top: "100%",
     marginTop: "8px",
     width: "224px",
-    backgroundColor: "#0d0f12",
-    border: "1px solid #1e293b",
+    backgroundColor: "var(--color-iron-surface)",
+    border: "1px solid var(--color-iron-border)",
     borderRadius: "12px",
     boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
     zIndex: 50,
@@ -107,7 +107,7 @@ const UserHeaderWidget = ({ onLogout }) => {
     backgroundColor: "transparent",
     border: "none",
     borderRadius: "6px",
-    color: "#cbd5e1",
+    color: "var(--color-silver-structure)",
     fontSize: "13px",
     cursor: "pointer",
     textAlign: "left",
@@ -117,18 +117,18 @@ const UserHeaderWidget = ({ onLogout }) => {
   };
 
   const handleItemMouseOver = (e) => {
-    e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.08)";
-    e.currentTarget.style.color = "#22d3ee";
+    e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 8%, transparent)";
+    e.currentTarget.style.color = "var(--color-emerald-core)";
     if (e.currentTarget.firstElementChild) {
-      e.currentTarget.firstElementChild.style.color = "#22d3ee";
+      e.currentTarget.firstElementChild.style.color = "var(--color-emerald-core)";
     }
   };
 
   const handleItemMouseOut = (e) => {
     e.currentTarget.style.backgroundColor = "transparent";
-    e.currentTarget.style.color = "#cbd5e1";
+    e.currentTarget.style.color = "var(--color-silver-structure)";
     if (e.currentTarget.firstElementChild) {
-      e.currentTarget.firstElementChild.style.color = "#64748b";
+      e.currentTarget.firstElementChild.style.color = "var(--color-silver-structure)";
     }
   };
 
@@ -147,17 +147,17 @@ const UserHeaderWidget = ({ onLogout }) => {
   };
 
   const modalStyle = {
-    backgroundColor: "#0d0f12",
-    border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "var(--color-iron-surface)",
+    border: "1px solid var(--color-iron-border)",
     borderRadius: "12px",
     width: "450px",
-    boxShadow: "0 0 30px rgba(34, 211, 238, 0.15)",
+    boxShadow: "0 0 30px var(--color-iron-border)",
     overflow: "hidden"
   };
 
   const modalHeaderStyle = {
     padding: "15px 20px",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+    borderBottom: "1px solid var(--color-iron-border)",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
@@ -171,9 +171,9 @@ const UserHeaderWidget = ({ onLogout }) => {
     width: "100%",
     padding: "10px",
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
+    border: "1px solid var(--color-iron-border)",
     borderRadius: "8px",
-    color: "#fff",
+    color: "var(--color-bone-light)",
     outline: "none",
     boxSizing: "border-box",
     marginBottom: "15px",
@@ -195,17 +195,17 @@ const UserHeaderWidget = ({ onLogout }) => {
             style={{ width: "100%", height: "100%", objectFit: "cover" }} 
           />
         </div>
-        <span style={{ fontSize: "14px", color: "rgba(226, 232, 240, 0.8)", fontWeight: "normal" }}>დავით მ.</span>
-        <i className="fa-solid fa-chevron-down" style={{ fontSize: "10px", color: "rgba(226, 232, 240, 0.5)", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}></i>
+        <span style={{ fontSize: "14px", color: "var(--color-bone-light)", fontWeight: "normal" }}>დავით მ.</span>
+        <i className="fa-solid fa-chevron-down" style={{ fontSize: "10px", color: "var(--color-silver-structure)", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}></i>
       </div>
 
       {isOpen && (
         <div style={dropdownMenuStyle}>
-          <div style={{ padding: "4px 8px 8px 8px", borderBottom: "1px solid rgba(255, 255, 255, 0.05)", display: "flex", flexDirection: "column" }}>
-            <span style={{ color: "#e2e8f0", fontWeight: "500", fontSize: "13px" }}>დავით მაისურაძე</span>
+          <div style={{ padding: "4px 8px 8px 8px", borderBottom: "1px solid var(--color-iron-border)", display: "flex", flexDirection: "column" }}>
+            <span style={{ color: "var(--color-bone-light)", fontWeight: "500", fontSize: "13px" }}>დავით მაისურაძე</span>
             <span style={{
-              backgroundColor: "rgba(255, 255, 255, 0.08)",
-              color: "#94a3b8",
+              backgroundColor: "var(--color-iron)",
+              color: "var(--color-silver-structure)",
               fontSize: "10px",
               padding: "2px 6px",
               borderRadius: "4px",
@@ -223,7 +223,7 @@ const UserHeaderWidget = ({ onLogout }) => {
             onMouseOver={handleItemMouseOver}
             onMouseOut={handleItemMouseOut}
           >
-            <i className="fa-solid fa-gear" style={{ width: "14px", color: "#64748b", fontSize: "14px", transition: "color 0.2s" }}></i>
+            <i className="fa-solid fa-gear" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
             <span>პროფილის პარამეტრები</span>
           </button>
 
@@ -233,33 +233,33 @@ const UserHeaderWidget = ({ onLogout }) => {
             onMouseOver={handleItemMouseOver}
             onMouseOut={handleItemMouseOut}
           >
-            <i className="fa-solid fa-scroll" style={{ width: "14px", color: "#64748b", fontSize: "14px", transition: "color 0.2s" }}></i>
+            <i className="fa-solid fa-scroll" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
             <span>უსაფრთხოების ლოგები</span>
           </button>
 
-          <hr style={{ border: "0", borderTop: "1px solid rgba(255, 255, 255, 0.05)", margin: "4px 0" }} />
+          <hr style={{ border: "0", borderTop: "1px solid var(--color-iron-border)", margin: "4px 0" }} />
           <button 
             style={{
               ...dropdownItemStyle,
-              color: "#f87171"
+              color: "var(--color-copper)"
             }}
             onClick={onLogout}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(127, 29, 29, 0.3)";
-              e.currentTarget.style.color = "#f43f5e";
+              e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-copper) 20%, transparent)";
+              e.currentTarget.style.color = "var(--color-copper)";
               if (e.currentTarget.firstElementChild) {
-                e.currentTarget.firstElementChild.style.color = "#f43f5e";
+                e.currentTarget.firstElementChild.style.color = "var(--color-copper)";
               }
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = "#f87171";
+              e.currentTarget.style.color = "var(--color-copper)";
               if (e.currentTarget.firstElementChild) {
-                e.currentTarget.firstElementChild.style.color = "#64748b";
+                e.currentTarget.firstElementChild.style.color = "var(--color-silver-structure)";
               }
             }}
           >
-            <i className="fa-solid fa-right-from-bracket" style={{ width: "14px", color: "#64748b", fontSize: "14px", transition: "color 0.2s" }}></i>
+            <i className="fa-solid fa-right-from-bracket" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
             <span>სისტემიდან გამოსვლა</span>
           </button>
         </div>
@@ -269,7 +269,7 @@ const UserHeaderWidget = ({ onLogout }) => {
         <div style={overlayStyle}>
           <div style={modalStyle}>
             <div style={modalHeaderStyle}>
-              <h3 style={{ color: "#22d3ee", margin: 0, textShadow: "0 0 10px rgba(34, 211, 238, 0.3)" }}>პროფილის პარამეტრები</h3>
+              <h3 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>პროფილის პარამეტრები</h3>
               <button 
                 onClick={() => setShowSettingsModal(false)}
                 style={{ backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px" }}
@@ -279,10 +279,10 @@ const UserHeaderWidget = ({ onLogout }) => {
             </div>
             <div style={modalContentStyle}>
               <form onSubmit={handleSaveSettings}>
-                <label style={{ display: "block", color: "#cbd5e1", fontSize: "12px", marginBottom: "5px" }}>მომხმარებლის სახელი</label>
+                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>მომხმარებლის სახელი</label>
                 <input type="text" value="დავით მაისურაძე" disabled style={{ ...inputStyle, opacity: 0.6, cursor: "not-allowed" }} />
 
-                <label style={{ display: "block", color: "#cbd5e1", fontSize: "12px", marginBottom: "5px" }}>მიმდინარე პაროლი</label>
+                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>მიმდინარე პაროლი</label>
                 <input 
                   type="password" 
                   placeholder="••••••••" 
@@ -292,7 +292,7 @@ const UserHeaderWidget = ({ onLogout }) => {
                   style={inputStyle} 
                 />
 
-                <label style={{ display: "block", color: "#cbd5e1", fontSize: "12px", marginBottom: "5px" }}>ახალი პაროლი</label>
+                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>ახალი პაროლი</label>
                 <input 
                   type="password" 
                   placeholder="••••••••" 
@@ -302,7 +302,7 @@ const UserHeaderWidget = ({ onLogout }) => {
                   style={inputStyle} 
                 />
 
-                <label style={{ display: "block", color: "#cbd5e1", fontSize: "12px", marginBottom: "5px" }}>დაადასტურეთ ახალი პაროლი</label>
+                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>დაადასტურეთ ახალი პაროლი</label>
                 <input 
                   type="password" 
                   placeholder="••••••••" 
@@ -314,7 +314,7 @@ const UserHeaderWidget = ({ onLogout }) => {
 
                 {settingsMessage && (
                   <div style={{ 
-                    color: settingsMessage.includes("წარმატებით") ? "#10b981" : "#f87171", 
+                    color: settingsMessage.includes("წარმატებით") ? "var(--color-emerald-core)" : "var(--color-copper)", 
                     fontSize: "12px", 
                     marginBottom: "15px",
                     textAlign: "center",
@@ -328,13 +328,13 @@ const UserHeaderWidget = ({ onLogout }) => {
                   <button 
                     type="button" 
                     onClick={() => setShowSettingsModal(false)}
-                    style={{ padding: "8px 16px", backgroundColor: "transparent", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "6px", color: "#94a3b8", cursor: "pointer" }}
+                    style={{ padding: "8px 16px", backgroundColor: "transparent", border: "1px solid var(--color-iron-border)", borderRadius: "6px", color: "var(--color-silver-structure)", cursor: "pointer" }}
                   >
                     გაუქმება
                   </button>
                   <button 
                     type="submit"
-                    style={{ padding: "8px 16px", backgroundColor: "#22d3ee", border: "none", borderRadius: "6px", color: "#0f172a", fontWeight: "bold", cursor: "pointer", boxShadow: "0 0 10px rgba(34, 211, 238, 0.3)" }}
+                    style={{ padding: "8px 16px", backgroundColor: "var(--color-emerald-core)", border: "none", borderRadius: "6px", color: "var(--color-iron)", fontWeight: "bold", cursor: "pointer", boxShadow: "0 0 10px var(--color-emerald-core)" }}
                   >
                     შენახვა
                   </button>
@@ -350,7 +350,7 @@ const UserHeaderWidget = ({ onLogout }) => {
         <div style={overlayStyle}>
           <div style={{ ...modalStyle, width: "600px" }}>
             <div style={modalHeaderStyle}>
-              <h3 style={{ color: "#22d3ee", margin: 0, textShadow: "0 0 10px rgba(34, 211, 238, 0.3)" }}>უსაფრთხოების ლოგები</h3>
+              <h3 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>უსაფრთხოების ლოგები</h3>
               <button 
                 onClick={() => setShowLogsModal(false)}
                 style={{ backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px" }}
@@ -359,47 +359,47 @@ const UserHeaderWidget = ({ onLogout }) => {
               </button>
             </div>
             <div style={{ ...modalContentStyle, maxHeight: "400px", overflowY: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", color: "#cbd5e1", fontSize: "12px", textAlign: "left" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", color: "var(--color-silver-structure)", fontSize: "12px", textAlign: "left" }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                    <th style={{ padding: "10px 5px", color: "#22d3ee" }}>თარიღი/დრო</th>
-                    <th style={{ padding: "10px 5px", color: "#22d3ee" }}>მოქმედება</th>
-                    <th style={{ padding: "10px 5px", color: "#22d3ee" }}>სტატუსი</th>
-                    <th style={{ padding: "10px 5px", color: "#22d3ee" }}>IP მისამართი</th>
+                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>თარიღი/დრო</th>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>მოქმედება</th>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>სტატუსი</th>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>IP მისამართი</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
+                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-22 21:15:46</td>
                     <td style={{ padding: "10px 5px" }}>სისტემაში ავტორიზაცია</td>
-                    <td style={{ padding: "10px 5px", color: "#10b981" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
-                  <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
+                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-22 17:11:34</td>
                     <td style={{ padding: "10px 5px" }}>სპორტსმენის რედაქტირება (გიორგი ბერიძე)</td>
-                    <td style={{ padding: "10px 5px", color: "#10b981" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
-                  <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
+                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-22 15:48:49</td>
                     <td style={{ padding: "10px 5px" }}>ექსპორტი (სპორტსმენები)</td>
-                    <td style={{ padding: "10px 5px", color: "#10b981" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
-                  <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
+                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-21 16:24:30</td>
                     <td style={{ padding: "10px 5px" }}>სისტემაში შესვლა</td>
-                    <td style={{ padding: "10px 5px", color: "#10b981" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div style={{ padding: "15px 20px", borderTop: "1px solid rgba(255, 255, 255, 0.05)", display: "flex", justifyContent: "flex-end" }}>
+            <div style={{ padding: "15px 20px", borderTop: "1px solid var(--color-iron-border)", display: "flex", justifyContent: "flex-end" }}>
               <button 
                 onClick={() => setShowLogsModal(false)}
-                style={{ padding: "8px 16px", backgroundColor: "#22d3ee", border: "none", borderRadius: "6px", color: "#0f172a", fontWeight: "bold", cursor: "pointer" }}
+                style={{ padding: "8px 16px", backgroundColor: "var(--color-emerald-core)", border: "none", borderRadius: "6px", color: "var(--color-iron)", fontWeight: "bold", cursor: "pointer" }}
               >
                 დახურვა
               </button>

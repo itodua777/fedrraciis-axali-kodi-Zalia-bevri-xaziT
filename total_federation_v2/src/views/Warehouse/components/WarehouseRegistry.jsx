@@ -32,18 +32,18 @@ const WarehouseRegistry = ({
   };
 
   return (
-    <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)", borderRadius: "12px", padding: "20px" }}>
+    <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", borderRadius: "12px", padding: "20px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", gap: "15px", flexWrap: "wrap" }}>
         <div style={{ 
           backgroundColor: "rgba(255,255,255,0.03)", 
-          border: searchFocused ? "1px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)", 
+          border: searchFocused ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)", 
           borderRadius: "20px", 
           padding: "8px 20px", 
           display: "flex", 
           alignItems: "center", 
           gap: "10px", 
           width: "320px",
-          boxShadow: searchFocused ? "0 0 10px rgba(34, 211, 238, 0.2)" : "none",
+          boxShadow: searchFocused ? "0 0 10px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" : "none",
           transition: "all 0.3s"
         }}>
           <BrandSearchIcon 
@@ -92,7 +92,7 @@ const WarehouseRegistry = ({
 
           <button 
             onClick={() => setIsAddItemOpen(true)}
-            style={{ backgroundColor: "#22d3ee", color: "#0f172a", border: "none", padding: "10px 20px", borderRadius: "20px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "all 0.3s" }}
+            style={{ backgroundColor: "var(--color-emerald-core)", color: "#0f172a", border: "none", padding: "10px 20px", borderRadius: "20px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "all 0.3s" }}
           >
             <i className="fa-solid fa-plus"></i> ნივთის დამატება
           </button>
@@ -108,7 +108,7 @@ const WarehouseRegistry = ({
             return (
               <div key={item.id} style={{ backgroundColor: "rgba(30, 41, 59, 0.4)", border: `1px solid ${expired ? "rgba(239, 68, 68, 0.3)" : lowStock ? "rgba(245, 158, 11, 0.3)" : "rgba(255,255,255,0.05)"}`, borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", position: "relative", transition: "all 0.3s" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-                  <span style={{ fontSize: "10px", padding: "3px 8px", backgroundColor: "rgba(34, 211, 238, 0.1)", color: "#22d3ee", borderRadius: "4px", fontWeight: "bold" }}>{item.category}</span>
+                  <span style={{ fontSize: "10px", padding: "3px 8px", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", color: "var(--color-emerald-core)", borderRadius: "4px", fontWeight: "bold" }}>{item.category}</span>
 
                   <div style={{ 
                     backgroundColor: expired ? "rgba(239, 68, 68, 0.15)" : item.status === 'დაზიანებული' ? "rgba(245, 158, 11, 0.15)" : "rgba(16, 185, 129, 0.15)",
@@ -161,7 +161,7 @@ const WarehouseRegistry = ({
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
                   <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>
-                    მდგომარეობა: <strong style={{ color: "#22d3ee" }}>{item.condition}</strong>
+                    მდგომარეობა: <strong style={{ color: "var(--color-emerald-core)" }}>{item.condition}</strong>
                   </div>
                 </div>
               </div>
@@ -190,7 +190,7 @@ const WarehouseRegistry = ({
                     borderLeft: row.hasOverdue ? "3px solid #ef4444" : "none"
                   }}
                 >
-                  <td style={{ padding: "12px", fontWeight: "bold", color: "#22d3ee" }}>{row.qr}</td>
+                  <td style={{ padding: "12px", fontWeight: "bold", color: "var(--color-emerald-core)" }}>{row.qr}</td>
                   <td style={{ padding: "12px", color: "#fff", fontWeight: "bold", whiteSpace: "pre-wrap" }}>{row.name}</td>
                   <td style={{ padding: "12px", color: "rgba(255,255,255,0.6)" }}>{row.type}</td>
                   <td style={{ padding: "12px", color: row.hasOverdue ? "#ef4444" : "#fff", fontWeight: row.hasOverdue ? "bold" : "normal" }}>

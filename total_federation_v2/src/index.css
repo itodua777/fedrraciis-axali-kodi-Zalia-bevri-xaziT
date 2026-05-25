@@ -1,7 +1,27 @@
+:root {
+  /* Tempered Iron // ნაწვრთობი რკინა (ბაზისი) */
+  --color-iron: #121418;
+  --color-iron-surface: #1A1D23;
+  --color-iron-border: #232730;
+
+  /* Silver Structure // ძველი ვერცხლი (სტრუქტურა) */
+  --color-silver-structure: #9CA3AF;
+
+  /* Emerald Core // ზურმუხტისფერი ბირთვი (აქტივაცია და ენერგია) */
+  --color-emerald-core: #00E676;
+
+  /* Active Node Elements // კვანძების აქტიური ფერები */
+  --color-sapphire: #0F52BA;
+  --color-copper: #D97736;
+  --color-gold-raw: #D4AF37;
+  --color-bone-light: #F5F5F7;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background-color: #121418;
+  background-color: var(--color-iron);
+  color: var(--color-bone-light);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 .print-only {
@@ -239,20 +259,20 @@ body {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: #121418;
-  border: 1px solid rgba(34, 211, 238, 0.4);
+  background-color: var(--color-iron);
+  border: 1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #22d3ee;
-  box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
+  color: var(--color-emerald-core);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent);
   transition: all 0.2s ease-in-out;
   outline: none;
 }
 .sidebar-toggle-btn:hover {
-  border-color: #22d3ee;
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+  border-color: var(--color-emerald-core);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--color-emerald-core) 60%, transparent);
   transform: scale(1.1);
 }
 .is-fullscreen-map .leaflet-top.leaflet-left {
@@ -273,12 +293,12 @@ body {
   height: 4px; /* ძალიან თხელი სქროლი */
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #0b111e; /* დეშბორდის ფონის ფერი */
+  background: var(--color-iron); /* დეშბორდის ფონის ფერი */
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #1e293b; /* ოდნავ ღია ნაცრისფერი/ლურჯი ზოლი */
+  background: var(--color-iron-border); /* ოდნავ ღია ნაცრისფერი/ლურჯი ზოლი */
   border-radius: 2px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #38bdf8; /* მაუსის მიტანისას ხდება ნეონისფერი ლურჯი */
+  background: var(--color-emerald-core); /* მაუსის მიტანისას ხდება ნეონისფერი ლურჯი */
 }

@@ -19,18 +19,21 @@ const Login = ({ onLogin }) => {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    width: "100vw",
     height: "100vh",
-    backgroundColor: "#121418",
-    fontFamily: "sans-serif"
+    background: "radial-gradient(circle at center, rgba(0, 230, 118, 0.15) 0%, rgba(18, 20, 24, 0.95) 60%, #121418 100%)",
+    fontFamily: "sans-serif",
+    overflow: "hidden",
+    position: "relative"
   };
 
   const cardStyle = {
-    backgroundColor: "rgba(15, 23, 42, 0.8)",
-    border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "var(--color-iron-surface)",
+    border: "1px solid var(--color-iron-border)",
     borderRadius: "16px",
     padding: "40px",
     width: "400px",
-    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(34, 211, 238, 0.1)",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px var(--color-iron-border)",
     backdropFilter: "blur(10px)",
     display: "flex",
     flexDirection: "column",
@@ -38,8 +41,8 @@ const Login = ({ onLogin }) => {
   };
 
   const titleStyle = {
-    color: "#22d3ee",
-    textShadow: "0 0 15px rgba(34, 211, 238, 0.8)",
+    color: "var(--color-emerald-core)",
+    textShadow: "0 0 15px var(--color-emerald-core)",
     margin: "0",
     fontSize: "28px",
     fontWeight: "bold",
@@ -48,10 +51,10 @@ const Login = ({ onLogin }) => {
 
   const inputStyle = {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(34, 211, 238, 0.2)",
+    border: "1px solid var(--color-iron-border)",
     borderRadius: "8px",
     padding: "12px 15px",
-    color: "#e2e8f0",
+    color: "var(--color-bone-light)",
     fontSize: "16px",
     outline: "none",
     transition: "all 0.3s ease",
@@ -60,15 +63,15 @@ const Login = ({ onLogin }) => {
   };
 
   const buttonStyle = {
-    backgroundColor: "#22d3ee",
-    color: "#121418",
+    backgroundColor: "var(--color-emerald-core)",
+    color: "var(--color-iron)",
     border: "none",
     padding: "14px",
     borderRadius: "8px",
     fontSize: "16px",
     fontWeight: "bold",
     cursor: "pointer",
-    boxShadow: "0 0 15px rgba(34, 211, 238, 0.5)",
+    boxShadow: "0 0 15px var(--color-emerald-core)",
     transition: "all 0.3s ease",
     marginTop: "10px"
   };
@@ -80,15 +83,15 @@ const Login = ({ onLogin }) => {
           {[...Array(9)].map((_, i) => (
             <div key={i} style={{
               width: "10px", height: "10px", borderRadius: "50%",
-              backgroundColor: i === 4 ? "#22d3ee" : "#ffffff",
-              boxShadow: i === 4 ? "0 0 10px rgba(34, 211, 238, 0.8)" : "none"
+              backgroundColor: i === 4 ? "var(--color-emerald-core)" : "var(--color-bone-light)",
+              boxShadow: i === 4 ? "0 0 10px var(--color-emerald-core)" : "none"
             }}></div>
           ))}
         </div>
         <h1 style={titleStyle}>ARTRON - FEDERATION</h1>
-        <p style={{ color: "rgba(226, 232, 240, 0.7)", textAlign: "center", margin: "0 0 10px 0" }}>Sign in to continue</p>
+        <p style={{ color: "var(--color-silver-structure)", textAlign: "center", margin: "0 0 10px 0" }}>Sign in to continue</p>
         
-        {error && <div style={{ color: "#ef4444", textAlign: "center", fontSize: "14px" }}>{error}</div>}
+        {error && <div style={{ color: "var(--color-copper)", textAlign: "center", fontSize: "14px", fontWeight: "bold" }}>{error}</div>}
 
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
           <input 
@@ -120,13 +123,29 @@ const Login = ({ onLogin }) => {
           <button 
             type="submit" 
             style={buttonStyle}
-            onMouseOver={(e) => e.target.style.boxShadow = "0 0 25px rgba(34, 211, 238, 0.8)"}
-            onMouseOut={(e) => e.target.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.5)"}
+            onMouseOver={(e) => e.target.style.boxShadow = "0 0 25px var(--color-emerald-core)"}
+            onMouseOut={(e) => e.target.style.boxShadow = "0 0 15px var(--color-emerald-core)"}
           >
             Authenticate
           </button>
         </form>
       </div>
+      <footer 
+        className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-[#9CA3AF] tracking-wide pointer-events-none select-none"
+        style={{
+          position: "absolute",
+          bottom: "16px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          fontSize: "12px",
+          color: "var(--color-silver-structure, #9CA3AF)",
+          letterSpacing: "0.025em",
+          pointerEvents: "none",
+          userSelect: "none"
+        }}
+      >
+        © {new Date().getFullYear()} ARTRON LLC. All rights reserved.
+      </footer>
     </div>
   );
 };

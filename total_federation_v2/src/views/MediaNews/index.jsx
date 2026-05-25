@@ -93,19 +93,19 @@ const MediaNewsDashboard = () => {
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    e.currentTarget.style.borderColor = "#22d3ee";
-    e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.05)";
+    e.currentTarget.style.borderColor = "var(--color-emerald-core)";
+    e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 5%, transparent)";
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
-    e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.3)";
+    e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
     e.currentTarget.style.backgroundColor = "transparent";
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.3)";
+    e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
     e.currentTarget.style.backgroundColor = "transparent";
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleMediaUpload(e.dataTransfer.files);

@@ -87,7 +87,7 @@ const RoutePlanningDashboard = () => {
         const isPeak = index === waypoints.length - 1 && waypoints.length > 1;
         el.innerHTML = isPeak 
           ? '<i class="fa-solid fa-flag" style="color: #ef4444; font-size: 24px; text-shadow: 0 0 10px #ef4444;"></i>'
-          : '<i class="fa-solid fa-campground" style="color: #22D3EE; font-size: 20px; text-shadow: 0 0 10px #22D3EE; cursor: pointer;"></i>';
+          : '<i class="fa-solid fa-campground" style="color: var(--color-emerald-core); font-size: 20px; text-shadow: 0 0 10px var(--color-emerald-core); cursor: pointer;"></i>';
         
         const marker = new window.mapboxgl.Marker(el)
           .setLngLat([parseFloat(wp.lng), parseFloat(wp.lat)])
@@ -190,16 +190,16 @@ const RoutePlanningDashboard = () => {
 
   return (
     <div style={{ flex: 1, display: "flex", backgroundColor: "#121418", color: "#e2e8f0", overflow: "hidden", fontFamily: "sans-serif" }}>
-      <div style={{ width: "300px", borderRight: "1px solid rgba(34, 211, 238, 0.2)", backgroundColor: "rgba(15, 23, 42, 0.8)", padding: "20px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px", zIndex: 10 }}>
+      <div style={{ width: "300px", borderRight: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", backgroundColor: "rgba(15, 23, 42, 0.8)", padding: "20px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px", zIndex: 10 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
           <h3 style={{ margin: 0, color: "#fff", fontSize: "18px" }}>მარშრუტები</h3>
-          <button onClick={handleCancel} style={{ background: "rgba(34, 211, 238, 0.1)", border: "1px solid #22d3ee", color: "#22d3ee", padding: "5px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "12px" }}>
+          <button onClick={handleCancel} style={{ background: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "5px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "12px" }}>
             + ახალი
           </button>
         </div>
 
         {routes.map(r => (
-          <div key={r.id} style={{ backgroundColor: "rgba(255,255,255,0.05)", border: editRouteId === r.id ? "1px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", padding: "15px", display: "flex", flexDirection: "column", gap: "10px", transition: "all 0.3s" }}>
+          <div key={r.id} style={{ backgroundColor: "rgba(255,255,255,0.05)", border: editRouteId === r.id ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", padding: "15px", display: "flex", flexDirection: "column", gap: "10px", transition: "all 0.3s" }}>
             <div style={{ fontWeight: "bold", fontSize: "14px", color: "#fff" }}>{r.name}</div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>
               <span><i className="fa-solid fa-layer-group"></i> {r.category}</span>
@@ -209,7 +209,7 @@ const RoutePlanningDashboard = () => {
               <button onClick={() => handlePreview(r)} style={{ flex: 1, background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "#fff", padding: "6px", borderRadius: "4px", cursor: "pointer" }} title="Preview">
                 <i className="fa-regular fa-eye"></i>
               </button>
-              <button onClick={() => handleEdit(r)} style={{ flex: 1, background: "transparent", border: "1px solid #22d3ee", color: "#22d3ee", padding: "6px", borderRadius: "4px", cursor: "pointer" }} title="Edit">
+              <button onClick={() => handleEdit(r)} style={{ flex: 1, background: "transparent", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "6px", borderRadius: "4px", cursor: "pointer" }} title="Edit">
                 <i className="fa-solid fa-pencil"></i>
               </button>
               <button onClick={() => handleDelete(r.id)} style={{ flex: 1, background: "transparent", border: "1px solid #ef4444", color: "#ef4444", padding: "6px", borderRadius: "4px", cursor: "pointer" }} title="Delete">

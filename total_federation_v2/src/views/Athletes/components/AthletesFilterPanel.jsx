@@ -18,7 +18,7 @@ const AthletesFilterPanel = ({
     width: "100%",
     padding: "8px 10px",
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(34, 211, 238, 0.2)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
     borderRadius: "6px",
     color: "#fff",
     outline: "none",
@@ -30,7 +30,7 @@ const AthletesFilterPanel = ({
     width: "100%",
     padding: "8px 10px",
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(34, 211, 238, 0.2)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
     borderRadius: "6px",
     color: "#fff",
     outline: "none",
@@ -49,7 +49,7 @@ const AthletesFilterPanel = ({
   };
 
   const checkboxStyle = {
-    accentColor: "#22d3ee",
+    accentColor: "var(--color-emerald-core)",
     width: "14px",
     height: "14px",
     cursor: "pointer"
@@ -62,7 +62,7 @@ const AthletesFilterPanel = ({
       right: 0,
       width: "550px",
       backgroundColor: "#161920",
-      border: "1px solid rgba(34, 211, 238, 0.4)",
+      border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
       borderRadius: "12px",
       padding: "20px",
       boxShadow: "0 10px 25px rgba(0, 0, 0, 0.7)",
@@ -72,7 +72,7 @@ const AthletesFilterPanel = ({
       gap: "15px"
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", paddingBottom: "8px" }}>
-        <span style={{ fontWeight: "bold", color: "#22d3ee" }}>🎛️ გაფართოებული ფილტრაცია</span>
+        <span style={{ fontWeight: "bold", color: "var(--color-emerald-core)" }}>🎛️ გაფართოებული ფილტრაცია</span>
         <div style={{ display: "flex", gap: "10px" }}>
           <button 
             onClick={() => setFilters(initialFilters)}
@@ -94,7 +94,7 @@ const AthletesFilterPanel = ({
       <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxHeight: "400px", overflowY: "auto", paddingRight: "5px" }}>
         {/* Section 1: Sport & Status */}
         <div>
-          <div style={{ fontSize: "12px", color: "rgba(34, 211, 238, 0.7)", fontWeight: "bold", marginBottom: "8px", textTransform: "uppercase" }}>
+          <div style={{ fontSize: "12px", color: "color-mix(in oklab, var(--color-emerald-core) 70%, transparent)", fontWeight: "bold", marginBottom: "8px", textTransform: "uppercase" }}>
             სპორტული და იურიდიული სტატუსი
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
@@ -212,7 +212,7 @@ const AthletesFilterPanel = ({
 
         {/* Section 2: Medical & Demographics */}
         <div>
-          <div style={{ fontSize: "12px", color: "rgba(34, 211, 238, 0.7)", fontWeight: "bold", marginBottom: "8px", textTransform: "uppercase", marginTop: "5px" }}>
+          <div style={{ fontSize: "12px", color: "color-mix(in oklab, var(--color-emerald-core) 70%, transparent)", fontWeight: "bold", marginBottom: "8px", textTransform: "uppercase", marginTop: "5px" }}>
             პერსონალური და სამედიცინო მონაცემები
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "10px" }}>

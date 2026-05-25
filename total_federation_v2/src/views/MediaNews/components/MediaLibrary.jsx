@@ -19,7 +19,7 @@ const MediaLibrary = ({
   handleDrop
 }) => {
   const panelStyle = {
-    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)",
+    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
     borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
     overflowY: "auto"
@@ -32,8 +32,8 @@ const MediaLibrary = ({
   };
 
   const focusStyle = (e) => {
-    e.target.style.borderColor = "#22d3ee";
-    e.target.style.boxShadow = "0 0 8px rgba(34, 211, 238, 0.3)";
+    e.target.style.borderColor = "var(--color-emerald-core)";
+    e.target.style.boxShadow = "0 0 8px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
   };
 
   const blurStyle = (e) => {
@@ -42,7 +42,7 @@ const MediaLibrary = ({
   };
 
   const primaryBtnStyle = {
-    backgroundColor: "#22d3ee", color: "#121418", border: "none", padding: "12px 20px",
+    backgroundColor: "var(--color-emerald-core)", color: "#121418", border: "none", padding: "12px 20px",
     borderRadius: "8px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", transition: "all 0.3s"
   };
 
@@ -102,8 +102,8 @@ const MediaLibrary = ({
               ) : (
                 <button
                   onClick={() => setIsCreatingAlbum(true)}
-                  style={{ ...primaryBtnStyle, backgroundColor: "transparent", border: "1px solid #22d3ee", color: "#22d3ee", padding: "6px 12px", fontSize: "13px" }}
-                  onMouseOver={e => e.target.style.backgroundColor = "rgba(34, 211, 238, 0.1)"}
+                  style={{ ...primaryBtnStyle, backgroundColor: "transparent", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "6px 12px", fontSize: "13px" }}
+                  onMouseOver={e => e.target.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"}
                   onMouseOut={e => e.target.style.backgroundColor = "transparent"}
                 >
                   <i className="fa-solid fa-folder-plus"></i> ახალი ალბომი
@@ -135,7 +135,7 @@ const MediaLibrary = ({
                     setSelectedAsset(null);
                   }}
                   style={{
-                    backgroundColor: isActive ? "#22d3ee" : "rgba(255, 255, 255, 0.05)",
+                    backgroundColor: isActive ? "var(--color-emerald-core)" : "rgba(255, 255, 255, 0.05)",
                     color: isActive ? "#121418" : "#fff",
                     border: isActive ? "none" : "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "20px",
@@ -150,7 +150,7 @@ const MediaLibrary = ({
                     whiteSpace: "nowrap"
                   }}
                 >
-                  <i className={`fa-solid ${isActive ? 'fa-folder-open' : 'fa-folder'}`} style={{ color: isActive ? "#121418" : "#22d3ee" }}></i>
+                  <i className={`fa-solid ${isActive ? 'fa-folder-open' : 'fa-folder'}`} style={{ color: isActive ? "#121418" : "var(--color-emerald-core)" }}></i>
                   {name}
                 </button>
               );
@@ -163,7 +163,7 @@ const MediaLibrary = ({
             onDrop={handleDrop}
             onClick={() => document.getElementById('media-library-upload-input').click()}
             style={{
-              border: "2px dashed rgba(34, 211, 238, 0.3)",
+              border: "2px dashed color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
               borderRadius: "12px",
               padding: "30px",
               textAlign: "center",
@@ -172,17 +172,17 @@ const MediaLibrary = ({
               transition: "all 0.3s"
             }}
           >
-            <i className="fa-solid fa-folder-open" style={{ fontSize: "28px", marginBottom: "8px", color: "#22d3ee" }} ></i>
+            <i className="fa-solid fa-folder-open" style={{ fontSize: "28px", marginBottom: "8px", color: "var(--color-emerald-core)" }} ></i>
             <div style={{ fontSize: "14px" }}>Drag-and-drop ზონა მასიური ატვირთვისთვის</div>
             <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)", marginTop: "4px" }}>
-              ატვირთული ფაილები დაჯგუფდება ალბომში: <strong style={{ color: "#22d3ee" }}>{selectedAlbum}</strong>
+              ატვირთული ფაილები დაჯგუფდება ალბომში: <strong style={{ color: "var(--color-emerald-core)" }}>{selectedAlbum}</strong>
             </div>
           </div>
         </div>
 
         <div style={{ ...panelStyle, flex: 1 }}>
           <h3 style={{ margin: "0 0 15px 0", color: "#fff", fontSize: "15px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span>ფაილები ალბომში: <strong style={{ color: "#22d3ee" }}>{selectedAlbum}</strong></span>
+            <span>ფაილები ალბომში: <strong style={{ color: "var(--color-emerald-core)" }}>{selectedAlbum}</strong></span>
             <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{filteredAssets.length} ფაილი</span>
           </h3>
 
@@ -202,11 +202,11 @@ const MediaLibrary = ({
                     borderRadius: "8px",
                     overflow: "hidden",
                     cursor: "pointer",
-                    border: selectedAsset?.id === asset.id ? "2px solid #22d3ee" : "2px solid transparent",
+                    border: selectedAsset?.id === asset.id ? "2px solid var(--color-emerald-core)" : "2px solid transparent",
                     transition: "all 0.3s"
                   }}
-                  onMouseOver={e => e.currentTarget.style.borderColor = selectedAsset?.id === asset.id ? "#22d3ee" : "rgba(34, 211, 238, 0.5)"}
-                  onMouseOut={e => e.currentTarget.style.borderColor = selectedAsset?.id === asset.id ? "#22d3ee" : "transparent"}
+                  onMouseOver={e => e.currentTarget.style.borderColor = selectedAsset?.id === asset.id ? "var(--color-emerald-core)" : "color-mix(in oklab, var(--color-emerald-core) 50%, transparent)"}
+                  onMouseOut={e => e.currentTarget.style.borderColor = selectedAsset?.id === asset.id ? "var(--color-emerald-core)" : "transparent"}
                 >
                   <div style={{ height: "90px", backgroundColor: "rgba(255,255,255,0.05)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {asset.url ? (
@@ -228,7 +228,7 @@ const MediaLibrary = ({
       {selectedAsset && (
         <div style={{ ...panelStyle, flex: 1, minWidth: "250px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h3 style={{ margin: 0, color: "#22d3ee" }}>დეტალები</h3>
+            <h3 style={{ margin: 0, color: "var(--color-emerald-core)" }}>დეტალები</h3>
             <i className="fa-solid fa-xmark" style={{ cursor: "pointer", color: "#fff" }} onClick={() => setSelectedAsset(null)}></i>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
@@ -268,7 +268,7 @@ const MediaLibrary = ({
                 setSelectedAsset({ ...selectedAsset, tags: e.target.value });
               }} onFocus={focusStyle} onBlur={blurStyle} />
             </div>
-            <button style={{ ...primaryBtnStyle, backgroundColor: "transparent", border: "1px solid #22d3ee", color: "#22d3ee" }} onMouseOver={e => { e.target.style.backgroundColor = "rgba(34, 211, 238, 0.1)"; e.target.style.boxShadow = "0 0 10px rgba(34, 211, 238, 0.3)"; }} onMouseOut={e => { e.target.style.backgroundColor = "transparent"; e.target.style.boxShadow = "none"; }} onClick={() => setSelectedAsset(null)}>
+            <button style={{ ...primaryBtnStyle, backgroundColor: "transparent", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)" }} onMouseOver={e => { e.target.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"; e.target.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)"; }} onMouseOut={e => { e.target.style.backgroundColor = "transparent"; e.target.style.boxShadow = "none"; }} onClick={() => setSelectedAsset(null)}>
               <i className="fa-solid fa-floppy-disk"></i> შენახვა
             </button>
           </div>

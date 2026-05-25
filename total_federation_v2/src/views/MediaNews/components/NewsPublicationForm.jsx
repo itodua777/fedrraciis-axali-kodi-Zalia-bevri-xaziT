@@ -2,7 +2,7 @@ import React from 'react';
 
 const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, handleTagKeyDown, removeTag, handleThumbnailChange, handleSubmitNews }) => {
   const panelStyle = {
-    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)",
+    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
     borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
     overflowY: "auto"
@@ -15,8 +15,8 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
   };
 
   const focusStyle = (e) => {
-    e.target.style.borderColor = "#22d3ee";
-    e.target.style.boxShadow = "0 0 8px rgba(34, 211, 238, 0.3)";
+    e.target.style.borderColor = "var(--color-emerald-core)";
+    e.target.style.boxShadow = "0 0 8px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
   };
 
   const blurStyle = (e) => {
@@ -25,14 +25,14 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
   };
 
   const primaryBtnStyle = {
-    backgroundColor: "#22d3ee", color: "#121418", border: "none", padding: "12px 20px",
+    backgroundColor: "var(--color-emerald-core)", color: "#121418", border: "none", padding: "12px 20px",
     borderRadius: "8px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", transition: "all 0.3s"
   };
 
   return (
     <div style={{ ...panelStyle, flex: 1, minWidth: "350px", gap: "25px" }}>
       <div>
-        <h2 style={{ color: "#22d3ee", margin: "0 0 20px 0" }}>სიახლეების პუბლიკაცია</h2>
+        <h2 style={{ color: "var(--color-emerald-core)", margin: "0 0 20px 0" }}>სიახლეების პუბლიკაცია</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
           <div>
             <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>სათაური</label>
@@ -63,18 +63,18 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px" }}>
                 {newsData.tags.map((tag, idx) => (
                   <span key={idx} style={{
-                    backgroundColor: "rgba(34, 211, 238, 0.1)",
-                    border: "1px solid rgba(34, 211, 238, 0.3)",
+                    backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
+                    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
                     borderRadius: "16px",
                     padding: "2px 8px",
                     fontSize: "12px",
-                    color: "#22d3ee",
+                    color: "var(--color-emerald-core)",
                     display: "flex",
                     alignItems: "center",
                     gap: "4px"
                   }}>
                     {tag}
-                    <i className="fa-solid fa-xmark" style={{ cursor: "pointer", fontSize: "10px", color: "rgba(34, 211, 238, 0.7)" }} onClick={() => removeTag(tag)}></i>
+                    <i className="fa-solid fa-xmark" style={{ cursor: "pointer", fontSize: "10px", color: "color-mix(in oklab, var(--color-emerald-core) 70%, transparent)" }} onClick={() => removeTag(tag)}></i>
                   </span>
                 ))}
               </div>
@@ -98,20 +98,20 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
           </div>
           {newsData.status === 'Scheduled' && (
             <div style={{
-              backgroundColor: "rgba(34, 211, 238, 0.05)",
-              border: "1px solid rgba(34, 211, 238, 0.2)",
+              backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 5%, transparent)",
+              border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
               borderRadius: "8px",
               padding: "12px",
               marginTop: "5px"
             }}>
-              <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", color: "#22d3ee", fontWeight: "bold" }}>
+              <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", color: "var(--color-emerald-core)", fontWeight: "bold" }}>
                 <i className="fa-regular fa-clock" style={{ marginRight: "6px" }}></i> პუბლიკაციის დრო
               </label>
               <input
                 type="datetime-local"
                 style={{
                   ...inputStyle,
-                  borderColor: "rgba(34, 211, 238, 0.4)",
+                  borderColor: "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
                   backgroundColor: "rgba(18, 20, 24, 0.8)",
                   color: "#fff"
                 }}
@@ -122,7 +122,7 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
               />
             </div>
           )}
-          <button onClick={handleSubmitNews} style={{ ...primaryBtnStyle, marginTop: "10px" }} onMouseOver={e => e.target.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.5)"} onMouseOut={e => e.target.style.boxShadow = "none"}>
+          <button onClick={handleSubmitNews} style={{ ...primaryBtnStyle, marginTop: "10px" }} onMouseOver={e => e.target.style.boxShadow = "0 0 15px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)"} onMouseOut={e => e.target.style.boxShadow = "none"}>
             <i className="fa-solid fa-paper-plane"></i> ინფორმაციის განთავსება
           </button>
         </div>
@@ -131,18 +131,18 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
       {/* Live Preview Block */}
       <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.1)", paddingTop: "20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-          <h3 style={{ color: "#22d3ee", margin: 0, fontSize: "15px", textTransform: "uppercase", letterSpacing: "1px" }}>
+          <h3 style={{ color: "var(--color-emerald-core)", margin: 0, fontSize: "15px", textTransform: "uppercase", letterSpacing: "1px" }}>
             <i className="fa-solid fa-eye" style={{ marginRight: "6px" }}></i> Live Preview (წინასწარი გადახედვა)
           </h3>
-          <span style={{ fontSize: "11px", backgroundColor: "rgba(34, 211, 238, 0.1)", color: "#22d3ee", padding: "2px 8px", borderRadius: "10px" }}>აქტიურია</span>
+          <span style={{ fontSize: "11px", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", color: "var(--color-emerald-core)", padding: "2px 8px", borderRadius: "10px" }}>აქტიურია</span>
         </div>
 
         <div style={{
           backgroundColor: "rgba(10, 15, 30, 0.8)",
-          border: "1px solid rgba(34, 211, 238, 0.2)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
           borderRadius: "12px",
           overflow: "hidden",
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(34, 211, 238, 0.05)",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 15px color-mix(in oklab, var(--color-emerald-core) 5%, transparent)",
           display: "flex",
           flexDirection: "column"
         }}>
@@ -153,14 +153,14 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
               <div style={{
                 width: "100%",
                 height: "100%",
-                background: "linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(18, 20, 24, 0.8) 100%)",
+                background: "linear-gradient(135deg, color-mix(in oklab, var(--color-emerald-core) 10%, transparent) 0%, rgba(18, 20, 24, 0.8) 100%)",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "rgba(255,255,255,0.2)"
               }}>
-                <i className="fa-solid fa-mountain" style={{ fontSize: "36px", marginBottom: "8px", color: "rgba(34, 211, 238, 0.3)" }}></i>
+                <i className="fa-solid fa-mountain" style={{ fontSize: "36px", marginBottom: "8px", color: "color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}></i>
                 <span style={{ fontSize: "11px" }}>ფოტო არ არის</span>
               </div>
             )}
@@ -169,7 +169,7 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
               position: "absolute",
               top: "12px",
               left: "12px",
-              backgroundColor: newsData.category === 'სიახლე' ? "#22d3ee" :
+              backgroundColor: newsData.category === 'სიახლე' ? "var(--color-emerald-core)" :
                                newsData.category === 'ექსპედიცია' ? "#f59e0b" :
                                newsData.category === 'განცხადება' ? "#ef4444" : "#a855f7",
               color: newsData.category === 'განცხადება' || newsData.category === 'ექსპედიცია' ? "#fff" : "#121418",
@@ -241,7 +241,7 @@ const NewsPublicationForm = ({ newsData, setNewsData, tagInput, setTagInput, han
                 {newsData.tags.map((tag, idx) => (
                   <span key={idx} style={{
                     fontSize: "11px",
-                    color: "rgba(34, 211, 238, 0.8)",
+                    color: "color-mix(in oklab, var(--color-emerald-core) 80%, transparent)",
                     marginRight: "4px"
                   }}>
                     {tag}

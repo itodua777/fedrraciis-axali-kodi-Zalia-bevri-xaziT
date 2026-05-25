@@ -23,7 +23,7 @@ const Timeline = ({ athlete, onUpdateAthlete }) => {
         return { color: '#34D399', label: '🥇 სპორტული თანრიგი', bulletBg: '#34D399', glow: '0 0 8px #34D399' };
       case 'expedition':
       default:
-        return { color: '#22D3EE', label: '🧗 ექსპედიცია', bulletBg: '#22D3EE', glow: '0 0 8px #22D3EE' };
+        return { color: 'var(--color-emerald-core)', label: '🧗 ექსპედიცია', bulletBg: 'var(--color-emerald-core)', glow: '0 0 8px var(--color-emerald-core)' };
     }
   };
 
@@ -38,9 +38,9 @@ const Timeline = ({ athlete, onUpdateAthlete }) => {
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
             style={{
-              backgroundColor: "rgba(34, 211, 238, 0.1)",
-              border: "1px solid #22d3ee",
-              color: "#22d3ee",
+              backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
+              border: "1px solid var(--color-emerald-core)",
+              color: "var(--color-emerald-core)",
               padding: "4px 10px",
               borderRadius: "6px",
               fontSize: "12px",
@@ -48,8 +48,8 @@ const Timeline = ({ athlete, onUpdateAthlete }) => {
               fontWeight: "bold",
               transition: "all 0.2s"
             }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.2)"; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)"; }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)"; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"; }}
           >
             {showAddForm ? 'გაუქმება' : '+ ახალი აქტივობის დამატება'}
           </button>
@@ -74,7 +74,7 @@ const Timeline = ({ athlete, onUpdateAthlete }) => {
           top: "10px",
           bottom: "10px",
           width: "2px",
-          backgroundColor: "rgba(34, 211, 238, 0.15)"
+          backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)"
         }} />
 
         {sortedActivities.map((act, i) => {

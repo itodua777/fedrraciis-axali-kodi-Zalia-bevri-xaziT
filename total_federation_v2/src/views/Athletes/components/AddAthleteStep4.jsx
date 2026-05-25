@@ -44,8 +44,8 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
         onClick={() => document.getElementById(inputId).click()}
         onMouseEnter={e => {
           if (!isUploaded) {
-            e.currentTarget.style.borderColor = "#22d3ee";
-            e.currentTarget.style.boxShadow = "0 0 10px rgba(34, 211, 238, 0.2)";
+            e.currentTarget.style.borderColor = "var(--color-emerald-core)";
+            e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)";
           }
         }}
         onMouseLeave={e => {

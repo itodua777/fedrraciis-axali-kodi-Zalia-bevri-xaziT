@@ -108,7 +108,7 @@ const AccountingModal = ({
   };
 
   const modalContentStyle = {
-    backgroundColor: "#1e293b", border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "#1e293b", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     borderRadius: "16px", padding: "30px", width: "100%", maxWidth: "1000px",
     boxShadow: "0 10px 25px rgba(0,0,0,0.5)", maxHeight: "85vh", overflowY: "auto"
   };
@@ -123,7 +123,7 @@ const AccountingModal = ({
       <div style={modalContentStyle}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
           <h3 style={{ margin: 0, color: "#fff", display: "flex", alignItems: "center", gap: "10px" }}>
-            <i className="fa-solid fa-file-invoice-dollar" style={{ color: "#22d3ee" }}></i>
+            <i className="fa-solid fa-file-invoice-dollar" style={{ color: "var(--color-emerald-core)" }}></i>
             საწყობის ბუღალტერია & ჩამოწერის მოდული
           </h3>
           <button 
@@ -204,8 +204,8 @@ const AccountingModal = ({
                 justifyContent: "space-between", 
                 alignItems: "center", 
                 padding: "8px 12px", 
-                backgroundColor: "rgba(34,211,238,0.06)", 
-                border: "1px solid rgba(34,211,238,0.3)", 
+                backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 6%, transparent)", 
+                border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", 
                 borderRadius: "8px",
                 height: "37px",
                 boxSizing: "border-box"
@@ -264,7 +264,7 @@ const AccountingModal = ({
                           setPrePrintAthleteSearch('');
                         }}
                         style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)"}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"}
                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                       >
                         <img src={ath.photo || "https://i.pravatar.cc/150"} style={{ width: "20px", height: "20px", borderRadius: "50%" }} alt="" />
@@ -283,7 +283,7 @@ const AccountingModal = ({
           <button 
             onClick={() => setIsDataGenerated(true)}
             style={{ 
-              backgroundColor: "#22d3ee", 
+              backgroundColor: "var(--color-emerald-core)", 
               color: "#0f172a", 
               border: "none", 
               padding: "9px 20px", 
@@ -298,7 +298,7 @@ const AccountingModal = ({
               transition: "all 0.3s" 
             }}
             onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#06b6d4"; }}
-            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#22d3ee"; }}
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "var(--color-emerald-core)"; }}
           >
             <i className="fa-solid fa-magnifying-glass"></i> მოძებნა
           </button>
@@ -307,7 +307,7 @@ const AccountingModal = ({
         {isDataGenerated ? (
           <div>
             <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "10px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
-              <i className="fa-solid fa-table-list" style={{ color: "#22d3ee" }}></i>
+              <i className="fa-solid fa-table-list" style={{ color: "var(--color-emerald-core)" }}></i>
               ნაპოვნი მონაცემების ცხრილი (Live Grid View):
             </div>
 
@@ -334,7 +334,7 @@ const AccountingModal = ({
                 <tbody>
                   {liveGridData.map(row => (
                     <tr key={row.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.03)", height: "35px" }}>
-                      <td style={{ padding: "8px", color: row.type === 'disposal' ? "#f87171" : "#22d3ee", fontWeight: "bold" }}>{row.code}</td>
+                      <td style={{ padding: "8px", color: row.type === 'disposal' ? "#f87171" : "var(--color-emerald-core)", fontWeight: "bold" }}>{row.code}</td>
                       <td style={{ padding: "8px" }}>{row.name.replace('\n', ' ')}</td>
                       <td style={{ padding: "8px", textAlign: "center" }}>{row.qty} ცალი</td>
                       <td style={{ padding: "8px", color: row.type === 'disposal' ? "#d97706" : "#10b981" }}>{row.statusOrReason}</td>
@@ -403,9 +403,9 @@ const AccountingModal = ({
                 onClick={() => setActivePrintDoc('disposal')}
                 disabled={prePrintFilteredDisposals.length === 0}
                 style={{ 
-                  backgroundColor: "rgba(34, 211, 238, 0.1)", 
-                  border: "1px solid rgba(34, 211, 238, 0.3)", 
-                  color: prePrintFilteredDisposals.length === 0 ? "rgba(34, 211, 238, 0.2)" : "#22d3ee", 
+                  backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", 
+                  border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", 
+                  color: prePrintFilteredDisposals.length === 0 ? "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" : "var(--color-emerald-core)", 
                   padding: "6px 12px", 
                   borderRadius: "6px", 
                   cursor: prePrintFilteredDisposals.length === 0 ? "not-allowed" : "pointer",
@@ -418,10 +418,10 @@ const AccountingModal = ({
                 }}
                 onMouseOver={(e) => { 
                   if (prePrintFilteredDisposals.length > 0) {
-                    e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.2)"; 
+                    e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)"; 
                   }
                 }}
-                onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)"; }}
+                onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"; }}
               >
                 <i className="fa-solid fa-print"></i> 🖨️ ჩამოწერის აქტის ბეჭდვა
               </button>

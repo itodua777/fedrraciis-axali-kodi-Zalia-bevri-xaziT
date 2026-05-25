@@ -9,7 +9,7 @@ const IncidentsDashboard = ({ onViewChange, incidents = [], athletes = [] }) => 
   };
 
   const topCardStyle = {
-    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)",
+    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
     borderRadius: "12px", padding: "20px", display: "flex", alignItems: "center", gap: "15px", flex: 1,
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)"
   };
@@ -30,7 +30,7 @@ const IncidentsDashboard = ({ onViewChange, incidents = [], athletes = [] }) => 
 
   return (
     <div style={containerStyle}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "rgba(15, 23, 42, 0.4)", padding: "20px", borderRadius: "12px", border: "1px solid rgba(34, 211, 238, 0.1)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "rgba(15, 23, 42, 0.4)", padding: "20px", borderRadius: "12px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <div style={{ width: "40px", height: "40px", backgroundColor: "#f59e0b", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <i className="fa-solid fa-shield-halved" style={{ color: "#000", fontSize: "20px" }}></i>
@@ -86,7 +86,7 @@ const IncidentsDashboard = ({ onViewChange, incidents = [], athletes = [] }) => 
         </div>
       </div>
 
-      <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)", borderRadius: "12px", overflow: "hidden" }}>
+      <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", borderRadius: "12px", overflow: "hidden" }}>
         <div style={{ padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
           <h3 style={{ margin: 0, color: "#fff", fontSize: "16px" }}>инциდენტების რეესტრი</h3>
           <div style={{ display: "flex", gap: "10px" }}>
@@ -128,7 +128,7 @@ const IncidentsDashboard = ({ onViewChange, incidents = [], athletes = [] }) => 
                     </span>
                   </td>
                   <td style={{ padding: "15px", color: "#e2e8f0" }}>{incident.status}</td>
-                  <td style={{ padding: "15px", textAlign: "center", color: "rgba(34, 211, 238, 0.8)", cursor: "pointer" }}>
+                  <td style={{ padding: "15px", textAlign: "center", color: "color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", cursor: "pointer" }}>
                     <i className="fa-solid fa-paperclip"></i> {incident.attachments?.length || 0}
                   </td>
                 </tr>

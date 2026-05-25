@@ -42,7 +42,7 @@ const BrandSearchIcon = ({ isFocused, className, style, size = 16 }) => {
         cx="12" 
         cy="12" 
         r="2" 
-        fill="#22d3ee" 
+        fill="var(--color-emerald-core)" 
         filter={isFocused ? `url(#${filterId}-focus)` : `url(#${filterId}-blur)`}
         style={{ transition: "all 0.2s" }}
       />

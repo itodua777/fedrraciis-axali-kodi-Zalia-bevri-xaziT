@@ -63,8 +63,8 @@ const FullscreenBioMedical = ({
             <span style={{
               fontSize: "12px",
               fontWeight: "600",
-              color: athlete.isFederationMember ? "#22d3ee" : "#64748b",
-              backgroundColor: athlete.isFederationMember ? "rgba(34, 211, 238, 0.1)" : "rgba(100, 116, 139, 0.1)",
+              color: athlete.isFederationMember ? "var(--color-emerald-core)" : "#64748b",
+              backgroundColor: athlete.isFederationMember ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "rgba(100, 116, 139, 0.1)",
               padding: "3px 10px",
               borderRadius: "6px"
             }}>
@@ -83,7 +83,7 @@ const FullscreenBioMedical = ({
                   value={editForm.phone || ''}
                   onChange={e => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
                   style={inputStyle}
-                  onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+                  onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
                 />
               </div>
@@ -95,7 +95,7 @@ const FullscreenBioMedical = ({
                   value={editForm.email || ''}
                   onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
                   style={inputStyle}
-                  onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+                  onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
                 />
               </div>
@@ -105,13 +105,13 @@ const FullscreenBioMedical = ({
               <div style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "13px", color: "#94a3b8", marginTop: "8px" }}>
                 {phoneVal && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <i className="fa-solid fa-phone" style={{ color: "#22d3ee", width: "16px", textAlign: "center" }}></i>
+                    <i className="fa-solid fa-phone" style={{ color: "var(--color-emerald-core)", width: "16px", textAlign: "center" }}></i>
                     <span>{phoneVal}</span>
                   </div>
                 )}
                 {emailVal && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <i className="fa-solid fa-envelope" style={{ color: "#22d3ee", width: "16px", textAlign: "center" }}></i>
+                    <i className="fa-solid fa-envelope" style={{ color: "var(--color-emerald-core)", width: "16px", textAlign: "center" }}></i>
                     <span>{emailVal}</span>
                   </div>
                 )}
@@ -130,7 +130,7 @@ const FullscreenBioMedical = ({
         paddingLeft: "24px",
         position: "relative"
       }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           🩸 ფიზიკური და სამედიცინო მატრიცა
         </h4>
 
@@ -147,7 +147,7 @@ const FullscreenBioMedical = ({
                     value={editForm.height || ''}
                     onChange={e => setEditForm(prev => ({ ...prev, height: e.target.value }))}
                     style={inputStyle}
-                    onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+                    onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
                   />
                   <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>სმ</span>
@@ -158,7 +158,7 @@ const FullscreenBioMedical = ({
                     value={editForm.weight || ''}
                     onChange={e => setEditForm(prev => ({ ...prev, weight: e.target.value }))}
                     style={inputStyle}
-                    onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+                    onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
                   />
                   <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>კგ</span>
@@ -171,7 +171,7 @@ const FullscreenBioMedical = ({
                   value={editForm.bloodType || ''}
                   onChange={e => setEditForm(prev => ({ ...prev, bloodType: e.target.value }))}
                   style={{ ...inputStyle, cursor: isDeceased ? "not-allowed" : "pointer" }}
-                  onFocus={e => { if (!isDeceased) e.target.style.borderColor = '#22d3ee'; }}
+                  onFocus={e => { if (!isDeceased) e.target.style.borderColor = 'var(--color-emerald-core)'; }}
                   onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
                 >
                   <option value="">აირჩიეთ</option>
@@ -223,7 +223,7 @@ const FullscreenBioMedical = ({
                 onChange={e => setEditForm(prev => ({ ...prev, allergies: e.target.value }))}
                 style={inputStyle}
                 placeholder="მაგ: თხილის ალერგია"
-                onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+                onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
                 onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
               />
             </div>

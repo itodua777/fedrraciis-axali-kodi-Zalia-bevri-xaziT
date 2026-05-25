@@ -264,7 +264,7 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
         borderRadius: "12px",
         padding: "24px"
       }}>
-        <h3 style={{ margin: "0 0 20px 0", color: "#22d3ee", fontSize: "16px", textShadow: "0 0 8px rgba(34, 211, 238, 0.2)" }}>
+        <h3 style={{ margin: "0 0 20px 0", color: "var(--color-emerald-core)", fontSize: "16px", textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" }}>
           <i className="fa-solid fa-user-plus" style={{ marginRight: "8px" }}></i>
           ახალი საშტატო ერთეულის დამატება
         </h3>
@@ -284,7 +284,7 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
               <div style={{
                 width: "100px",
                 height: "100px",
-                border: "2px dashed rgba(34, 211, 238, 0.4)",
+                border: "2px dashed color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
                 borderRadius: "50%",
                 display: "flex",
                 alignItems: "center",
@@ -292,7 +292,7 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
                 position: "relative",
                 overflow: "hidden",
                 cursor: "pointer",
-                backgroundColor: "rgba(34, 211, 238, 0.02)"
+                backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 2%, transparent)"
               }}>
                 {!isCameraOpen && <input type="file" accept="image/*" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0, cursor: "pointer", zIndex: 10 }} onChange={handlePhotoUpload} />}
                 {isCameraOpen ? (
@@ -300,7 +300,7 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
                 ) : formData.photoPreview ? (
                   <img src={formData.photoPreview} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar Preview" />
                 ) : (
-                  <div style={{ textAlign: "center", color: "rgba(34, 211, 238, 0.6)" }}>
+                  <div style={{ textAlign: "center", color: "color-mix(in oklab, var(--color-emerald-core) 60%, transparent)" }}>
                     <i className="fa-solid fa-image" style={{ fontSize: "20px", marginBottom: "4px" }}></i>
                     <div style={{ fontSize: "10px" }}>ატვირთვა</div>
                   </div>
@@ -308,12 +308,12 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
               </div>
 
               {!isCameraOpen ? (
-                <button type="button" onClick={startCamera} style={{ background: "rgba(34, 211, 238, 0.1)", border: "1px solid rgba(34, 211, 238, 0.4)", color: "#22d3ee", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "11px", display: "flex", alignItems: "center", gap: "5px" }}>
+                <button type="button" onClick={startCamera} style={{ background: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)", color: "var(--color-emerald-core)", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "11px", display: "flex", alignItems: "center", gap: "5px" }}>
                   <i className="fa-solid fa-camera"></i> კამერა
                 </button>
               ) : (
                 <div style={{ display: "flex", gap: "5px" }}>
-                  <button type="button" onClick={capturePhoto} style={{ background: "#22d3ee", border: "none", color: "#121418", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>
+                  <button type="button" onClick={capturePhoto} style={{ background: "var(--color-emerald-core)", border: "none", color: "#121418", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" }}>
                     გადაღება
                   </button>
                   <button type="button" onClick={stopCamera} style={{ background: "transparent", border: "1px solid #ef4444", color: "#ef4444", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "11px" }}>
@@ -384,22 +384,22 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
             borderTop: "1px solid rgba(255, 255, 255, 0.05)",
             paddingTop: "20px"
           }}>
-            <label style={{ ...labelStyle, display: "block", marginBottom: "12px", color: "#22d3ee" }}>
+            <label style={{ ...labelStyle, display: "block", marginBottom: "12px", color: "var(--color-emerald-core)" }}>
               🔒 დაშვების უფლებების მატრიცა (ACL Matrix)
             </label>
             <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
               <label style={checkboxLabelStyle}>
-                <input type="checkbox" checked={formData.read} onChange={() => handleCheckboxChange('read')} style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "#22d3ee" }} />
+                <input type="checkbox" checked={formData.read} onChange={() => handleCheckboxChange('read')} style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "var(--color-emerald-core)" }} />
                 დანახვა (Read)
               </label>
 
               <label style={checkboxLabelStyle}>
-                <input type="checkbox" checked={formData.write} onChange={() => handleCheckboxChange('write')} style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "#22d3ee" }} />
+                <input type="checkbox" checked={formData.write} onChange={() => handleCheckboxChange('write')} style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "var(--color-emerald-core)" }} />
                 რედაქტირება (Write)
               </label>
 
               <label style={checkboxLabelStyle}>
-                <input type="checkbox" checked={formData.delete} onChange={() => handleCheckboxChange('delete')} style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "#22d3ee" }} />
+                <input type="checkbox" checked={formData.delete} onChange={() => handleCheckboxChange('delete')} style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "var(--color-emerald-core)" }} />
                 წაშლა (Delete)
               </label>
             </div>
@@ -408,14 +408,14 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
           {/* Submit */}
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
             <button type="submit" style={{
-              backgroundColor: "#22d3ee",
+              backgroundColor: "var(--color-emerald-core)",
               color: "#121418",
               border: "none",
               padding: "12px 24px",
               borderRadius: "8px",
               fontWeight: "bold",
               cursor: "pointer",
-              boxShadow: "0 0 15px rgba(34, 211, 238, 0.3)",
+              boxShadow: "0 0 15px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
               display: "flex",
               alignItems: "center",
               gap: "8px",
@@ -455,7 +455,7 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
               <tr key={member.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", transition: "background-color 0.2s" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.02)"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
                 <td style={{ padding: "12px 8px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <img src={member.photo} alt={member.firstName} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(34, 211, 238, 0.4)" }} />
+                    <img src={member.photo} alt={member.firstName} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)" }} />
                     <div>
                       <div style={{ color: "#fff", fontWeight: "500", fontSize: "14px" }}>{member.firstName} {member.lastName}</div>
                       {member.bio && <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", marginTop: "2px" }}>{member.bio}</div>}
@@ -463,7 +463,7 @@ export const StaffRegistry: React.FC<StaffRegistryProps> = () => {
                   </div>
                 </td>
                 <td style={{ padding: "12px 8px" }}>
-                  <span style={{ fontSize: "12px", backgroundColor: "rgba(34, 211, 238, 0.1)", color: "#22d3ee", padding: "4px 8px", borderRadius: "6px", border: "1px solid rgba(34, 211, 238, 0.2)" }}>
+                  <span style={{ fontSize: "12px", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", color: "var(--color-emerald-core)", padding: "4px 8px", borderRadius: "6px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" }}>
                     {ROLE_MAP[member.role] || member.role}
                   </span>
                 </td>

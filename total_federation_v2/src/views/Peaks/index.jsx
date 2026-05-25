@@ -145,7 +145,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
       
       filteredPeaks.forEach(peak => {
         if (peak.lat && peak.lng) {
-          const color = peak.isBorderZone ? '#f59e0b' : '#22d3ee';
+          const color = peak.isBorderZone ? '#f59e0b' : 'var(--color-emerald-core)';
           const markerHtml = `<div style="width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 20px solid ${color}; filter: drop-shadow(0 0 5px ${color});"></div>`;
           const icon = L.divIcon({ html: markerHtml, className: 'custom-peak-icon', iconSize: [20, 20], iconAnchor: [10, 20] });
           const marker = L.marker([peak.lat, peak.lng], { icon }).addTo(mapInstanceRef.current);
@@ -205,7 +205,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
         backgroundColor: "rgba(13, 15, 18, 0.85)",
         backdropFilter: "blur(12px)",
         borderRadius: "12px",
-        border: "1px solid rgba(34, 211, 238, 0.2)",
+        border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
         display: "flex",
         flexDirection: "column",
         padding: "15px",
@@ -215,15 +215,15 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
         width: "300px",
         backgroundColor: "rgba(15, 23, 42, 0.6)",
         borderRadius: "12px",
-        border: "1px solid rgba(34, 211, 238, 0.2)",
+        border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
         display: "flex",
         flexDirection: "column",
         padding: "15px",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)"
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-          <h3 style={{ margin: 0, color: "#22d3ee", textShadow: "0 0 10px rgba(34, 211, 238, 0.5)" }}>მწვერვალები</h3>
-          <button onClick={() => { setIsAdding(true); setSelectedPeak(null); }} style={{ background: "#22d3ee", color: "#121418", border: "none", padding: "6px 12px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 0 15px rgba(34, 211, 238, 0.5)" }}>
+          <h3 style={{ margin: 0, color: "var(--color-emerald-core)", textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)" }}>მწვერვალები</h3>
+          <button onClick={() => { setIsAdding(true); setSelectedPeak(null); }} style={{ background: "var(--color-emerald-core)", color: "#121418", border: "none", padding: "6px 12px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 0 15px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)" }}>
             <i className="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -240,7 +240,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                 width: "100%",
                 padding: "8px 12px 8px 32px",
                 backgroundColor: "rgba(0, 0, 0, 0.3)",
-                border: "1px solid rgba(34, 211, 238, 0.2)",
+                border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
                 borderRadius: "6px",
                 color: "#fff",
                 fontSize: "13px",
@@ -294,7 +294,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
         
         <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
           {filteredPeaks.map(p => (
-            <div key={p.id} onClick={() => { setSelectedPeak(p); setIsAdding(false); }} style={{ padding: "10px", backgroundColor: selectedPeak?.id === p.id ? "rgba(34, 211, 238, 0.1)" : "rgba(255,255,255,0.05)", border: `1px solid ${selectedPeak?.id === p.id ? '#22d3ee' : 'transparent'}`, borderRadius: "8px", cursor: "pointer", transition: "all 0.3s" }}>
+            <div key={p.id} onClick={() => { setSelectedPeak(p); setIsAdding(false); }} style={{ padding: "10px", backgroundColor: selectedPeak?.id === p.id ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "rgba(255,255,255,0.05)", border: `1px solid ${selectedPeak?.id === p.id ? 'var(--color-emerald-core)' : 'transparent'}`, borderRadius: "8px", cursor: "pointer", transition: "all 0.3s" }}>
               <div style={{ fontWeight: "bold", color: "#fff" }}>{p.name} {p.isBorderZone && <i className="fa-solid fa-shield-halved" style={{ color: "#f59e0b", fontSize: "10px", marginLeft: "5px" }}></i>}</div>
               <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>{p.height} მ | {p.continent}</div>
             </div>
@@ -306,10 +306,10 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "15px", position: "relative" }}>
         {!isMapFullscreen && (
           <div style={{ display: "flex", gap: "10px", position: "absolute", top: "10px", left: "10px", zIndex: 1000 }}>
-            <button onClick={() => setViewMode('map')} style={{ padding: "8px 16px", backgroundColor: viewMode === 'map' ? "#22d3ee" : "rgba(15, 23, 42, 0.8)", color: viewMode === 'map' ? "#121418" : "#fff", border: "1px solid #22d3ee", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", transition: "all 0.3s" }}>
+            <button onClick={() => setViewMode('map')} style={{ padding: "8px 16px", backgroundColor: viewMode === 'map' ? "var(--color-emerald-core)" : "rgba(15, 23, 42, 0.8)", color: viewMode === 'map' ? "#121418" : "#fff", border: "1px solid var(--color-emerald-core)", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", transition: "all 0.3s" }}>
               <i className="fa-solid fa-map"></i> რუკა
             </button>
-            <button onClick={() => setViewMode('table')} style={{ padding: "8px 16px", backgroundColor: viewMode === 'table' ? "#22d3ee" : "rgba(15, 23, 42, 0.8)", color: viewMode === 'table' ? "#121418" : "#fff", border: "1px solid #22d3ee", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", transition: "all 0.3s" }}>
+            <button onClick={() => setViewMode('table')} style={{ padding: "8px 16px", backgroundColor: viewMode === 'table' ? "var(--color-emerald-core)" : "rgba(15, 23, 42, 0.8)", color: viewMode === 'table' ? "#121418" : "#fff", border: "1px solid var(--color-emerald-core)", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", transition: "all 0.3s" }}>
               <i className="fa-solid fa-table"></i> ცხრილი
             </button>
           </div>
@@ -334,7 +334,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
               flex: 1,
               borderRadius: "12px",
               overflow: "hidden",
-              border: "1px solid rgba(34, 211, 238, 0.2)",
+              border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
               position: "relative"
             }}
@@ -350,7 +350,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                 backgroundColor: "rgba(13, 15, 18, 0.85)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
-                borderBottom: "1px solid rgba(34, 211, 238, 0.2)",
+                borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -362,7 +362,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                   onClick={() => setIsMapFullscreen(false)}
                   style={{
                     background: "rgba(15, 23, 42, 0.9)",
-                    border: "1px solid rgba(34, 211, 238, 0.4)",
+                    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
                     color: "#e2e8f0",
                     padding: "8px 16px",
                     borderRadius: "8px",
@@ -374,13 +374,13 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                     gap: "8px",
                     transition: "all 0.3s"
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.color = "#22d3ee"; e.currentTarget.style.borderColor = "#22d3ee"; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = "#e2e8f0"; e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.4)"; }}
+                  onMouseEnter={e => { e.currentTarget.style.color = "var(--color-emerald-core)"; e.currentTarget.style.borderColor = "var(--color-emerald-core)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = "#e2e8f0"; e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)"; }}
                 >
                   <i className="fa-solid fa-compress"></i> პატარა ფანჯარაში დაბრუნება
                 </button>
 
-                <div style={{ fontSize: "16px", fontWeight: "bold", color: "#fff", textShadow: "0 0 10px rgba(34, 211, 238, 0.3)" }}>
+                <div style={{ fontSize: "16px", fontWeight: "bold", color: "#fff", textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>
                   მწვერვალების გეო-რეესტრი
                 </div>
 
@@ -418,7 +418,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                   right: "12px",
                   zIndex: 1000,
                   backgroundColor: "rgba(15, 23, 42, 0.9)",
-                  border: "1px solid rgba(34, 211, 238, 0.4)",
+                  border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
                   padding: "10px",
                   borderRadius: "8px",
                   color: "rgba(255, 255, 255, 0.7)",
@@ -430,8 +430,8 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                   justifyContent: "center"
                 }}
                 title="რუკის მთელ ეკრანზე გაშლა"
-                onMouseEnter={e => { e.currentTarget.style.color = "#22d3ee"; e.currentTarget.style.borderColor = "#22d3ee"; }}
-                onMouseLeave={e => { e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"; e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.4)"; }}
+                onMouseEnter={e => { e.currentTarget.style.color = "var(--color-emerald-core)"; e.currentTarget.style.borderColor = "var(--color-emerald-core)"; }}
+                onMouseLeave={e => { e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"; e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)"; }}
               >
                 <i className="fa-solid fa-expand" style={{ fontSize: "14px" }}></i>
               </button>
@@ -442,19 +442,19 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
         )}
         
         {viewMode === 'table' && (
-          <div style={{ flex: 1, backgroundColor: "rgba(15, 23, 42, 0.6)", borderRadius: "12px", border: "1px solid rgba(34, 211, 238, 0.2)", padding: "20px", overflowY: "auto", marginTop: "50px", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)" }}>
+          <div style={{ flex: 1, backgroundColor: "rgba(15, 23, 42, 0.6)", borderRadius: "12px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", padding: "20px", overflowY: "auto", marginTop: "50px", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)" }}>
              <table style={{ width: "100%", borderCollapse: "collapse" }}>
                <thead>
                  <tr>
-                   <th style={{ textAlign: "left", padding: "10px", color: "#22d3ee", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", fontSize: "14px", textTransform: "uppercase" }}>სახელი</th>
-                   <th style={{ textAlign: "left", padding: "10px", color: "#22d3ee", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", fontSize: "14px", textTransform: "uppercase" }}>სიმაღლე</th>
-                   <th style={{ textAlign: "left", padding: "10px", color: "#22d3ee", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", fontSize: "14px", textTransform: "uppercase" }}>სისტემა</th>
-                   <th style={{ textAlign: "left", padding: "10px", color: "#22d3ee", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", fontSize: "14px", textTransform: "uppercase" }}>სირთულე</th>
+                   <th style={{ textAlign: "left", padding: "10px", color: "var(--color-emerald-core)", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", fontSize: "14px", textTransform: "uppercase" }}>სახელი</th>
+                   <th style={{ textAlign: "left", padding: "10px", color: "var(--color-emerald-core)", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", fontSize: "14px", textTransform: "uppercase" }}>სიმაღლე</th>
+                   <th style={{ textAlign: "left", padding: "10px", color: "var(--color-emerald-core)", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", fontSize: "14px", textTransform: "uppercase" }}>სისტემა</th>
+                   <th style={{ textAlign: "left", padding: "10px", color: "var(--color-emerald-core)", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", fontSize: "14px", textTransform: "uppercase" }}>სირთულე</th>
                  </tr>
                </thead>
                <tbody>
                  {peaks.map(p => (
-                   <tr key={p.id} onClick={() => { setSelectedPeak(p); setIsAdding(false); }} style={{ cursor: "pointer", backgroundColor: selectedPeak?.id === p.id ? "rgba(34, 211, 238, 0.1)" : "transparent", transition: "all 0.2s" }}>
+                   <tr key={p.id} onClick={() => { setSelectedPeak(p); setIsAdding(false); }} style={{ cursor: "pointer", backgroundColor: selectedPeak?.id === p.id ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "transparent", transition: "all 0.2s" }}>
                      <td style={{ padding: "15px 10px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>{p.name} {p.isBorderZone && <i className="fa-solid fa-shield-halved" style={{ color: "#f59e0b", marginLeft: "5px" }}></i>}</td>
                      <td style={{ padding: "15px 10px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>{p.height} მ</td>
                      <td style={{ padding: "15px 10px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>{p.system}</td>
@@ -479,7 +479,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
           borderRadius: "12px",
-          border: "1px solid rgba(34, 211, 238, 0.2)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
           padding: "20px",
           overflowY: "auto",
           display: "flex",
@@ -490,7 +490,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
           width: "400px",
           backgroundColor: "rgba(15, 23, 42, 0.6)",
           borderRadius: "12px",
-          border: "1px solid rgba(34, 211, 238, 0.2)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
           padding: "20px",
           overflowY: "auto",
           display: "flex",
@@ -499,7 +499,7 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
         }}>
           
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h3 style={{ margin: 0, color: "#22d3ee", textShadow: "0 0 10px rgba(34, 211, 238, 0.3)" }}>{isAdding ? "ახალი მწვერვალი" : "მწვერვალის პროფილი"}</h3>
+            <h3 style={{ margin: 0, color: "var(--color-emerald-core)", textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>{isAdding ? "ახალი მწვერვალი" : "მწვერვალის პროფილი"}</h3>
             <i className="fa-solid fa-xmark" style={{ cursor: "pointer", color: "#fff", fontSize: "18px" }} onClick={() => { setSelectedPeak(null); setIsAdding(false); }}></i>
           </div>
 
@@ -515,11 +515,11 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
           ) : (
             selectedPeak && (
               <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                <div style={{ position: "relative", width: "100%", height: "200px", borderRadius: "12px", overflow: "hidden", border: `2px solid ${selectedPeak.isBorderZone ? '#f59e0b' : '#22d3ee'}`, boxShadow: `0 0 15px ${selectedPeak.isBorderZone ? 'rgba(245, 158, 11, 0.3)' : 'rgba(34, 211, 238, 0.3)'}` }}>
+                <div style={{ position: "relative", width: "100%", height: "200px", borderRadius: "12px", overflow: "hidden", border: `2px solid ${selectedPeak.isBorderZone ? '#f59e0b' : 'var(--color-emerald-core)'}`, boxShadow: `0 0 15px ${selectedPeak.isBorderZone ? 'rgba(245, 158, 11, 0.3)' : 'color-mix(in oklab, var(--color-emerald-core) 30%, transparent)'}` }}>
                   <img src={selectedPeak.photo || "https://via.placeholder.com/400x200"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div style={{ position: "absolute", bottom: 0, left: 0, width: "100%", padding: "40px 20px 20px 20px", background: "linear-gradient(transparent, rgba(0,0,0,0.9))", display: "flex", flexDirection: "column" }}>
                     <h2 style={{ margin: 0, color: "#fff", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{selectedPeak.name}</h2>
-                    <div style={{ color: "#22d3ee", fontWeight: "bold", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{selectedPeak.height} მ</div>
+                    <div style={{ color: "var(--color-emerald-core)", fontWeight: "bold", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{selectedPeak.height} მ</div>
                   </div>
                 </div>
 
@@ -551,17 +551,17 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                   </div>
                   <div style={{ backgroundColor: "rgba(0,0,0,0.3)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                     <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "4px" }}>სირთულე</div>
-                    <div style={{ color: "#22d3ee", fontSize: "16px", fontWeight: "bold", textShadow: "0 0 5px rgba(34, 211, 238, 0.4)" }}>{selectedPeak.difficulty}</div>
+                    <div style={{ color: "var(--color-emerald-core)", fontSize: "16px", fontWeight: "bold", textShadow: "0 0 5px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)" }}>{selectedPeak.difficulty}</div>
                   </div>
                 </div>
 
                 <div style={{ backgroundColor: "rgba(0,0,0,0.2)", borderRadius: "8px", padding: "15px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                  <h4 style={{ color: "#22d3ee", margin: "0 0 15px 0", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", paddingBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <h4 style={{ color: "var(--color-emerald-core)", margin: "0 0 15px 0", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", paddingBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
                     <i className="fa-solid fa-book-open"></i> ისტორიული ანალები
                   </h4>
                   <div style={{ marginBottom: "15px" }}>
                     <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "5px" }}>პირველი ასვლა</div>
-                    <p style={{ fontSize: "14px", color: "#fff", margin: 0, fontWeight: "500", backgroundColor: "rgba(255,255,255,0.05)", padding: "10px", borderRadius: "6px", borderLeft: "3px solid #22d3ee" }}>
+                    <p style={{ fontSize: "14px", color: "#fff", margin: 0, fontWeight: "500", backgroundColor: "rgba(255,255,255,0.05)", padding: "10px", borderRadius: "6px", borderLeft: "3px solid var(--color-emerald-core)" }}>
                       {selectedPeak.firstAscent}
                     </p>
                   </div>
@@ -573,8 +573,8 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
 
                 {/* Ascent Registration Form */}
                 {onUpdateAthlete && (
-                  <div style={{ backgroundColor: "rgba(0,0,0,0.2)", borderRadius: "8px", padding: "15px", border: "1px solid rgba(34, 211, 238, 0.2)", display: "flex", flexDirection: "column", gap: "10px", marginTop: "15px" }}>
-                    <h4 style={{ color: "#22d3ee", margin: "0 0 10px 0", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", paddingBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ backgroundColor: "rgba(0,0,0,0.2)", borderRadius: "8px", padding: "15px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", display: "flex", flexDirection: "column", gap: "10px", marginTop: "15px" }}>
+                    <h4 style={{ color: "var(--color-emerald-core)", margin: "0 0 10px 0", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", paddingBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
                       🧗 ასვლის რეგისტრაცია
                     </h4>
                     
@@ -672,19 +672,19 @@ const PeaksDashboard = ({ athletes = [], onUpdateAthlete }) => {
                       type="button"
                       onClick={handleClimbRegister}
                       style={{
-                        backgroundColor: "#22d3ee",
+                        backgroundColor: "var(--color-emerald-core)",
                         color: "#121418",
                         border: "none",
                         padding: "10px",
                         borderRadius: "8px",
                         fontWeight: "bold",
                         cursor: "pointer",
-                        boxShadow: "0 0 10px rgba(34, 211, 238, 0.3)",
+                        boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
                         transition: "all 0.3s",
                         marginTop: "5px"
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.5)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 10px rgba(34, 211, 238, 0.3)"; }}
+                      onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 15px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)"; }}
                     >
                       რეგისტრაცია
                     </button>

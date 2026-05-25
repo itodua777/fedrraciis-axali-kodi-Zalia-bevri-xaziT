@@ -7,13 +7,13 @@ const Navbar = ({ federation, onLogout }) => {
 
   const headerStyle = {
     height: "70px",
-    backgroundColor: "#121418",
-    borderBottom: "1px solid rgba(34, 211, 238, 0.2)",
+    backgroundColor: "var(--color-iron)",
+    borderBottom: "1px solid var(--color-iron-border)",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     padding: "0 30px",
-    color: "#e2e8f0"
+    color: "var(--color-bone-light)"
   };
 
   const searchContainerStyle = {
@@ -26,22 +26,22 @@ const Navbar = ({ federation, onLogout }) => {
 
   const searchInputStyle = {
     width: "100%",
-    backgroundColor: "#121418",
-    color: "#e2e8f0",
+    backgroundColor: "var(--color-iron)",
+    color: "var(--color-bone-light)",
     paddingLeft: "40px",
     paddingRight: "16px",
     paddingTop: "8px",
     paddingBottom: "8px",
     borderRadius: "8px",
-    border: `1px solid ${isFocused ? '#22d3ee' : 'rgba(255, 255, 255, 0.1)'}`,
-    boxShadow: isFocused ? "0 0 10px rgba(34, 211, 238, 0.2)" : "none",
+    border: `1px solid ${isFocused ? 'var(--color-emerald-core)' : 'var(--color-iron-border)'}`,
+    boxShadow: isFocused ? "0 0 10px var(--color-emerald-core)" : "none",
     outline: "none",
     fontSize: "14px",
     transition: "all 0.2s ease-in-out",
     fontFamily: "sans-serif"
   };
 
-  const svgColor = isFocused ? "#22d3ee" : "#64748b";
+  const svgColor = isFocused ? "var(--color-emerald-core)" : "var(--color-silver-structure)";
 
   const logoIconStyle = {
     position: "absolute",
@@ -54,8 +54,8 @@ const Navbar = ({ federation, onLogout }) => {
   };
 
   const userStyle = {
-    color: "#22d3ee",
-    textShadow: "0 0 5px rgba(34, 211, 238, 0.5)",
+    color: "var(--color-emerald-core)",
+    textShadow: "0 0 5px var(--color-emerald-core)",
     fontWeight: "bold",
     fontFamily: "sans-serif",
     display: "flex",
@@ -88,23 +88,23 @@ const Navbar = ({ federation, onLogout }) => {
               </filter>
             </defs>
             {/* 8 white outer dots */}
-            <circle cx="5" cy="5" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="12" cy="5" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="19" cy="5" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="5" cy="5" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="12" cy="5" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="19" cy="5" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
             
-            <circle cx="5" cy="12" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="19" cy="12" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="5" cy="12" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="19" cy="12" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
             
-            <circle cx="5" cy="19" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="12" cy="19" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="19" cy="19" r="2" fill={isFocused ? "#ffffff" : "rgba(255, 255, 255, 0.4)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="5" cy="19" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="12" cy="19" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
+            <circle cx="19" cy="19" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
             
             {/* 1 neon middle dot */}
             <circle 
               cx="12" 
               cy="12" 
               r="2" 
-              fill="#22d3ee" 
+              fill="var(--color-emerald-core)" 
               filter={isFocused ? "url(#neon-glow-focus)" : "url(#neon-glow-blur)"}
               style={{ transition: "all 0.2s" }}
             />

@@ -5,7 +5,7 @@ const CardSkeleton = ({ variant }) => {
   return (
     <div style={{
       backgroundColor: "rgba(15, 23, 42, 0.4)",
-      border: "1px solid rgba(34, 211, 238, 0.05)",
+      border: "1px solid color-mix(in oklab, var(--color-emerald-core) 5%, transparent)",
       borderRadius: "12px",
       padding: "20px",
       minHeight: "125px",
@@ -45,20 +45,20 @@ const DashboardCard = ({
 
   const numericValue = parseFloat(String(value).replace(/[^0-9.-]/g, '')) || 0;
   let cardClass = "dashboard-card";
-  let textShadow = "0 0 10px rgba(255, 255, 255, 0.2)";
+  let textShadow = "0 0 10px var(--color-iron-border)";
   let finalValueColor = valueColor;
 
   if (variant === 'incident' && numericValue > 0) {
     cardClass += " incident-card-active";
-    finalValueColor = "#ef4444";
-    textShadow = "0 0 12px rgba(239, 68, 68, 0.6)";
+    finalValueColor = "var(--color-copper)";
+    textShadow = "0 0 12px var(--color-copper)";
   } else if (variant === 'returnable' && numericValue > 0) {
     cardClass += " warning-card-active";
-    finalValueColor = "#fbbf24";
-    textShadow = "0 0 12px rgba(251, 191, 36, 0.6)";
+    finalValueColor = "var(--color-copper)";
+    textShadow = "0 0 12px var(--color-copper)";
   } else if (variant === 'status') {
-    finalValueColor = "#22d3ee";
-    textShadow = "0 0 10px rgba(34, 211, 238, 0.5)";
+    finalValueColor = "var(--color-emerald-core)";
+    textShadow = "0 0 10px var(--color-emerald-core)";
   }
 
   const renderVisual = () => {
@@ -69,13 +69,13 @@ const DashboardCard = ({
       return (
         <div className="card-visual-container">
           <svg width="56" height="56" viewBox="0 0 56 56" style={{ transform: "rotate(-90deg)" }}>
-            <circle cx="28" cy="28" r={radius} fill="transparent" stroke="rgba(34, 211, 238, 0.05)" strokeWidth="4" />
+            <circle cx="28" cy="28" r={radius} fill="transparent" stroke="var(--color-iron-border)" strokeWidth="4" />
             <circle 
               cx="28" 
               cy="28" 
               r={radius} 
               fill="transparent" 
-              stroke="#22d3ee" 
+              stroke="var(--color-emerald-core)" 
               strokeWidth="4" 
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
@@ -109,17 +109,17 @@ const DashboardCard = ({
           <svg width={width} height={height} style={{ overflow: 'visible' }}>
             <defs>
               <linearGradient id="sparklineGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+                <stop offset="0%" stopColor="var(--color-emerald-core)" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="var(--color-emerald-core)" stopOpacity="0" />
               </linearGradient>
             </defs>
             <polygon points={fillPoints} fill="url(#sparklineGrad)" />
-            <polyline points={points} fill="none" stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <polyline points={points} fill="none" stroke="var(--color-emerald-core)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             <circle 
               cx={width} 
               cy={height - ((dataPoints[6] - min) / range) * (height - 6) - 3} 
               r="2.5" 
-              fill="#22d3ee" 
+              fill="var(--color-emerald-core)" 
               className="pulse-dot" 
             />
           </svg>
@@ -138,11 +138,11 @@ const DashboardCard = ({
     if (variant === 'bars') {
       return (
         <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: "20px" }}>
-          <div style={{ width: "3px", height: "35%", backgroundColor: "rgba(34, 211, 238, 0.25)", borderRadius: "1px" }}></div>
-          <div style={{ width: "3px", height: "55%", backgroundColor: "rgba(34, 211, 238, 0.45)", borderRadius: "1px" }}></div>
-          <div style={{ width: "3px", height: "45%", backgroundColor: "rgba(34, 211, 238, 0.35)", borderRadius: "1px" }}></div>
-          <div style={{ width: "3px", height: "75%", backgroundColor: "rgba(34, 211, 238, 0.65)", borderRadius: "1px" }}></div>
-          <div style={{ width: "3px", height: "90%", backgroundColor: "#22d3ee", borderRadius: "1px", boxShadow: "0 0 4px rgba(34, 211, 238, 0.5)" }}></div>
+          <div style={{ width: "3px", height: "35%", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 25%, transparent)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "55%", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 45%, transparent)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "45%", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 35%, transparent)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "75%", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 65%, transparent)", borderRadius: "1px" }}></div>
+          <div style={{ width: "3px", height: "90%", backgroundColor: "var(--color-emerald-core)", borderRadius: "1px", boxShadow: "0 0 4px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)" }}></div>
         </div>
       );
     }
@@ -182,22 +182,22 @@ const Dashboard = ({ incidents = [] }) => {
   const containerStyle = {
     flex: 1,
     padding: "30px",
-    backgroundColor: "#121418",
-    color: "#e2e8f0",
+    backgroundColor: "var(--color-iron)",
+    color: "var(--color-bone-light)",
     fontFamily: "sans-serif",
     overflowY: "auto"
   };
 
   const cardStyle = {
-    backgroundColor: "rgba(15, 23, 42, 0.6)",
-    border: "1px solid rgba(34, 211, 238, 0.1)",
+    backgroundColor: "var(--color-iron-surface)",
+    border: "1px solid var(--color-iron-border)",
     borderRadius: "12px",
     padding: "20px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(34, 211, 238, 0.05)"
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px var(--color-iron-border)"
   };
 
   const statTitleStyle = {
-    color: "#22d3ee",
+    color: "var(--color-emerald-core)",
     fontSize: "14px",
     textTransform: "uppercase",
     letterSpacing: "1px",
@@ -519,7 +519,7 @@ const Dashboard = ({ incidents = [] }) => {
           margin-bottom: 40px;
         }
         .dashboard-sector {
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid var(--color-iron-border);
           padding-bottom: 35px;
           display: flex;
           flex-direction: column;
@@ -535,7 +535,7 @@ const Dashboard = ({ incidents = [] }) => {
           gap: 10px;
         }
         .sector-icon {
-          color: rgba(34, 211, 238, 0.85);
+          color: var(--color-emerald-core);
           font-size: 14px;
         }
         .sector-title {
@@ -543,7 +543,7 @@ const Dashboard = ({ incidents = [] }) => {
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 1.5px;
-          color: #94a3b8;
+          color: var(--color-silver-structure);
           margin: 0;
         }
         .sector-grid {
@@ -552,11 +552,11 @@ const Dashboard = ({ incidents = [] }) => {
           gap: 20px;
         }
         .dashboard-card {
-          background-color: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(34, 211, 238, 0.1);
+          background-color: var(--color-iron-surface);
+          border: 1px solid var(--color-iron-border);
           border-radius: 12px;
           padding: 20px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(34, 211, 238, 0.05);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px var(--color-iron-border);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           display: flex;
           flex-direction: column;
@@ -565,8 +565,8 @@ const Dashboard = ({ incidents = [] }) => {
           box-sizing: border-box;
         }
         .dashboard-card:hover {
-          border-color: rgba(34, 211, 238, 0.3);
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(34, 211, 238, 0.1), inset 0 0 15px rgba(34, 211, 238, 0.08);
+          border-color: var(--color-emerald-core);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px var(--color-emerald-core), inset 0 0 15px var(--color-iron-border);
           transform: translateY(-2px);
         }
         .card-top {
@@ -576,7 +576,7 @@ const Dashboard = ({ incidents = [] }) => {
           width: 100%;
         }
         .card-title {
-          color: #22d3ee;
+          color: var(--color-silver-structure);
           font-size: 12px;
           font-weight: 600;
           text-transform: uppercase;
@@ -589,7 +589,7 @@ const Dashboard = ({ incidents = [] }) => {
           margin-bottom: 4px;
         }
         .card-subtitle {
-          color: rgba(226, 232, 240, 0.5);
+          color: var(--color-silver-structure);
           font-size: 11px;
           margin-top: 2px;
         }
@@ -606,47 +606,47 @@ const Dashboard = ({ incidents = [] }) => {
         }
         @keyframes status-pulse {
           0% { transform: scale(0.95); opacity: 0.6; }
-          50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px #10b981; }
+          50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px var(--color-emerald-core); }
           100% { transform: scale(0.95); opacity: 0.6; }
         }
         .status-dot-active {
           width: 8px;
           height: 8px;
-          background-color: #10b981;
+          background-color: var(--color-emerald-core);
           border-radius: 50%;
           display: inline-block;
-          box-shadow: 0 0 8px #10b981;
+          box-shadow: 0 0 8px var(--color-emerald-core);
           animation: status-pulse 2s infinite ease-in-out;
         }
-        @keyframes red-neon-glow {
+        @keyframes copper-neon-glow {
           0% {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(239, 68, 68, 0.05);
+            border-color: color-mix(in oklab, var(--color-copper) 20%, transparent);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px color-mix(in oklab, var(--color-copper) 5%, transparent);
           }
           50% {
-            border-color: rgba(239, 68, 68, 0.6);
-            box-shadow: 0 4px 30px rgba(239, 68, 68, 0.25), 0 0 15px rgba(239, 68, 68, 0.2), inset 0 0 15px rgba(239, 68, 68, 0.15);
+            border-color: color-mix(in oklab, var(--color-copper) 60%, transparent);
+            box-shadow: 0 4px 30px color-mix(in oklab, var(--color-copper) 25%, transparent), 0 0 15px color-mix(in oklab, var(--color-copper) 20%, transparent), inset 0 0 15px color-mix(in oklab, var(--color-copper) 15%, transparent);
           }
           100% {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(239, 68, 68, 0.05);
+            border-color: color-mix(in oklab, var(--color-copper) 20%, transparent);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px color-mix(in oklab, var(--color-copper) 5%, transparent);
           }
         }
         .incident-card-active {
-          animation: red-neon-glow 2s infinite ease-in-out;
-          background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(239, 68, 68, 0.04) 100%) !important;
+          animation: copper-neon-glow 2s infinite ease-in-out;
+          background: linear-gradient(135deg, var(--color-iron-surface) 0%, color-mix(in oklab, var(--color-copper) 4%, transparent) 100%) !important;
         }
         .incident-card-active:hover {
-          border-color: rgba(239, 68, 68, 0.7) !important;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(239, 68, 68, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.2) !important;
+          border-color: var(--color-copper) !important;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px var(--color-copper), inset 0 0 20px color-mix(in oklab, var(--color-copper) 20%, transparent) !important;
         }
         .warning-card-active {
-          border-color: rgba(245, 158, 11, 0.2) !important;
-          background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(245, 158, 11, 0.02) 100%) !important;
+          border-color: color-mix(in oklab, var(--color-copper) 20%, transparent) !important;
+          background: linear-gradient(135deg, var(--color-iron-surface) 0%, color-mix(in oklab, var(--color-copper) 2%, transparent) 100%) !important;
         }
         .warning-card-active:hover {
-          border-color: rgba(245, 158, 11, 0.5) !important;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(245, 158, 11, 0.12), inset 0 0 15px rgba(245, 158, 11, 0.08) !important;
+          border-color: var(--color-copper) !important;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px var(--color-copper), inset 0 0 15px color-mix(in oklab, var(--color-copper) 8%, transparent) !important;
         }
         @keyframes spark-pulse {
           0% { transform: scale(1); opacity: 1; }
@@ -672,7 +672,7 @@ const Dashboard = ({ incidents = [] }) => {
         .incident-radar {
           width: 8px;
           height: 8px;
-          background-color: #ef4444;
+          background-color: var(--color-copper);
           border-radius: 50%;
           position: relative;
         }
@@ -683,14 +683,14 @@ const Dashboard = ({ incidents = [] }) => {
           left: -4px;
           width: 16px;
           height: 16px;
-          border: 2px solid #ef4444;
+          border: 2px solid var(--color-copper);
           border-radius: 50%;
           animation: radar-ping 1.5s infinite ease-out;
         }
       `}</style>
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "15px" }}>
-        <h2 style={{ color: "#22d3ee", margin: 0, textShadow: "0 0 10px rgba(34, 211, 238, 0.5)" }}>
+        <h2 style={{ color: "var(--color-bone-light)", margin: 0, textShadow: "0 0 10px var(--color-emerald-core)" }}>
           პანელის მიმოხილვა
         </h2>
       </div>

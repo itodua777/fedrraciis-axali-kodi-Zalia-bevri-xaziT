@@ -160,12 +160,12 @@ const InternationalPhoneInput = ({ value, onChange, placeholder, style, defaultC
     position: 'relative',
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    border: isFocused ? '1px solid #22d3ee' : '1px solid rgba(34, 211, 238, 0.3)',
+    border: isFocused ? '1px solid var(--color-emerald-core)' : '1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)',
     borderRadius: '8px',
     padding: '2px',
     boxSizing: 'border-box',
     transition: 'all 0.3s',
-    boxShadow: isFocused ? '0 0 8px rgba(34, 211, 238, 0.2)' : 'none'
+    boxShadow: isFocused ? '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)' : 'none'
   };
 
   const selectorStyle = {
@@ -200,7 +200,7 @@ const InternationalPhoneInput = ({ value, onChange, placeholder, style, defaultC
     width: '260px',
     zIndex: 1100,
     backgroundColor: '#1b1f24',
-    border: '1px solid rgba(34, 211, 238, 0.4)',
+    border: '1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)',
     borderRadius: '8px',
     marginTop: '6px',
     boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
@@ -240,7 +240,7 @@ const InternationalPhoneInput = ({ value, onChange, placeholder, style, defaultC
                 width: '100%',
                 padding: '8px 10px',
                 backgroundColor: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(34, 211, 238, 0.2)',
+                border: '1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)',
                 borderRadius: '6px',
                 color: '#fff',
                 outline: 'none',
@@ -261,15 +261,15 @@ const InternationalPhoneInput = ({ value, onChange, placeholder, style, defaultC
                     padding: '8px 12px',
                     cursor: 'pointer',
                     fontSize: '13px',
-                    color: countryCode === opt.code ? '#22d3ee' : '#e2e8f0',
-                    backgroundColor: countryCode === opt.code ? 'rgba(34, 211, 238, 0.08)' : 'transparent',
+                    color: countryCode === opt.code ? 'var(--color-emerald-core)' : '#e2e8f0',
+                    backgroundColor: countryCode === opt.code ? 'color-mix(in oklab, var(--color-emerald-core) 8%, transparent)' : 'transparent',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     transition: 'background-color 0.15s'
                   }}
                   onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'}
-                  onMouseLeave={e => e.currentTarget.style.backgroundColor = countryCode === opt.code ? 'rgba(34, 211, 238, 0.08)' : 'transparent'}
+                  onMouseLeave={e => e.currentTarget.style.backgroundColor = countryCode === opt.code ? 'color-mix(in oklab, var(--color-emerald-core) 8%, transparent)' : 'transparent'}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>{getFlag(opt.code)}</span>

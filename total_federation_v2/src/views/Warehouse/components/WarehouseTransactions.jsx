@@ -11,7 +11,7 @@ const WarehouseTransactions = ({ transactions, openReturn }) => {
   };
 
   return (
-    <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)", borderRadius: "12px", padding: "20px" }}>
+    <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", borderRadius: "12px", padding: "20px" }}>
       <div style={{ marginBottom: "20px" }}>
         <h3 style={{ margin: "0 0 15px 0", color: "#fff" }}>გაცემული ინვენტარის მატრიცა & რეესტრი</h3>
       </div>
@@ -44,7 +44,7 @@ const WarehouseTransactions = ({ transactions, openReturn }) => {
                     borderLeft: overdue ? "3px solid #ef4444" : "none"
                   }}
                 >
-                  <td style={{ padding: "12px", fontWeight: "bold", color: "#22d3ee" }}>{trans.itemCode}</td>
+                  <td style={{ padding: "12px", fontWeight: "bold", color: "var(--color-emerald-core)" }}>{trans.itemCode}</td>
                   <td style={{ padding: "12px", color: "#fff", fontWeight: "bold" }}>{trans.itemName}</td>
                   <td style={{ padding: "12px", color: "rgba(255,255,255,0.6)", fontSize: "11px" }}>
                     {trans.type === 'bundle' ? (

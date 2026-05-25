@@ -95,7 +95,7 @@ const FullscreenRightCol = ({
         flexDirection: "column",
         gap: "12px"
       }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           📄 იურიდიული საბუთები / დოკუმენტები
         </h4>
 
@@ -146,9 +146,9 @@ const FullscreenRightCol = ({
                     href={doc.data} 
                     download={doc.name}
                     style={{ 
-                      background: "rgba(34, 211, 238, 0.1)", 
-                      border: "1px solid rgba(34, 211, 238, 0.3)", 
-                      color: "#22d3ee", 
+                      background: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", 
+                      border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", 
+                      color: "var(--color-emerald-core)", 
                       width: "28px", 
                       height: "28px", 
                       borderRadius: "6px", 
@@ -157,8 +157,8 @@ const FullscreenRightCol = ({
                       justifyContent: "center", 
                       transition: "all 0.2s"
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(34, 211, 238, 0.2)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(34, 211, 238, 0.1)"; }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"; }}
                   >
                     <i className="fa-solid fa-download" style={{ fontSize: "11px" }}></i>
                   </a>
@@ -171,15 +171,15 @@ const FullscreenRightCol = ({
 
       {/* Checked-out Inventory Section in Fullscreen View */}
       <div style={{
-        backgroundColor: "rgba(34, 211, 238, 0.02)",
-        border: "1px solid rgba(34, 211, 238, 0.15)",
+        backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 2%, transparent)",
+        border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)",
         borderRadius: "12px",
         padding: "20px",
         display: "flex",
         flexDirection: "column",
         gap: "12px"
       }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           📦 გაცემული ინვენტარი & აღჭურვილობა
         </h4>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(30, 41, 59, 0.8)", paddingTop: "12px" }}>
@@ -198,7 +198,7 @@ const FullscreenRightCol = ({
                         {item.itemName} {item.type === 'bundle' ? ' (კომპლექტი)' : ''}
                       </div>
                       <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)" }}>
-                        საინვენტარო კოდი: <span style={{ color: "#22d3ee" }}>{item.itemCode}</span>
+                        საინვენტარო კოდი: <span style={{ color: "var(--color-emerald-core)" }}>{item.itemCode}</span>
                         {item.components && <span style={{ marginLeft: "10px", fontStyle: "italic", color: "rgba(255,255,255,0.4)" }}>({item.components})</span>}
                       </div>
                     </div>
@@ -229,7 +229,7 @@ const FullscreenRightCol = ({
         gap: "12px",
         flex: 1
       }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           📝 ბიოგრაფია & TIMELINE ნარატივი
         </h4>
 
@@ -248,7 +248,7 @@ const FullscreenRightCol = ({
                 lineHeight: "1.5"
               }}
               placeholder="აღწერეთ სპორტსმენის გზა..."
-              onFocus={e => { if (!isDeceased) { e.target.style.borderColor = '#22d3ee'; e.target.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)'; } }}
+              onFocus={e => { if (!isDeceased) { e.target.style.borderColor = 'var(--color-emerald-core)'; e.target.style.boxShadow = '0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)'; } }}
               onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.target.style.boxShadow = 'none'; }}
             />
           </div>

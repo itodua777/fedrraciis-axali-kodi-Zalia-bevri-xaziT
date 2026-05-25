@@ -2,7 +2,7 @@ import React from 'react';
 
 const WarehouseKits = ({ bundles, items, openCheckout, setIsCreateKitOpen }) => {
   return (
-    <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)", borderRadius: "12px", padding: "20px" }}>
+    <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", borderRadius: "12px", padding: "20px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <h3 style={{ margin: 0, color: "#fff" }}>საოპერაციო კომპლექტები (Kit Bundles)</h3>
         <button 
@@ -54,7 +54,7 @@ const WarehouseKits = ({ bundles, items, openCheckout, setIsCreateKitOpen }) => 
                   onClick={() => openCheckout(bundle, 'bundle')}
                   disabled={componentsLowStock}
                   style={{ 
-                    backgroundColor: componentsLowStock ? "rgba(255,255,255,0.05)" : "#22d3ee", 
+                    backgroundColor: componentsLowStock ? "rgba(255,255,255,0.05)" : "var(--color-emerald-core)", 
                     color: componentsLowStock ? "rgba(255,255,255,0.3)" : "#0f172a", 
                     border: "none", 
                     padding: "8px 16px", 

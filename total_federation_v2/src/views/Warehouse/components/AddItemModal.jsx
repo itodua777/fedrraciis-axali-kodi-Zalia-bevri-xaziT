@@ -50,7 +50,7 @@ const AddItemModal = ({ isOpen, onClose, onAdd }) => {
   };
 
   const modalContentStyle = {
-    backgroundColor: "#1e293b", border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "#1e293b", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     borderRadius: "16px", padding: "30px", width: "100%", maxWidth: "600px",
     boxShadow: "0 10px 25px rgba(0,0,0,0.5)", maxHeight: "85vh", overflowY: "auto"
   };
@@ -186,7 +186,7 @@ const AddItemModal = ({ isOpen, onClose, onAdd }) => {
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "20px" }}>
             <button type="button" onClick={onClose} style={{ backgroundColor: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", padding: "10px 20px", borderRadius: "8px", cursor: "pointer" }}>გაუქმება</button>
-            <button type="submit" style={{ backgroundColor: "#22d3ee", border: "none", color: "#0f172a", padding: "10px 20px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>ბაზაში შეტანა</button>
+            <button type="submit" style={{ backgroundColor: "var(--color-emerald-core)", border: "none", color: "#0f172a", padding: "10px 20px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>ბაზაში შეტანა</button>
           </div>
         </form>
       </div>

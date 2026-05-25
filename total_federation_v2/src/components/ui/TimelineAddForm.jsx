@@ -100,23 +100,23 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
   };
 
   return (
-    <div style={{ backgroundColor: "#16191f", border: "1px solid rgba(34, 211, 238, 0.2)", borderRadius: "8px", padding: "12px", display: "flex", flexDirection: "column", gap: "10px" }}>
+    <div style={{ backgroundColor: "#16191f", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", borderRadius: "8px", padding: "12px", display: "flex", flexDirection: "column", gap: "10px" }}>
       <div style={{ display: "flex", gap: "15px", marginBottom: "5px", flexWrap: "wrap", alignItems: "center" }}>
         <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "bold" }}>აქტივობის ტიპი:</span>
         <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
-          <input type="radio" name="eventType" checked={newAct.type === 'expedition'} onChange={() => setNewAct(prev => ({ ...prev, type: 'expedition' }))} style={{ accentColor: "#22d3ee" }} />
+          <input type="radio" name="eventType" checked={newAct.type === 'expedition'} onChange={() => setNewAct(prev => ({ ...prev, type: 'expedition' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
           🧗 ექსპედიცია
         </label>
         <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
-          <input type="radio" name="eventType" checked={newAct.type === 'rank_up'} onChange={() => setNewAct(prev => ({ ...prev, type: 'rank_up' }))} style={{ accentColor: "#22d3ee" }} />
+          <input type="radio" name="eventType" checked={newAct.type === 'rank_up'} onChange={() => setNewAct(prev => ({ ...prev, type: 'rank_up' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
           🥇 სპორტული თანრიგი
         </label>
         <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
-          <input type="radio" name="eventType" checked={newAct.type === 'title'} onChange={() => setNewAct(prev => ({ ...prev, type: 'title' }))} style={{ accentColor: "#22d3ee" }} />
+          <input type="radio" name="eventType" checked={newAct.type === 'title'} onChange={() => setNewAct(prev => ({ ...prev, type: 'title' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
           🎖️ საპატიო წოდება
         </label>
         <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
-          <input type="radio" name="eventType" checked={newAct.type === 'award'} onChange={() => setNewAct(prev => ({ ...prev, type: 'award' }))} style={{ accentColor: "#22d3ee" }} />
+          <input type="radio" name="eventType" checked={newAct.type === 'award'} onChange={() => setNewAct(prev => ({ ...prev, type: 'award' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
           🏆 ჯილდო
         </label>
       </div>
@@ -362,7 +362,7 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
         type="button"
         onClick={handleAddActivity}
         style={{
-          backgroundColor: "#22d3ee",
+          backgroundColor: "var(--color-emerald-core)",
           color: "#121418",
           border: "none",
           padding: "6px 12px",

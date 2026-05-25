@@ -68,7 +68,7 @@ const CreateKitModal = ({ isOpen, onClose, onCreateKitConfirm, items }) => {
   };
 
   const modalContentStyle = {
-    backgroundColor: "#1e293b", border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "#1e293b", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     borderRadius: "16px", padding: "30px", width: "100%", maxWidth: "600px",
     boxShadow: "0 10px 25px rgba(0,0,0,0.5)", maxHeight: "85vh", overflowY: "auto"
   };
@@ -111,11 +111,11 @@ const CreateKitModal = ({ isOpen, onClose, onCreateKitConfirm, items }) => {
           </div>
 
           <div style={{ ...formGroupStyle, border: "1px solid rgba(255,255,255,0.06)", padding: "15px", borderRadius: "8px", backgroundColor: "rgba(0,0,0,0.15)" }}>
-            <label style={{ fontSize: "12px", color: "#22d3ee", fontWeight: "bold", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+            <label style={{ fontSize: "12px", color: "var(--color-emerald-core)", fontWeight: "bold", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
               შემადგენელი კომპონენტები
               <button 
                 type="button" onClick={addKitComponentRow}
-                style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", border: "1px solid rgba(34, 211, 238, 0.3)", color: "#22d3ee", padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
+                style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", color: "var(--color-emerald-core)", padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
               >
                 + ნივთის დამატება
               </button>
@@ -152,7 +152,7 @@ const CreateKitModal = ({ isOpen, onClose, onCreateKitConfirm, items }) => {
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "20px" }}>
             <button type="button" onClick={onClose} style={{ backgroundColor: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", padding: "10px 20px", borderRadius: "8px", cursor: "pointer" }}>გაუქმება</button>
-            <button type="submit" style={{ backgroundColor: "#22d3ee", border: "none", color: "#0f172a", padding: "10px 20px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>კომპლექტის შექმნა</button>
+            <button type="submit" style={{ backgroundColor: "var(--color-emerald-core)", border: "none", color: "#0f172a", padding: "10px 20px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>კომპლექტის შექმნა</button>
           </div>
         </form>
       </div>

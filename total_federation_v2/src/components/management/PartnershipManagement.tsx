@@ -367,7 +367,7 @@ const PartnershipManagement: React.FC = () => {
     minWidth: "320px",
     maxWidth: "450px",
     backgroundColor: "rgba(15, 23, 42, 0.6)",
-    border: "2px solid rgba(34, 211, 238, 0.15)",
+    border: "2px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)",
     borderRadius: "0px", // Sharp brutalist borders
     padding: "24px",
     display: "flex",
@@ -380,7 +380,7 @@ const PartnershipManagement: React.FC = () => {
 
   const cardStyle = (isSelected: boolean) => ({
     backgroundColor: "rgba(30, 41, 59, 0.35)",
-    border: isSelected ? "2px solid #22d3ee" : "1px solid rgba(255,255,255,0.08)",
+    border: isSelected ? "2px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.08)",
     padding: "16px",
     cursor: "pointer",
     transition: "all 0.25s ease",
@@ -388,15 +388,15 @@ const PartnershipManagement: React.FC = () => {
     flexDirection: "column" as const,
     gap: "10px",
     position: "relative" as const,
-    boxShadow: isSelected ? "0 0 15px rgba(34, 211, 238, 0.2)" : "none"
+    boxShadow: isSelected ? "0 0 15px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" : "none"
   });
 
   const tabStyle = (tab: 'SPONSOR' | 'PARTNER') => ({
     flex: 1,
     padding: "12px",
-    backgroundColor: activeTab === tab ? "rgba(34, 211, 238, 0.1)" : "transparent",
-    color: activeTab === tab ? "#22d3ee" : "rgba(255,255,255,0.4)",
-    border: activeTab === tab ? "2px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)",
+    backgroundColor: activeTab === tab ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "transparent",
+    color: activeTab === tab ? "var(--color-emerald-core)" : "rgba(255,255,255,0.4)",
+    border: activeTab === tab ? "2px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)",
     fontSize: "14px",
     fontWeight: "bold" as const,
     cursor: "pointer",
@@ -426,7 +426,7 @@ const PartnershipManagement: React.FC = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: "#22d3ee",
+    backgroundColor: "var(--color-emerald-core)",
     color: "#121418",
     border: "none",
     padding: "12px 20px",
@@ -456,7 +456,7 @@ const PartnershipManagement: React.FC = () => {
           <button 
             style={buttonStyle} 
             onClick={() => { resetForm(); setIsCreating(true); setEditingItem(null); setSelectedItem(null); }}
-            onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.5)"}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 15px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)"}
             onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
           >
             <i className="fa-solid fa-plus"></i> 
@@ -500,7 +500,7 @@ const PartnershipManagement: React.FC = () => {
                 onMouseEnter={e => {
                   setHoveredItemId(item.partnership_id);
                   if (!isSelected) {
-                    e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.4)";
+                    e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)";
                     e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
                   }
                 }}
@@ -522,19 +522,19 @@ const PartnershipManagement: React.FC = () => {
                       fontSize: "10px",
                       fontWeight: "bold",
                       textTransform: "uppercase",
-                      backgroundColor: isActive ? "rgba(34, 211, 238, 0.1)" : "rgba(239, 68, 68, 0.1)",
-                      border: `1.5px solid ${isActive ? '#22d3ee' : '#ef4444'}`,
-                      color: isActive ? '#22d3ee' : '#f87171'
+                      backgroundColor: isActive ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "rgba(239, 68, 68, 0.1)",
+                      border: `1.5px solid ${isActive ? 'var(--color-emerald-core)' : '#ef4444'}`,
+                      color: isActive ? 'var(--color-emerald-core)' : '#f87171'
                     }}>
                       {isActive ? "Active" : "Expired"}
                     </div>
                     <button
                       onClick={(e) => startEdit(item, e)}
                       style={{
-                        background: hoveredItemId === item.partnership_id ? "rgba(34, 211, 238, 0.2)" : "rgba(255, 255, 255, 0.05)",
-                        border: hoveredItemId === item.partnership_id ? "1px solid #22d3ee" : "1px solid rgba(255, 255, 255, 0.1)",
+                        background: hoveredItemId === item.partnership_id ? "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" : "rgba(255, 255, 255, 0.05)",
+                        border: hoveredItemId === item.partnership_id ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255, 255, 255, 0.1)",
                         borderRadius: "0px",
-                        color: hoveredItemId === item.partnership_id ? "#22d3ee" : "rgba(255, 255, 255, 0.3)",
+                        color: hoveredItemId === item.partnership_id ? "var(--color-emerald-core)" : "rgba(255, 255, 255, 0.3)",
                         cursor: "pointer",
                         padding: "3px 6px",
                         fontSize: "11px",
@@ -552,7 +552,7 @@ const PartnershipManagement: React.FC = () => {
                 </div>
 
                 {item.partnership_form && (
-                  <div style={{ fontSize: "11px", color: "#22d3ee", display: "inline-flex", alignItems: "center", gap: "5px", fontWeight: "bold" }}>
+                  <div style={{ fontSize: "11px", color: "var(--color-emerald-core)", display: "inline-flex", alignItems: "center", gap: "5px", fontWeight: "bold" }}>
                     <i className="fa-solid fa-tag"></i> {item.partnership_form}
                   </div>
                 )}
@@ -566,7 +566,7 @@ const PartnershipManagement: React.FC = () => {
                     <i className="fa-solid fa-calendar-days"></i> {item.valid_from} — {item.valid_to}
                   </span>
                   {item.contract_file_url && (
-                    <span style={{ color: "#22d3ee" }} title="ხელშეკრულება მიბმულია">
+                    <span style={{ color: "var(--color-emerald-core)" }} title="ხელშეკრულება მიბმულია">
                       <i className="fa-solid fa-file-pdf"></i> PDF
                     </span>
                   )}
@@ -587,7 +587,7 @@ const PartnershipManagement: React.FC = () => {
       {selectedItem && !isCreating && !editingItem && (
         <div style={sidebarStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "15px" }}>
-            <h3 style={{ margin: 0, color: "#22d3ee", fontSize: "16px", fontWeight: "bold" }}>დეტალები</h3>
+            <h3 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "16px", fontWeight: "bold" }}>დეტალები</h3>
             <button 
               onClick={() => setSelectedItem(null)}
               style={{ background: "transparent", border: "none", color: "#fff", cursor: "pointer", fontSize: "16px" }}
@@ -598,8 +598,8 @@ const PartnershipManagement: React.FC = () => {
 
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             <div style={{ padding: "20px", backgroundColor: "rgba(0,0,0,0.25)", border: "1px solid rgba(255,255,255,0.05)", textAlign: "center" }}>
-              <div style={{ width: "48px", height: "48px", backgroundColor: "rgba(34, 211, 238, 0.1)", borderRadius: "0px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 15px auto", border: "1.5px solid #22d3ee" }}>
-                <i className={selectedItem.type === 'SPONSOR' ? "fa-solid fa-trophy" : "fa-solid fa-handshake"} style={{ fontSize: "20px", color: "#22d3ee" }}></i>
+              <div style={{ width: "48px", height: "48px", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", borderRadius: "0px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 15px auto", border: "1.5px solid var(--color-emerald-core)" }}>
+                <i className={selectedItem.type === 'SPONSOR' ? "fa-solid fa-trophy" : "fa-solid fa-handshake"} style={{ fontSize: "20px", color: "var(--color-emerald-core)" }}></i>
               </div>
               <h3 style={{ margin: "0 0 5px 0", color: "#fff", fontSize: "16px" }}>{selectedItem.name}</h3>
               <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "1px" }}>
@@ -617,7 +617,7 @@ const PartnershipManagement: React.FC = () => {
             <div>
               <span style={labelStyle}>აქტივობის პერიოდი</span>
               <div style={{ fontSize: "13px", color: "#fff" }}>
-                <i className="fa-solid fa-calendar-check" style={{ marginRight: "6px", color: "#22d3ee" }}></i>
+                <i className="fa-solid fa-calendar-check" style={{ marginRight: "6px", color: "var(--color-emerald-core)" }}></i>
                 {selectedItem.valid_from} — {selectedItem.valid_to}
               </div>
             </div>
@@ -644,10 +644,10 @@ const PartnershipManagement: React.FC = () => {
                       ...buttonStyle,
                       width: "100%",
                       backgroundColor: "transparent",
-                      border: "1.5px solid #22d3ee",
-                      color: "#22d3ee"
+                      border: "1.5px solid var(--color-emerald-core)",
+                      color: "var(--color-emerald-core)"
                     }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)"}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"}
                     onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
                   >
                     <i className="fa-solid fa-file-pdf"></i> ხელშეკრულების ნახვა
@@ -681,7 +681,7 @@ const PartnershipManagement: React.FC = () => {
       {(isCreating || editingItem) && (
         <div style={sidebarStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "15px" }}>
-            <h3 style={{ margin: 0, color: "#22d3ee", fontSize: "16px", fontWeight: "bold" }}>
+            <h3 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "16px", fontWeight: "bold" }}>
               {editingItem 
                 ? (activeTab === 'SPONSOR' ? "✏️ სპონსორის რედაქტირება" : "✏️ პარტნიორის რედაქტირება")
                 : (activeTab === 'SPONSOR' ? "➕ ახალი სპონსორის დამატება" : "➕ ახალი პარტნიორის დამატება")}
@@ -778,20 +778,20 @@ const PartnershipManagement: React.FC = () => {
                 <label style={labelStyle}>გაფორმებული ხელშეკრულების მიბმა</label>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   <label style={{
-                    border: "1px dashed rgba(34, 211, 238, 0.4)",
+                    border: "1px dashed color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
                     padding: "16px",
                     textAlign: "center",
                     cursor: "pointer",
-                    color: uploading ? "rgba(255,255,255,0.3)" : "#22d3ee",
-                    backgroundColor: "rgba(34, 211, 238, 0.03)",
+                    color: uploading ? "rgba(255,255,255,0.3)" : "var(--color-emerald-core)",
+                    backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 3%, transparent)",
                     transition: "all 0.3s ease",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     gap: "8px"
                   }}
-                  onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = "#22d3ee"; }}
-                  onMouseLeave={e => { if (!uploading) e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.4)"; }}
+                  onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = "var(--color-emerald-core)"; }}
+                  onMouseLeave={e => { if (!uploading) e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)"; }}
                   >
                     <input 
                       type="file" 

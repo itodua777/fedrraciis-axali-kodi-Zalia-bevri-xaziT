@@ -52,7 +52,7 @@ const SearchableDropdown = ({ value, onChange, options, placeholder, style }) =>
           right: 0,
           zIndex: 1000,
           backgroundColor: '#1b1f24',
-          border: '1px solid rgba(34, 211, 238, 0.4)',
+          border: '1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)',
           borderRadius: '8px',
           marginTop: '4px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
@@ -69,7 +69,7 @@ const SearchableDropdown = ({ value, onChange, options, placeholder, style }) =>
                 width: '100%',
                 padding: '8px 10px',
                 backgroundColor: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(34, 211, 238, 0.2)',
+                border: '1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)',
                 borderRadius: '6px',
                 color: '#fff',
                 outline: 'none',
@@ -93,12 +93,12 @@ const SearchableDropdown = ({ value, onChange, options, placeholder, style }) =>
                     padding: '8px 12px',
                     cursor: 'pointer',
                     fontSize: '13px',
-                    color: value === opt.code ? '#22d3ee' : '#e2e8f0',
-                    backgroundColor: value === opt.code ? 'rgba(34, 211, 238, 0.08)' : 'transparent',
+                    color: value === opt.code ? 'var(--color-emerald-core)' : '#e2e8f0',
+                    backgroundColor: value === opt.code ? 'color-mix(in oklab, var(--color-emerald-core) 8%, transparent)' : 'transparent',
                     transition: 'background-color 0.15s'
                   }}
                   onMouseEnter={e => e.target.style.backgroundColor = 'rgba(255,255,255,0.04)'}
-                  onMouseLeave={e => e.target.style.backgroundColor = value === opt.code ? 'rgba(34, 211, 238, 0.08)' : 'transparent'}
+                  onMouseLeave={e => e.target.style.backgroundColor = value === opt.code ? 'color-mix(in oklab, var(--color-emerald-core) 8%, transparent)' : 'transparent'}
                 >
                   {opt.name}
                 </div>

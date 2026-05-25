@@ -140,13 +140,13 @@ const MentorForm = ({ onViewChange }) => {
 
   const sectionStyle = {
     backgroundColor: "rgba(15, 23, 42, 0.6)",
-    border: "1px solid rgba(34, 211, 238, 0.2)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
     borderRadius: "12px",
     padding: "20px",
     marginBottom: "20px"
   };
 
-  const titleStyle = { color: "#22d3ee", margin: "0 0 15px 0", fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" };
+  const titleStyle = { color: "var(--color-emerald-core)", margin: "0 0 15px 0", fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" };
   const inputStyle = { width: "100%", padding: "10px", backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#fff", outline: "none", boxSizing: "border-box" };
   const labelStyle = { fontSize: "12px", color: "rgba(255,255,255,0.5)", display: "block", marginBottom: "5px" };
   const gridStyle = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "15px" };
@@ -178,9 +178,9 @@ const MentorForm = ({ onViewChange }) => {
             <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
               <div style={{ width: "120px", flexShrink: 0, textAlign: "center" }}>
                 <label style={labelStyle}>ფოტო</label>
-                <div onDragOver={e => e.preventDefault()} onDrop={handlePhotoDrop} style={{ width: "120px", height: "120px", borderRadius: "12px", border: "2px dashed #22d3ee", backgroundColor: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", overflow: "hidden", position: "relative" }}>
+                <div onDragOver={e => e.preventDefault()} onDrop={handlePhotoDrop} style={{ width: "120px", height: "120px", borderRadius: "12px", border: "2px dashed var(--color-emerald-core)", backgroundColor: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", overflow: "hidden", position: "relative" }}>
                   <input type="file" onChange={handlePhotoDrop} accept="image/*" style={{ position: "absolute", opacity: 0, width: "100%", height: "100%", cursor: "pointer" }} />
-                  {formData.photo ? <img src={formData.photo} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <i className="fa-solid fa-camera" style={{ color: "#22d3ee", fontSize: "24px" }}></i>}
+                  {formData.photo ? <img src={formData.photo} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <i className="fa-solid fa-camera" style={{ color: "var(--color-emerald-core)", fontSize: "24px" }}></i>}
                 </div>
               </div>
 
@@ -310,7 +310,7 @@ const MentorForm = ({ onViewChange }) => {
                 <input type="text" placeholder="დასახელება" style={{ ...inputStyle, flex: 1 }} value={certName} onChange={e => setCertName(e.target.value)} />
                 <input type="text" placeholder="გამცემი" style={{ ...inputStyle, flex: 1 }} value={certIssuer} onChange={e => setCertIssuer(e.target.value)} />
                 <input type="date" style={{ ...inputStyle, flex: 1 }} value={certExpiry} onChange={e => setCertExpiry(e.target.value)} />
-                <button type="button" onClick={handleAddCert} style={{ background: "#22d3ee", color: "#121418", border: "none", padding: "0 15px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>+</button>
+                <button type="button" onClick={handleAddCert} style={{ background: "var(--color-emerald-core)", color: "#121418", border: "none", padding: "0 15px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>+</button>
               </div>
             </div>
 
@@ -326,7 +326,7 @@ const MentorForm = ({ onViewChange }) => {
               <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                 <input type="text" placeholder="ჯილდოს დასახელება" style={{ ...inputStyle, flex: 2 }} value={awardName} onChange={e => setAwardName(e.target.value)} />
                 <input type="number" placeholder="წელი" style={{ ...inputStyle, flex: 1 }} value={awardYear} onChange={e => setAwardYear(e.target.value)} />
-                <button type="button" onClick={handleAddAward} style={{ background: "#22d3ee", color: "#121418", border: "none", padding: "0 15px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>+</button>
+                <button type="button" onClick={handleAddAward} style={{ background: "var(--color-emerald-core)", color: "#121418", border: "none", padding: "0 15px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}>+</button>
               </div>
             </div>
 
@@ -342,9 +342,9 @@ const MentorForm = ({ onViewChange }) => {
             <h3 style={titleStyle}><i className="fa-solid fa-vault"></i> სექცია E: File Vault</h3>
             <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "15px" }}>ატვირთეთ პირადობის დამადასტურებელი და სამედიცინო დოკუმენტაცია.</p>
 
-            <div onDragOver={e => e.preventDefault()} onDrop={handleDocsDrop} style={{ border: "2px dashed rgba(34, 211, 238, 0.4)", borderRadius: "12px", padding: "30px", textAlign: "center", cursor: "pointer", backgroundColor: "rgba(0,0,0,0.2)", marginBottom: "15px", position: "relative" }}>
+            <div onDragOver={e => e.preventDefault()} onDrop={handleDocsDrop} style={{ border: "2px dashed color-mix(in oklab, var(--color-emerald-core) 40%, transparent)", borderRadius: "12px", padding: "30px", textAlign: "center", cursor: "pointer", backgroundColor: "rgba(0,0,0,0.2)", marginBottom: "15px", position: "relative" }}>
               <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onChange={handleDocsDrop} style={{ position: "absolute", opacity: 0, top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }} />
-              <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: "32px", color: "#22d3ee", marginBottom: "10px" }}></i>
+              <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: "32px", color: "var(--color-emerald-core)", marginBottom: "10px" }}></i>
               <div style={{ fontSize: "14px", color: "#fff" }}>ფაილების ატვირთვა</div>
               <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>PDF, JPG, PNG</div>
             </div>
@@ -352,7 +352,7 @@ const MentorForm = ({ onViewChange }) => {
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {formData.docs.map((d, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "8px", fontSize: "12px" }}>
-                  <i className={d.type.includes('pdf') ? "fa-solid fa-file-pdf" : "fa-solid fa-image"} style={{ color: "#22d3ee" }}></i>
+                  <i className={d.type.includes('pdf') ? "fa-solid fa-file-pdf" : "fa-solid fa-image"} style={{ color: "var(--color-emerald-core)" }}></i>
                   <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "#fff" }}>{d.name}</div>
                   <i className="fa-solid fa-xmark" style={{ color: "#ef4444", cursor: "pointer" }} onClick={() => updateData('docs', formData.docs.filter((_, idx) => idx !== i))}></i>
                 </div>
@@ -360,7 +360,7 @@ const MentorForm = ({ onViewChange }) => {
             </div>
           </div>
 
-          <button onClick={handleSubmit} style={{ width: "100%", background: "#22d3ee", color: "#121418", padding: "15px", border: "none", borderRadius: "12px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 15px rgba(34,211,238,0.4)" }}>
+          <button onClick={handleSubmit} style={{ width: "100%", background: "var(--color-emerald-core)", color: "#121418", padding: "15px", border: "none", borderRadius: "12px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)" }}>
             <i className="fa-solid fa-check"></i> ბაზაში შენახვა
           </button>
         </div>

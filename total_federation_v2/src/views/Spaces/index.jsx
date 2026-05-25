@@ -50,7 +50,7 @@ const TrainingSpacesDashboard = () => {
 
   const containerStyle = { flex: 1, padding: "30px", backgroundColor: "#121418", color: "#e2e8f0", fontFamily: "sans-serif", overflowY: "auto", display: "flex", flexDirection: "row", gap: "20px" };
   const centerContentStyle = { flex: 1, display: "flex", flexDirection: "column", gap: "20px", transition: "all 0.3s" };
-  const cardStyle = { backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)", borderRadius: "12px", padding: "20px", cursor: "pointer", transition: "all 0.3s" };
+  const cardStyle = { backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", borderRadius: "12px", padding: "20px", cursor: "pointer", transition: "all 0.3s" };
   
   // Add Form States
   const [name, setName] = React.useState('');
@@ -213,13 +213,13 @@ const TrainingSpacesDashboard = () => {
 
       <div style={centerContentStyle}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h2 style={{ color: "#22d3ee", margin: 0, textShadow: "0 0 10px rgba(34, 211, 238, 0.5)" }}>სავარჯიშო სივრცე</h2>
-          <button onClick={() => setShowAddForm(true)} style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", color: "#22d3ee", border: "1px solid rgba(34, 211, 238, 0.4)", padding: "10px 20px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
+          <h2 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)" }}>სავარჯიშო სივრცე</h2>
+          <button onClick={() => setShowAddForm(true)} style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", color: "var(--color-emerald-core)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)", padding: "10px 20px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
             <i className="fa-solid fa-plus"></i> სივრცის დამატება
           </button>
         </div>
         
-        <div style={{ display: "flex", gap: "10px", backgroundColor: "rgba(15, 23, 42, 0.6)", padding: "15px", borderRadius: "12px", border: "1px solid rgba(34, 211, 238, 0.1)" }}>
+        <div style={{ display: "flex", gap: "10px", backgroundColor: "rgba(15, 23, 42, 0.6)", padding: "15px", borderRadius: "12px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" }}>
           <input type="text" placeholder="ძიება..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", backgroundColor: "transparent", color: "#fff" }} />
           <select value={filterOwner} onChange={e => setFilterOwner(e.target.value)} style={{ padding: "10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", backgroundColor: "#1e293b", color: "#fff" }}>
             <option value="ALL">ყველა საკუთრება</option>
@@ -238,7 +238,7 @@ const TrainingSpacesDashboard = () => {
               emoji = "⛺";
             }
             return (
-              <div key={space.id} onClick={() => setSelectedSpace(space)} style={{ ...cardStyle, position: "relative", border: selectedSpace?.id === space.id ? "1px solid #22d3ee" : isExpiringSoon ? "1px solid #f43f5e" : "1px solid rgba(34, 211, 238, 0.1)", backgroundColor: selectedSpace?.id === space.id ? "rgba(34, 211, 238, 0.05)" : "rgba(15, 23, 42, 0.6)" }}>
+              <div key={space.id} onClick={() => setSelectedSpace(space)} style={{ ...cardStyle, position: "relative", border: selectedSpace?.id === space.id ? "1px solid var(--color-emerald-core)" : isExpiringSoon ? "1px solid #f43f5e" : "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", backgroundColor: selectedSpace?.id === space.id ? "color-mix(in oklab, var(--color-emerald-core) 5%, transparent)" : "rgba(15, 23, 42, 0.6)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px", gap: "10px" }}>
                   <h3 style={{ color: "#fff", margin: 0, fontSize: "15px", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{emoji}</span> {space.name}
@@ -263,8 +263,8 @@ const TrainingSpacesDashboard = () => {
                       transition: "color 0.2s, background-color 0.2s"
                     }}
                     onMouseOver={e => {
-                      e.currentTarget.style.color = "#22d3ee";
-                      e.currentTarget.style.textShadow = "0 0 8px rgba(34, 211, 238, 0.6)";
+                      e.currentTarget.style.color = "var(--color-emerald-core)";
+                      e.currentTarget.style.textShadow = "0 0 8px color-mix(in oklab, var(--color-emerald-core) 60%, transparent)";
                     }}
                     onMouseOut={e => {
                       e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
@@ -300,9 +300,9 @@ const TrainingSpacesDashboard = () => {
       </div>
       
       {selectedSpace && (
-        <div style={{ width: "350px", minWidth: "350px", backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", gap: "20px", boxShadow: "-4px 0 15px rgba(0,0,0,0.5)" }}>
+        <div style={{ width: "350px", minWidth: "350px", backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", gap: "20px", boxShadow: "-4px 0 15px rgba(0,0,0,0.5)" }}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <h3 style={{ margin: 0, color: "#22d3ee" }}>{selectedSpace.name}</h3>
+            <h3 style={{ margin: 0, color: "var(--color-emerald-core)" }}>{selectedSpace.name}</h3>
             <button onClick={() => setSelectedSpace(null)} style={{ background: "transparent", border: "none", color: "#fff", cursor: "pointer" }}><i className="fa-solid fa-xmark"></i></button>
           </div>
           
@@ -347,7 +347,7 @@ const TrainingSpacesDashboard = () => {
               <span style={{ color: ((new Date(selectedSpace.contract.endDate).getTime() - Date.now()) / (1000 * 3600 * 24) < 30) ? "#f43f5e" : "#fff" }}>{selectedSpace.contract.endDate}</span>
             </div>
             
-            <button style={{ width: "100%", marginTop: "15px", padding: "8px", backgroundColor: "transparent", border: "1px solid rgba(34, 211, 238, 0.4)", color: "#22d3ee", borderRadius: "6px", cursor: "pointer", fontSize: "12px" }}>
+            <button style={{ width: "100%", marginTop: "15px", padding: "8px", backgroundColor: "transparent", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)", color: "var(--color-emerald-core)", borderRadius: "6px", cursor: "pointer", fontSize: "12px" }}>
               <i className="fa-solid fa-download"></i> PDF გადმოწერა
             </button>
           </div>

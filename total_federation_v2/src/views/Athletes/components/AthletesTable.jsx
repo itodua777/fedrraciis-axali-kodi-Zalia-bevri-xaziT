@@ -38,53 +38,53 @@ const getRankBadgeContent = (rankValue) => {
   if (labelLower.includes('ოსტატი')) {
     return {
       label: displayLabel,
-      backgroundColor: "rgba(251, 191, 36, 0.15)", // Muted gold
-      color: "#fbbf24", // Gold
-      border: "1px solid rgba(251, 191, 36, 0.3)",
+      backgroundColor: "color-mix(in oklab, var(--color-gold-raw) 15%, transparent)", // Muted gold
+      color: "var(--color-gold-raw)", // Gold
+      border: "1px solid var(--color-gold-raw)",
       icon: "fa-solid fa-crown"
     };
   } else if (labelLower.includes('თანრიგი')) {
     if (labelLower.includes('i თანრიგი')) {
       return {
         label: displayLabel,
-        backgroundColor: "rgba(59, 130, 246, 0.15)", // Muted blue
-        color: "#3b82f6",
-        border: "1px solid rgba(59, 130, 246, 0.3)",
+        backgroundColor: "color-mix(in oklab, var(--color-sapphire) 15%, transparent)", // Muted blue
+        color: "var(--color-sapphire)",
+        border: "1px solid var(--color-sapphire)",
         icon: "fa-solid fa-medal"
       };
     } else if (labelLower.includes('ii თანრიგი')) {
       return {
         label: displayLabel,
-        backgroundColor: "rgba(16, 185, 129, 0.15)", // Muted green
-        color: "#10b981",
-        border: "1px solid rgba(16, 185, 129, 0.3)",
+        backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", // Muted green
+        color: "var(--color-emerald-core)",
+        border: "1px solid var(--color-emerald-core)",
         icon: "fa-solid fa-medal"
       };
     } else {
       // III თანრიგი or any other
       return {
         label: displayLabel,
-        backgroundColor: "rgba(148, 163, 184, 0.15)", // Muted slate/gray
-        color: "#94a3b8",
-        border: "1px solid rgba(148, 163, 184, 0.3)",
+        backgroundColor: "color-mix(in oklab, var(--color-silver-structure) 15%, transparent)", // Muted slate/gray
+        color: "var(--color-silver-structure)",
+        border: "1px solid var(--color-silver-structure)",
         icon: "fa-solid fa-medal"
       };
     }
   } else if (labelLower.includes('ალპინისტი') || labelLower.includes('badge')) {
     return {
       label: displayLabel,
-      backgroundColor: "rgba(34, 211, 238, 0.15)", // Muted cyan
-      color: "#22d3ee",
-      border: "1px solid rgba(34, 211, 238, 0.3)",
+      backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", // Muted cyan
+      color: "var(--color-emerald-core)",
+      border: "1px solid var(--color-emerald-core)",
       icon: "fa-solid fa-certificate"
     };
   }
 
   return {
     label: displayLabel,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    color: "#e2e8f0",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
+    backgroundColor: "var(--color-iron-surface)",
+    color: "var(--color-silver-structure)",
+    border: "1px solid var(--color-iron-border)",
     icon: "fa-solid fa-award"
   };
 };
@@ -104,10 +104,10 @@ const AthletesTable = ({
   };
 
   const thStyle = {
-    color: "#22d3ee",
+    color: "var(--color-emerald-core)",
     textAlign: "left",
     padding: "15px",
-    borderBottom: "1px solid rgba(34, 211, 238, 0.2)",
+    borderBottom: "1px solid var(--color-iron-border)",
     textTransform: "uppercase",
     fontSize: "12px",
     letterSpacing: "1px",
@@ -116,8 +116,8 @@ const AthletesTable = ({
 
   const tdStyle = {
     padding: "15px",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-    color: "#e2e8f0",
+    borderBottom: "1px solid var(--color-iron-border)",
+    color: "var(--color-bone-light)",
     verticalAlign: "middle"
   };
 
@@ -125,13 +125,13 @@ const AthletesTable = ({
     width: "38px",
     height: "38px",
     borderRadius: "50%",
-    border: "1.5px solid #22d3ee",
-    boxShadow: "0 0 8px rgba(34, 211, 238, 0.4)",
+    border: "1.5px solid var(--color-iron-border)",
+    boxShadow: "none",
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.6)",
+    backgroundColor: "var(--color-iron-surface)",
     flexShrink: 0
   };
 
@@ -159,12 +159,12 @@ const AthletesTable = ({
                 onClick={() => setSelectedAthlete(athlete)}
                 style={{ 
                   cursor: "pointer", 
-                  backgroundColor: selectedAthlete?.id === athlete.id ? "rgba(34, 211, 238, 0.1)" : "transparent",
+                  backgroundColor: selectedAthlete?.id === athlete.id ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "transparent",
                   transition: "background-color 0.2s"
                 }}
                 onMouseOver={(e) => {
                   if (selectedAthlete?.id !== athlete.id) {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-bone-light) 5%, transparent)";
                   }
                 }}
                 onMouseOut={(e) => {
@@ -182,7 +182,7 @@ const AthletesTable = ({
                       </div>
                     ) : (
                       <div style={avatarContainerStyle}>
-                        <i className="fa-solid fa-user" style={{ color: "rgba(226, 232, 240, 0.4)", fontSize: "14px" }}></i>
+                        <i className="fa-solid fa-user" style={{ color: "var(--color-silver-structure)", fontSize: "14px" }}></i>
                       </div>
                     )}
                   </div>
@@ -195,7 +195,7 @@ const AthletesTable = ({
 
                 {/* 3. Age */}
                 <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>
-                  {age !== '' ? age : <span style={{ color: "rgba(255, 255, 255, 0.3)" }}>—</span>}
+                  {age !== '' ? age : <span style={{ color: "var(--color-silver-structure)" }}>—</span>}
                 </td>
 
                 {/* 4. Sport */}
@@ -203,7 +203,7 @@ const AthletesTable = ({
                   {athlete.sportsDiscipline ? (
                     athlete.sportsDiscipline
                   ) : (
-                    <span style={{ color: "rgba(255, 255, 255, 0.3)" }}>—</span>
+                    <span style={{ color: "var(--color-silver-structure)" }}>—</span>
                   )}
                 </td>
 
@@ -227,7 +227,7 @@ const AthletesTable = ({
                         {rankBadge.label}
                       </span>
                     ) : (
-                      <span style={{ color: "rgba(255, 255, 255, 0.3)" }}>—</span>
+                      <span style={{ color: "var(--color-silver-structure)" }}>—</span>
                     )}
                   </td>
                 )}
@@ -259,8 +259,8 @@ const AthletesTable = ({
                             }
                           }}
                           style={{
-                            color: "#22d3ee",
-                            textShadow: "0 0 8px rgba(34, 211, 238, 0.4)",
+                            color: "var(--color-emerald-core)",
+                            textShadow: "0 0 8px var(--color-emerald-core)",
                             textDecoration: "none",
                             fontWeight: "500",
                             cursor: "pointer"
@@ -272,7 +272,7 @@ const AthletesTable = ({
                         </a>
                       </div>
                     ) : (
-                      <span style={{ color: "rgba(255, 255, 255, 0.3)" }}>—</span>
+                      <span style={{ color: "var(--color-silver-structure)" }}>—</span>
                     );
                   })()}
                 </td>
@@ -281,7 +281,7 @@ const AthletesTable = ({
           })}
           {filteredAthletes.length === 0 && (
             <tr>
-              <td colSpan={ranksEnabled ? 6 : 5} style={{ ...tdStyle, textAlign: "center", color: "rgba(226, 232, 240, 0.5)" }}>
+              <td colSpan={ranksEnabled ? 6 : 5} style={{ ...tdStyle, textAlign: "center", color: "var(--color-silver-structure)" }}>
                 ჩანაწერები არ მოიძებნა
               </td>
             </tr>

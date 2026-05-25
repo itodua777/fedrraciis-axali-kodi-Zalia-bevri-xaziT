@@ -67,7 +67,7 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
 
   const inputStyle = {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(34, 211, 238, 0.3)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     borderRadius: "8px",
     padding: "12px",
     color: "#fff",
@@ -79,7 +79,7 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
     <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: 1 }}>
       <div style={{ display: "flex", gap: "30px" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "15px", flexShrink: 0 }}>
-          <div style={{ width: "120px", height: "120px", border: "2px solid #22d3ee", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", color: "#22d3ee", cursor: "pointer", position: "relative", overflow: "hidden", boxShadow: "0 0 15px rgba(34, 211, 238, 0.4)" }}>
+          <div style={{ width: "120px", height: "120px", border: "2px solid var(--color-emerald-core)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", color: "var(--color-emerald-core)", cursor: "pointer", position: "relative", overflow: "hidden", boxShadow: "0 0 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)" }}>
             {!isCameraOpen && <input type="file" accept="image/*" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0, cursor: "pointer", zIndex: 10 }} onChange={handlePhotoUpload} />}
             {isCameraOpen ? (
               <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }}></video>
@@ -94,12 +94,12 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
           </div>
           
           {!isCameraOpen ? (
-            <button type="button" onClick={startCamera} style={{ background: "rgba(34, 211, 238, 0.1)", border: "1px solid #22d3ee", color: "#22d3ee", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "8px", transition: "all 0.3s" }}>
+            <button type="button" onClick={startCamera} style={{ background: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "8px", transition: "all 0.3s" }}>
               <i className="fa-solid fa-camera"></i> კამერით გადაღება
             </button>
           ) : (
             <div style={{ display: "flex", gap: "8px" }}>
-              <button type="button" onClick={capturePhoto} style={{ background: "#22d3ee", border: "none", color: "#121418", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "12px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "5px" }}>
+              <button type="button" onClick={capturePhoto} style={{ background: "var(--color-emerald-core)", border: "none", color: "#121418", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "12px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "5px" }}>
                 <i className="fa-solid fa-camera"></i> გადაღება
               </button>
               <button type="button" onClick={stopCamera} style={{ background: "transparent", border: "1px solid #ef4444", color: "#ef4444", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "5px" }}>
@@ -164,9 +164,9 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
                 style={{
                   padding: "6px 12px",
                   borderRadius: "6px",
-                  border: formData.isClubMember ? "1px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)",
-                  backgroundColor: formData.isClubMember ? "rgba(34, 211, 238, 0.15)" : "transparent",
-                  color: formData.isClubMember ? "#22d3ee" : "rgba(255,255,255,0.6)",
+                  border: formData.isClubMember ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)",
+                  backgroundColor: formData.isClubMember ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "transparent",
+                  color: formData.isClubMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.6)",
                   cursor: "pointer",
                   fontWeight: "bold",
                   fontSize: "12px",
@@ -224,13 +224,13 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
       {isMinor && (
         <div className="animate-slide-down" style={{
           padding: "20px",
-          backgroundColor: "rgba(34, 211, 238, 0.02)",
-          border: "1px dashed rgba(34, 211, 238, 0.3)",
+          backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 2%, transparent)",
+          border: "1px dashed color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
           borderRadius: "12px",
           marginTop: "10px",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)"
         }}>
-          <h4 style={{ margin: "0 0 15px 0", color: "#22d3ee", fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
+          <h4 style={{ margin: "0 0 15px 0", color: "var(--color-emerald-core)", fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
             <i className="fa-solid fa-users-viewfinder"></i> კანონიერი წარმომადგენელი (არასრულწლოვანისთვის)
           </h4>
           
@@ -242,7 +242,7 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
                 value="parent" 
                 checked={formData.representativeType === 'parent'} 
                 onChange={() => updateData('representativeType', 'parent')}
-                style={{ accentColor: "#22d3ee" }}
+                style={{ accentColor: "var(--color-emerald-core)" }}
               />
               მშობელი
             </label>
@@ -253,7 +253,7 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
                 value="guardian" 
                 checked={formData.representativeType === 'guardian'} 
                 onChange={() => updateData('representativeType', 'guardian')}
-                style={{ accentColor: "#22d3ee" }}
+                style={{ accentColor: "var(--color-emerald-core)" }}
               />
               მეურვე / კანონიერი წარმომადგენელი
             </label>
@@ -297,9 +297,9 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
             <label style={{ ...labelStyle, display: "block", marginBottom: "8px" }}>წარმომადგენლობის დამადასტურებელი დოკუმენტი (PDF/JPG)</label>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
               <label style={{
-                background: "rgba(34, 211, 238, 0.1)",
-                border: "1px solid #22d3ee",
-                color: "#22d3ee",
+                background: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
+                border: "1px solid var(--color-emerald-core)",
+                color: "var(--color-emerald-core)",
                 padding: "10px 16px",
                 borderRadius: "8px",
                 cursor: "pointer",

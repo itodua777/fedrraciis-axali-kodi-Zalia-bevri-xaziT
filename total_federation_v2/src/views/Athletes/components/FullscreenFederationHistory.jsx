@@ -36,7 +36,7 @@ const FullscreenFederationHistory = ({
         flexDirection: "column",
         gap: "16px"
       }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           🛡️ ფედერაციული სტატუსი & როლები
         </h4>
 
@@ -64,9 +64,9 @@ const FullscreenFederationHistory = ({
                   style={{
                     padding: "5px 12px",
                     borderRadius: "6px",
-                    border: editForm.isClubMember ? "1px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)",
-                    backgroundColor: editForm.isClubMember ? "rgba(34, 211, 238, 0.15)" : "transparent",
-                    color: editForm.isClubMember ? "#22d3ee" : "rgba(255,255,255,0.6)",
+                    border: editForm.isClubMember ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)",
+                    backgroundColor: editForm.isClubMember ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "transparent",
+                    color: editForm.isClubMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.6)",
                     cursor: "pointer",
                     fontWeight: "bold",
                     fontSize: "12px",
@@ -131,9 +131,9 @@ const FullscreenFederationHistory = ({
                   style={{
                     padding: "5px 12px",
                     borderRadius: "6px",
-                    border: editForm.isFederationMember ? "1px solid #22d3ee" : "1px solid rgba(255,255,255,0.1)",
-                    backgroundColor: editForm.isFederationMember ? "rgba(34, 211, 238, 0.15)" : "transparent",
-                    color: editForm.isFederationMember ? "#22d3ee" : "rgba(255,255,255,0.6)",
+                    border: editForm.isFederationMember ? "1px solid var(--color-emerald-core)" : "1px solid rgba(255,255,255,0.1)",
+                    backgroundColor: editForm.isFederationMember ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "transparent",
+                    color: editForm.isFederationMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.6)",
                     cursor: isDeceased ? "not-allowed" : "pointer",
                     fontWeight: "bold",
                     fontSize: "12px",
@@ -189,7 +189,7 @@ const FullscreenFederationHistory = ({
                         });
                       }}
                       style={{ ...inputStyle, cursor: "pointer", opacity: 1 }}
-                      onFocus={e => e.target.style.borderColor = '#22d3ee'}
+                      onFocus={e => e.target.style.borderColor = 'var(--color-emerald-core)'}
                       onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                     >
                       <option value="Active">მოქმედი</option>
@@ -226,7 +226,7 @@ const FullscreenFederationHistory = ({
                         ...inputStyle,
                         cursor: isDeceased ? "not-allowed" : "pointer"
                       }}
-                      onFocus={e => { if (!isDeceased) e.target.style.borderColor = '#22d3ee'; }}
+                      onFocus={e => { if (!isDeceased) e.target.style.borderColor = 'var(--color-emerald-core)'; }}
                       onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                     >
                       <option value="paid">გადახდილი</option>
@@ -257,7 +257,7 @@ const FullscreenFederationHistory = ({
                         });
                       }}
                       style={inputStyle}
-                      onFocus={e => { if (!isDeceased) e.target.style.borderColor = '#22d3ee'; }}
+                      onFocus={e => { if (!isDeceased) e.target.style.borderColor = 'var(--color-emerald-core)'; }}
                       onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
                     />
                   </div>
@@ -362,7 +362,7 @@ const FullscreenFederationHistory = ({
               </div>
               <div>
                 <span style={{ color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontSize: "11px", display: "block", marginBottom: "4px" }}>კლუბის წევრი</span>
-                <span style={{ fontWeight: "bold", color: athlete.isClubMember ? "#22d3ee" : "rgba(255,255,255,0.5)", fontSize: "13px" }}>
+                <span style={{ fontWeight: "bold", color: athlete.isClubMember ? "var(--color-emerald-core)" : "rgba(255,255,255,0.5)", fontSize: "13px" }}>
                   {athlete.isClubMember ? "კი" : "არა"}
                 </span>
               </div>
@@ -380,7 +380,7 @@ const FullscreenFederationHistory = ({
                   }}
                   style={{ 
                     cursor: "pointer", 
-                    color: "#22d3ee",
+                    color: "var(--color-emerald-core)",
                     textDecoration: "underline",
                     fontSize: "13px"
                   }}
@@ -442,7 +442,7 @@ const FullscreenFederationHistory = ({
                     </span>
                   )}
                   {athlete.hasVotingRight ? (
-                    <span style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", border: "1px solid rgba(34, 211, 238, 0.3)", color: "#22d3ee", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "500" }}>
+                    <span style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)", color: "var(--color-emerald-core)", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "500" }}>
                       🗳️ ხმის უფლებით
                     </span>
                   ) : (
@@ -483,7 +483,7 @@ const FullscreenFederationHistory = ({
             </span>
             <div style={{ display: "flex", justifyContent: "space-between", color: "#fff" }}>
               <span>{athlete.representativeName || '-'}</span>
-              <span style={{ color: "#22d3ee", fontWeight: "bold" }}>{athlete.representativePhone || '-'}</span>
+              <span style={{ color: "var(--color-emerald-core)", fontWeight: "bold" }}>{athlete.representativePhone || '-'}</span>
             </div>
           </div>
         )}
@@ -500,7 +500,7 @@ const FullscreenFederationHistory = ({
         gap: "12px",
         flex: 1
       }}>
-        <h4 style={{ margin: 0, color: "#22d3ee", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           🏆 სპორტული ისტორია & მიღწევები
         </h4>
         <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: "12px", flex: 1 }}>

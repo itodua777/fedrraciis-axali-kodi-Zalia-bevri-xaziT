@@ -72,7 +72,7 @@ const RouteMap = ({
             'line-cap': 'round'
           },
           'paint': {
-            'line-color': '#22D3EE',
+            'line-color': 'var(--color-emerald-core)',
             'line-width': 4,
             'line-opacity': 0.8
           }
@@ -97,23 +97,23 @@ const RouteMap = ({
     <div style={{ flex: 1, position: "relative" }}>
       <div ref={mapContainerRef} style={{ width: "100%", height: "100%", outline: "none" }}></div>
       
-      <div style={{ position: "absolute", top: "20px", left: "20px", backgroundColor: "rgba(15, 23, 42, 0.8)", border: "1px solid rgba(34, 211, 238, 0.2)", borderRadius: "8px", padding: "15px", backdropFilter: "blur(5px)", pointerEvents: "none" }}>
+      <div style={{ position: "absolute", top: "20px", left: "20px", backgroundColor: "rgba(15, 23, 42, 0.8)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", borderRadius: "8px", padding: "15px", backdropFilter: "blur(5px)", pointerEvents: "none" }}>
         <div style={{ color: "#fff", fontWeight: "bold", marginBottom: "10px", fontSize: "14px" }}>3D Terrain Mesh Active</div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "rgba(255,255,255,0.7)", marginBottom: "5px" }}>
-          <div style={{ width: "15px", height: "3px", backgroundColor: "#22d3ee" }}></div> მარშრუტის ხაზი
+          <div style={{ width: "15px", height: "3px", backgroundColor: "var(--color-emerald-core)" }}></div> მარშრუტის ხაზი
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "rgba(255,255,255,0.7)", marginBottom: "5px" }}>
           <i className="fa-solid fa-flag" style={{ color: "#ef4444" }}></i> მწვერვალი
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>
-          <i className="fa-solid fa-campground" style={{ color: "#22d3ee" }}></i> გაჩერების ადგილი
+          <i className="fa-solid fa-campground" style={{ color: "var(--color-emerald-core)" }}></i> გაჩერების ადგილი
         </div>
       </div>
 
       {selectedWaypoint && (
-        <div style={{ position: "absolute", top: "20px", right: "20px", width: "250px", backgroundColor: "rgba(15, 23, 42, 0.9)", border: "1px solid #22d3ee", borderRadius: "8px", padding: "15px", backdropFilter: "blur(5px)", boxShadow: "0 0 20px rgba(34, 211, 238, 0.2)" }}>
+        <div style={{ position: "absolute", top: "20px", right: "20px", width: "250px", backgroundColor: "rgba(15, 23, 42, 0.9)", border: "1px solid var(--color-emerald-core)", borderRadius: "8px", padding: "15px", backdropFilter: "blur(5px)", boxShadow: "0 0 20px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <h4 style={{ margin: 0, color: "#22d3ee" }}>{selectedWaypoint.title}</h4>
+            <h4 style={{ margin: 0, color: "var(--color-emerald-core)" }}>{selectedWaypoint.title}</h4>
             <i className="fa-solid fa-xmark" style={{ cursor: "pointer", color: "rgba(255,255,255,0.5)" }} onClick={() => setSelectedWaypoint(null)}></i>
           </div>
           <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", marginBottom: "5px" }}>

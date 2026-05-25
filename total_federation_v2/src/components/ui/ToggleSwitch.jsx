@@ -7,11 +7,11 @@ const ToggleSwitch = ({ checked, onChange, label }) => {
         position: 'relative',
         width: '44px',
         height: '22px',
-        backgroundColor: checked ? 'rgba(34, 211, 238, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-        border: checked ? '1px solid #22d3ee' : '1px solid rgba(255, 255, 255, 0.2)',
+        backgroundColor: checked ? 'color-mix(in oklab, var(--color-emerald-core) 20%, transparent)' : 'rgba(255, 255, 255, 0.1)',
+        border: checked ? '1px solid var(--color-emerald-core)' : '1px solid rgba(255, 255, 255, 0.2)',
         borderRadius: '11px',
         transition: 'all 0.3s ease',
-        boxShadow: checked ? '0 0 8px rgba(34, 211, 238, 0.3)' : 'none'
+        boxShadow: checked ? '0 0 8px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)' : 'none'
       }}>
         <div style={{
           position: 'absolute',
@@ -19,10 +19,10 @@ const ToggleSwitch = ({ checked, onChange, label }) => {
           left: checked ? '24px' : '2px',
           width: '16px',
           height: '16px',
-          backgroundColor: checked ? '#22d3ee' : 'rgba(255, 255, 255, 0.6)',
+          backgroundColor: checked ? 'var(--color-emerald-core)' : 'rgba(255, 255, 255, 0.6)',
           borderRadius: '50%',
           transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
-          boxShadow: checked ? '0 0 6px #22d3ee' : 'none'
+          boxShadow: checked ? '0 0 6px var(--color-emerald-core)' : 'none'
         }} />
       </div>
       <input 

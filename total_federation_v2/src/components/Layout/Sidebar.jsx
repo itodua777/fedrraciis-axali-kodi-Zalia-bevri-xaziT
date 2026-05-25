@@ -31,14 +31,14 @@ const menuItems = [
     node: '570',
     label: 'სავარჯიშო სივრცე',
     icon: 'fa-solid fa-map-location-dot',
-    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
+    iconStyle: { textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", color: "var(--color-emerald-core)" }
   },
   {
     id: 'medianews',
     node: '570',
     label: 'მედიანიუსი',
     icon: 'fa-solid fa-photo-film',
-    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
+    iconStyle: { textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", color: "var(--color-emerald-core)" }
   },
   {
     id: 'incidents',
@@ -51,7 +51,7 @@ const menuItems = [
     node: '570',
     label: 'ფედერაციის პარამეტრები',
     icon: 'fa-solid fa-gear',
-    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
+    iconStyle: { textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", color: "var(--color-emerald-core)" }
   },
 
   // 8849 Tab items
@@ -78,7 +78,7 @@ const menuItems = [
     node: '8849',
     label: 'კლუბების რეესტრი',
     icon: 'fa-solid fa-building-flag',
-    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
+    iconStyle: { textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", color: "var(--color-emerald-core)" }
   },
 
   {
@@ -86,14 +86,14 @@ const menuItems = [
     node: '8849',
     label: 'მარშრუტის დაგეგმვა',
     icon: 'fa-solid fa-mountain',
-    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
+    iconStyle: { textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", color: "var(--color-emerald-core)" }
   },
   {
     id: 'peaks',
     node: '8849',
     label: 'მწვერვალები',
     icon: 'fa-solid fa-mountain-sun',
-    iconStyle: { textShadow: "0 0 8px rgba(34, 211, 238, 0.8)", color: "#22d3ee" }
+    iconStyle: { textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 80%, transparent)", color: "var(--color-emerald-core)" }
   }
 ];
 
@@ -129,8 +129,8 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
   const containerStyle = {
     position: "relative",
     width: isCollapsed ? "80px" : "250px",
-    backgroundColor: "#121418",
-    borderRight: "1px solid rgba(34, 211, 238, 0.2)",
+    backgroundColor: "var(--color-iron)",
+    borderRight: "1px solid var(--color-iron-border)",
     padding: isCollapsed ? "20px 10px" : "20px",
     display: "flex",
     flexDirection: "column",
@@ -147,7 +147,7 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
     gap: isCollapsed ? "0px" : "12px",
     marginBottom: "10px",
     paddingBottom: isCollapsed ? "10px" : "20px",
-    borderBottom: "1px solid rgba(34, 211, 238, 0.2)",
+    borderBottom: "1px solid var(--color-iron-border)",
     flexShrink: 0,
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
   };
@@ -157,14 +157,14 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
     height: isCollapsed ? "40px" : "72px",
     borderRadius: "50%",
     objectFit: "cover",
-    border: "2px solid rgba(34, 211, 238, 0.5)",
-    backgroundColor: "#F8FAFC",
+    border: "2px solid var(--color-iron-border)",
+    backgroundColor: "var(--color-bone-light)",
     transition: "width 0.3s ease, height 0.3s ease"
   };
 
   const federationNameStyle = {
     display: isCollapsed ? "none" : "block",
-    color: "#F8FAFC",
+    color: "var(--color-bone-light)",
     fontFamily: "'FiraGO', 'Lato', 'Poppins', sans-serif",
     fontWeight: "700",
     fontSize: "14px",
@@ -184,8 +184,8 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
     display: "flex",
     flexDirection: isCollapsed ? "column" : "row",
     width: "100%",
-    backgroundColor: "#121418",
-    border: "1px solid rgba(34, 211, 238, 0.2)",
+    backgroundColor: "var(--color-iron)",
+    border: "1px solid var(--color-iron-border)",
     borderRadius: "8px",
     overflow: "hidden",
     flexShrink: 0,
@@ -197,10 +197,10 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
     flex: 1,
     padding: isCollapsed ? "6px 0" : "10px 0",
     backgroundColor: "transparent",
-    color: activeNode === node ? "#22d3ee" : "#475569",
+    color: activeNode === node ? "var(--color-emerald-core)" : "var(--color-silver-structure)",
     border: "none",
-    borderBottom: (!isCollapsed && activeNode === node) ? "2px solid #22d3ee" : "2px solid transparent",
-    textShadow: activeNode === node ? "0 0 10px rgba(34, 211, 238, 0.5)" : "none",
+    borderBottom: (!isCollapsed && activeNode === node) ? "2px solid var(--color-emerald-core)" : "2px solid transparent",
+    textShadow: activeNode === node ? "0 0 10px var(--color-emerald-core)" : "none",
     fontFamily: "'FiraGO', 'Poppins', sans-serif",
     fontWeight: "700",
     fontSize: isCollapsed ? "12px" : "16px",
@@ -220,13 +220,13 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
   const buttonStyle = (view) => {
     const isActive = isViewActive(view);
     return {
-      backgroundColor: isActive ? "rgba(34, 211, 238, 0.1)" : "transparent",
-      color: isActive ? "#ffffff" : "#22d3ee",
-      border: isActive ? "1px solid rgba(34, 211, 238, 0.8)" : "1px solid rgba(34, 211, 238, 0.2)",
+      backgroundColor: isActive ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "transparent",
+      color: isActive ? "var(--color-bone-light)" : "var(--color-emerald-core)",
+      border: isActive ? "1px solid var(--color-emerald-core)" : "1px solid var(--color-iron-border)",
       padding: isCollapsed ? "12px 0px" : "12px",
       borderRadius: "8px",
       cursor: "pointer",
-      boxShadow: isActive ? "0 0 12px rgba(34, 211, 238, 0.5)" : "0 0 10px rgba(34, 211, 238, 0.1)",
+      boxShadow: isActive ? "0 0 12px var(--color-emerald-core)" : "none",
       transition: "all 0.3s ease",
       textAlign: isCollapsed ? "center" : "left",
       display: "flex",

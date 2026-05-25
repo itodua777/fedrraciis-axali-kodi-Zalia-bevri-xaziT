@@ -73,7 +73,7 @@ const ReturnModal = ({ isOpen, onClose, onReturnConfirm, selectedTransactionForR
   };
 
   const modalContentStyle = {
-    backgroundColor: "#1e293b", border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "#1e293b", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     borderRadius: "16px", padding: "30px", width: "100%", maxWidth: "600px",
     boxShadow: "0 10px 25px rgba(0,0,0,0.5)", maxHeight: "85vh", overflowY: "auto"
   };
@@ -187,7 +187,7 @@ const ReturnModal = ({ isOpen, onClose, onReturnConfirm, selectedTransactionForR
             <div style={{ color: "#fff", display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
               <div>
                 <span style={{ color: "rgba(255,255,255,0.5)" }}>ინვენტარი: </span>
-                <strong style={{ color: "#22d3ee" }}>{selectedTransactionForReturn?.itemName} #{selectedTransactionForReturn?.itemCode}</strong>
+                <strong style={{ color: "var(--color-emerald-core)" }}>{selectedTransactionForReturn?.itemName} #{selectedTransactionForReturn?.itemCode}</strong>
               </div>
               <div>
                 <span style={{ color: "rgba(255,255,255,0.5)" }}>პასუხისმგებელი: </span>

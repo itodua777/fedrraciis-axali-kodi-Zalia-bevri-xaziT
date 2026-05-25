@@ -54,8 +54,8 @@ const SpaceEditForm = ({
           <div>
             <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", marginBottom: "5px", display: "block" }}>ტიპი *</label>
             <div style={{ display: "flex", gap: "0", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden", backgroundColor: "rgba(255,255,255,0.02)" }}>
-              <button type="button" onClick={() => setEditOwnerType('FEDERATION')} style={{ flex: 1, padding: "12px", backgroundColor: editOwnerType === 'FEDERATION' ? "rgba(15, 23, 42, 0.8)" : "transparent", color: editOwnerType === 'FEDERATION' ? "#22d3ee" : "rgba(255,255,255,0.5)", border: "none", cursor: "pointer", transition: "all 0.3s" }}>საჯარო სივრცე</button>
-              <button type="button" onClick={() => setEditOwnerType('PRIVATE')} style={{ flex: 1, padding: "12px", backgroundColor: editOwnerType === 'PRIVATE' ? "rgba(15, 23, 42, 0.8)" : "transparent", color: editOwnerType === 'PRIVATE' ? "#22d3ee" : "rgba(255,255,255,0.5)", border: "none", cursor: "pointer", transition: "all 0.3s" }}>კერძო საკუთრება</button>
+              <button type="button" onClick={() => setEditOwnerType('FEDERATION')} style={{ flex: 1, padding: "12px", backgroundColor: editOwnerType === 'FEDERATION' ? "rgba(15, 23, 42, 0.8)" : "transparent", color: editOwnerType === 'FEDERATION' ? "var(--color-emerald-core)" : "rgba(255,255,255,0.5)", border: "none", cursor: "pointer", transition: "all 0.3s" }}>საჯარო სივრცე</button>
+              <button type="button" onClick={() => setEditOwnerType('PRIVATE')} style={{ flex: 1, padding: "12px", backgroundColor: editOwnerType === 'PRIVATE' ? "rgba(15, 23, 42, 0.8)" : "transparent", color: editOwnerType === 'PRIVATE' ? "var(--color-emerald-core)" : "rgba(255,255,255,0.5)", border: "none", cursor: "pointer", transition: "all 0.3s" }}>კერძო საკუთრება</button>
             </div>
           </div>
           
@@ -86,7 +86,7 @@ const SpaceEditForm = ({
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "15px", marginTop: "10px", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "20px" }}>
             <button type="button" onClick={handleCloseEditModal} style={{ padding: "12px 24px", backgroundColor: "rgba(255,255,255,0.05)", border: "none", color: "#fff", borderRadius: "24px", cursor: "pointer", transition: "all 0.3s" }}>გაუქმება</button>
-            <button type="submit" style={{ padding: "12px 30px", backgroundColor: "#22d3ee", border: "none", color: "#121418", borderRadius: "24px", cursor: "pointer", fontWeight: "bold", transition: "all 0.3s" }}>შენახვა</button>
+            <button type="submit" style={{ padding: "12px 30px", backgroundColor: "var(--color-emerald-core)", border: "none", color: "#121418", borderRadius: "24px", cursor: "pointer", fontWeight: "bold", transition: "all 0.3s" }}>შენახვა</button>
           </div>
         </form>
       </div>

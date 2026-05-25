@@ -51,7 +51,7 @@ const PeakAddForm = ({
       <div style={{ backgroundColor: "rgba(0,0,0,0.3)", padding: "15px", borderRadius: "8px", marginBottom: "15px", border: "1px solid rgba(255,255,255,0.05)" }}>
         <h4 style={{ color: "#fff", margin: "0 0 15px 0" }}>🪪 ბლოკი B: სასაზღვრო სტატუსი</h4>
         <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", marginBottom: formData.isBorderZone ? "15px" : "0" }}>
-          <input type="checkbox" checked={formData.isBorderZone} onChange={e => setFormData({...formData, isBorderZone: e.target.checked, borderCountries: []})} style={{ width: "16px", height: "16px", accentColor: "#22d3ee" }} />
+          <input type="checkbox" checked={formData.isBorderZone} onChange={e => setFormData({...formData, isBorderZone: e.target.checked, borderCountries: []})} style={{ width: "16px", height: "16px", accentColor: "var(--color-emerald-core)" }} />
           <span style={{ color: "#fff" }}>სასაზღვრო ზონა</span>
         </label>
         
@@ -95,7 +95,7 @@ const PeakAddForm = ({
         <textarea style={{...inputStyle, resize: "vertical", height: "100px"}} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}></textarea>
       </div>
 
-      <button onClick={handleSave} style={{ width: "100%", padding: "15px", background: "#22d3ee", color: "#121418", border: "none", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 0 15px rgba(34, 211, 238, 0.4)", transition: "all 0.3s" }}>
+      <button onClick={handleSave} style={{ width: "100%", padding: "15px", background: "var(--color-emerald-core)", color: "#121418", border: "none", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 0 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)", transition: "all 0.3s" }}>
         შენახვა ბაზაში
       </button>
     </div>

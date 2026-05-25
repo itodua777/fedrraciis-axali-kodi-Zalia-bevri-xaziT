@@ -53,7 +53,7 @@ const LazyRanksValidationEngine = ({ athletes, onUpdateAthlete }) => {
 
   if (!Component) {
     return (
-      <div style={{ color: '#22d3ee', padding: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ color: 'var(--color-emerald-core)', padding: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
         <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '18px' }}></i>
         <span>მთამსვლელთა თანრიგების მართვის პანელი იტვირთება...</span>
       </div>
@@ -83,7 +83,7 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
   };
 
   const cardStyle = {
-    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(34, 211, 238, 0.1)",
+    backgroundColor: "rgba(15, 23, 42, 0.6)", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
     borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)", gap: "15px"
   };
@@ -98,31 +98,31 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
   };
 
   const tabContainerStyle = {
-    display: "flex", gap: "15px", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", paddingBottom: "15px", marginBottom: "10px"
+    display: "flex", gap: "15px", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", paddingBottom: "15px", marginBottom: "10px"
   };
 
   const tabButtonStyle = (tabId) => ({
     backgroundColor: "transparent",
     color: activeTab === tabId ? "#fff" : "rgba(226, 232, 240, 0.6)",
-    border: activeTab === tabId ? "1px solid #22d3ee" : "1px solid transparent",
+    border: activeTab === tabId ? "1px solid var(--color-emerald-core)" : "1px solid transparent",
     borderRadius: "20px",
     padding: "8px 24px",
     cursor: "pointer",
     fontSize: "14px",
     fontWeight: "bold",
-    boxShadow: activeTab === tabId ? "0 0 10px rgba(34, 211, 238, 0.2)" : "none",
+    boxShadow: activeTab === tabId ? "0 0 10px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" : "none",
     transition: "all 0.3s"
   });
 
   const switchBoxStyle = {
     backgroundColor: "rgba(15, 23, 42, 0.8)",
-    border: "1px solid rgba(34, 211, 238, 0.2)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
     borderRadius: "12px",
     padding: "20px",
     display: "flex",
     flexDirection: "column",
     gap: "15px",
-    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(34, 211, 238, 0.05)",
+    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.4), inset 0 0 10px color-mix(in oklab, var(--color-emerald-core) 5%, transparent)",
     backdropFilter: "blur(4px)"
   };
 
@@ -206,7 +206,7 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
               {/* Card 1: UIAA */}
               <div style={cardStyle}>
-                <h3 style={{ color: "#22d3ee", margin: "0 0 10px 0", fontSize: "16px" }}><i className="fa-solid fa-mountain"></i> UIAA საბაზისო ქულები</h3>
+                <h3 style={{ color: "var(--color-emerald-core)", margin: "0 0 10px 0", fontSize: "16px" }}><i className="fa-solid fa-mountain"></i> UIAA საბაზისო ქულები</h3>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   {Object.entries(store.uiaaDictionary || {}).map(([level, point]) => (
                     <div key={level} style={rowStyle}>
@@ -217,13 +217,13 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
                 </div>
                 <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                   <input type="text" placeholder="ახალი კატეგორია" style={inputStyle} value={newCat} onChange={e => setNewCat(e.target.value)} />
-                  <button onClick={() => { if(newCat) { store.addUiaaCategory(newCat); setNewCat(""); } }} style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", border: "1px solid #22d3ee", color: "#22d3ee", padding: "8px 12px", borderRadius: "8px", cursor: "pointer" }}>+</button>
+                  <button onClick={() => { if(newCat) { store.addUiaaCategory(newCat); setNewCat(""); } }} style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "8px 12px", borderRadius: "8px", cursor: "pointer" }}>+</button>
                 </div>
               </div>
 
               {/* Card 2: Styles */}
               <div style={cardStyle}>
-                <h3 style={{ color: "#22d3ee", margin: "0 0 10px 0", fontSize: "16px" }}><i className="fa-solid fa-person-snowboarding"></i> ასვლის სტილის კოეფიციენტი</h3>
+                <h3 style={{ color: "var(--color-emerald-core)", margin: "0 0 10px 0", fontSize: "16px" }}><i className="fa-solid fa-person-snowboarding"></i> ასვლის სტილის კოეფიციენტი</h3>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   {Object.entries(store.uiaaStyleMultipliers || {}).map(([style, mult]) => (
                     <div key={style} style={rowStyle}>
@@ -234,13 +234,13 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
                 </div>
                 <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                   <input type="text" placeholder="ახალი სტილი" style={inputStyle} value={newStyle} onChange={e => setNewStyle(e.target.value)} />
-                  <button onClick={() => { if(newStyle) { store.addStyle(newStyle); setNewStyle(""); } }} style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", border: "1px solid #22d3ee", color: "#22d3ee", padding: "8px 12px", borderRadius: "8px", cursor: "pointer" }}>+</button>
+                  <button onClick={() => { if(newStyle) { store.addStyle(newStyle); setNewStyle(""); } }} style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "8px 12px", borderRadius: "8px", cursor: "pointer" }}>+</button>
                 </div>
               </div>
 
               {/* Card 3: Height Divisor */}
               <div style={cardStyle}>
-                <h3 style={{ color: "#22d3ee", margin: "0 0 10px 0", fontSize: "16px" }}><i className="fa-solid fa-ruler-vertical"></i> სიმაღლის პარამეტრები</h3>
+                <h3 style={{ color: "var(--color-emerald-core)", margin: "0 0 10px 0", fontSize: "16px" }}><i className="fa-solid fa-ruler-vertical"></i> სიმაღლის პარამეტრები</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   <label style={{ fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>სიმაღლის გამყოფი კოეფიციენტი</label>
                   <input type="number" style={inputStyle} value={store.heightDivisor} onChange={e => store.updateHeightDivisor(parseFloat(e.target.value) || 1)} />

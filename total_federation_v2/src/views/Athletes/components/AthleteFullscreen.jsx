@@ -96,8 +96,8 @@ const AthleteFullscreen = ({
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.8)";
-                e.currentTarget.style.color = "#22d3ee";
-                e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.4)";
+                e.currentTarget.style.color = "var(--color-emerald-core)";
+                e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)";
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
@@ -144,8 +144,8 @@ const AthleteFullscreen = ({
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.8)";
-                  e.currentTarget.style.color = "#22d3ee";
-                  e.currentTarget.style.borderColor = "rgba(34, 211, 238, 0.4)";
+                  e.currentTarget.style.color = "var(--color-emerald-core)";
+                  e.currentTarget.style.borderColor = "color-mix(in oklab, var(--color-emerald-core) 40%, transparent)";
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
@@ -162,9 +162,9 @@ const AthleteFullscreen = ({
                   alignItems: "center",
                   gap: "8px",
                   fontSize: "13px",
-                  backgroundColor: "rgba(34, 211, 238, 0.1)",
-                  border: "1px solid rgba(34, 211, 238, 0.3)",
-                  color: "#22d3ee",
+                  backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
+                  border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
+                  color: "var(--color-emerald-core)",
                   padding: "6px 14px",
                   borderRadius: "8px",
                   cursor: "pointer",
@@ -172,11 +172,11 @@ const AthleteFullscreen = ({
                   transition: "all 0.2s"
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.2)";
-                  e.currentTarget.style.boxShadow = "0 0 10px rgba(34, 211, 238, 0.3)";
+                  e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)";
+                  e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)";
+                  e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)";
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
@@ -208,7 +208,7 @@ const AthleteFullscreen = ({
                 type="button"
                 onClick={handleSave}
                 style={{
-                  backgroundColor: "#22d3ee",
+                  backgroundColor: "var(--color-emerald-core)",
                   border: "none",
                   color: "#121418",
                   padding: "6px 16px",
@@ -217,10 +217,10 @@ const AthleteFullscreen = ({
                   fontSize: "13px",
                   fontWeight: "bold",
                   transition: "all 0.3s",
-                  boxShadow: "0 0 10px rgba(34, 211, 238, 0.3)"
+                  boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)"
                 }}
-                onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.6)"; }}
-                onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 10px rgba(34, 211, 238, 0.3)"; }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 15px color-mix(in oklab, var(--color-emerald-core) 60%, transparent)"; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)"; }}
               >
                 <i className="fa-regular fa-floppy-disk"></i> ცვლილების შენახვა
               </button>

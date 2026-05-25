@@ -5,12 +5,12 @@ const StatCard = ({ title, value, subtitle, loading, valueColor = "#ffffff", tex
   
   const cardStyle = {
     backgroundColor: "rgba(15, 23, 42, 0.6)",
-    border: hovered ? "1px solid rgba(34, 211, 238, 0.3)" : "1px solid rgba(34, 211, 238, 0.1)",
+    border: hovered ? "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" : "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
     borderRadius: "12px",
     padding: "20px",
     boxShadow: hovered 
-      ? "0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(34, 211, 238, 0.1), inset 0 0 15px rgba(34, 211, 238, 0.08)"
-      : "0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(34, 211, 238, 0.05)",
+      ? "0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px color-mix(in oklab, var(--color-emerald-core) 10%, transparent), inset 0 0 15px color-mix(in oklab, var(--color-emerald-core) 8%, transparent)"
+      : "0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px color-mix(in oklab, var(--color-emerald-core) 5%, transparent)",
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     display: "flex",
     flexDirection: "column",
@@ -20,7 +20,7 @@ const StatCard = ({ title, value, subtitle, loading, valueColor = "#ffffff", tex
   };
 
   const titleStyle = {
-    color: "#22d3ee",
+    color: "var(--color-emerald-core)",
     fontSize: "12px",
     fontWeight: "600",
     textTransform: "uppercase",

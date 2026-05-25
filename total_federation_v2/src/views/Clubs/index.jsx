@@ -29,7 +29,7 @@ const MapView = ({ clubs, onSelectClub }) => {
 
     clubs.forEach(club => {
       if (club.lat && club.lng) {
-        const markerHtml = `<div style="background-color: #22D3EE; width: 15px; height: 15px; border-radius: 50%; box-shadow: 0 0 10px #22D3EE, 0 0 20px #22D3EE; border: 2px solid #fff;"></div>`;
+        const markerHtml = `<div style="background-color: var(--color-emerald-core); width: 15px; height: 15px; border-radius: 50%; box-shadow: 0 0 10px var(--color-emerald-core), 0 0 20px var(--color-emerald-core); border: 2px solid #fff;"></div>`;
         const customIcon = L.divIcon({
           html: markerHtml,
           className: 'custom-leaflet-icon',
@@ -39,8 +39,8 @@ const MapView = ({ clubs, onSelectClub }) => {
         const marker = L.marker([club.lat, club.lng], { icon: customIcon }).addTo(map);
         
         marker.bindTooltip(`
-          <div style="background: #121418; border: 1px solid #22D3EE; padding: 10px; border-radius: 8px; color: #fff;">
-            <h4 style="margin: 0 0 5px 0; color: #22D3EE;">${club.name}</h4>
+          <div style="background: #121418; border: 1px solid var(--color-emerald-core); padding: 10px; border-radius: 8px; color: #fff;">
+            <h4 style="margin: 0 0 5px 0; color: var(--color-emerald-core);">${club.name}</h4>
             <div style="font-size: 12px; color: rgba(255,255,255,0.7);">წევრები: ${club.members}</div>
             <div style="font-size: 12px; color: rgba(255,255,255,0.7);">ხელმძღვანელი: ${club.managerName}</div>
           </div>
@@ -52,7 +52,7 @@ const MapView = ({ clubs, onSelectClub }) => {
     });
   }, [clubs]);
 
-  return <div ref={mapRef} style={{ width: '100%', height: '100%', borderRadius: '12px', border: '1px solid rgba(34, 211, 238, 0.2)' }}></div>;
+  return <div ref={mapRef} style={{ width: '100%', height: '100%', borderRadius: '12px', border: '1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)' }}></div>;
 };
 
 const ClubsRegistryDashboard = ({ clubs, setClubs, selectedClubId, setSelectedClubId }) => {
@@ -109,10 +109,10 @@ const ClubsRegistryDashboard = ({ clubs, setClubs, selectedClubId, setSelectedCl
   return (
     <div style={{ flex: 1, padding: "30px", display: "flex", gap: "20px", backgroundColor: "#121418", color: "#e2e8f0", overflow: "hidden", fontFamily: "sans-serif" }}>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "20px", overflow: "hidden" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "rgba(15, 23, 42, 0.6)", padding: "20px", borderRadius: "12px", border: "1px solid rgba(34, 211, 238, 0.1)", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "rgba(15, 23, 42, 0.6)", padding: "20px", borderRadius: "12px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <div style={{ width: "40px", height: "40px", backgroundColor: "rgba(34, 211, 238, 0.1)", border: "1px solid #22d3ee", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <i className="fa-solid fa-building-flag" style={{ color: "#22d3ee", fontSize: "20px", textShadow: "0 0 10px #22d3ee" }}></i>
+            <div style={{ width: "40px", height: "40px", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid var(--color-emerald-core)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <i className="fa-solid fa-building-flag" style={{ color: "var(--color-emerald-core)", fontSize: "20px", textShadow: "0 0 10px var(--color-emerald-core)" }}></i>
             </div>
             <div>
               <h2 style={{ margin: 0, color: "#fff", fontSize: "20px" }}>კლუბების რეესტრი</h2>
@@ -120,17 +120,17 @@ const ClubsRegistryDashboard = ({ clubs, setClubs, selectedClubId, setSelectedCl
             </div>
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
-            <div style={{ display: "flex", backgroundColor: "rgba(0,0,0,0.3)", borderRadius: "8px", padding: "4px", border: "1px solid rgba(34, 211, 238, 0.2)" }}>
-              <button onClick={() => setViewMode('table')} style={{ padding: "8px 16px", borderRadius: "6px", border: "none", background: viewMode === 'table' ? "#22d3ee" : "transparent", color: viewMode === 'table' ? "#121418" : "#fff", fontWeight: "bold", cursor: "pointer", transition: "0.2s" }}>ცხრილი</button>
-              <button onClick={() => setViewMode('map')} style={{ padding: "8px 16px", borderRadius: "6px", border: "none", background: viewMode === 'map' ? "#22d3ee" : "transparent", color: viewMode === 'map' ? "#121418" : "#fff", fontWeight: "bold", cursor: "pointer", transition: "0.2s" }}>რუკა</button>
+            <div style={{ display: "flex", backgroundColor: "rgba(0,0,0,0.3)", borderRadius: "8px", padding: "4px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" }}>
+              <button onClick={() => setViewMode('table')} style={{ padding: "8px 16px", borderRadius: "6px", border: "none", background: viewMode === 'table' ? "var(--color-emerald-core)" : "transparent", color: viewMode === 'table' ? "#121418" : "#fff", fontWeight: "bold", cursor: "pointer", transition: "0.2s" }}>ცხრილი</button>
+              <button onClick={() => setViewMode('map')} style={{ padding: "8px 16px", borderRadius: "6px", border: "none", background: viewMode === 'map' ? "var(--color-emerald-core)" : "transparent", color: viewMode === 'map' ? "#121418" : "#fff", fontWeight: "bold", cursor: "pointer", transition: "0.2s" }}>რუკა</button>
             </div>
-            <button onClick={() => { setIsFormOpen(true); setSelectedClub(null); }} style={{ backgroundColor: "#22d3ee", color: "#121418", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 15px rgba(34, 211, 238, 0.3)" }}>
+            <button onClick={() => { setIsFormOpen(true); setSelectedClub(null); }} style={{ backgroundColor: "var(--color-emerald-core)", color: "#121418", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 15px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>
               <i className="fa-solid fa-plus"></i> კლუბის დამატება
             </button>
           </div>
         </div>
 
-        <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", padding: "15px", borderRadius: "12px", border: "1px solid rgba(34, 211, 238, 0.1)", display: "flex", gap: "15px", flexWrap: "wrap", alignItems: "flex-end" }}>
+        <div style={{ backgroundColor: "rgba(15, 23, 42, 0.6)", padding: "15px", borderRadius: "12px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", display: "flex", gap: "15px", flexWrap: "wrap", alignItems: "flex-end" }}>
           <div style={{ flex: 1, minWidth: "200px" }}>
             <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", display: "block", marginBottom: "5px" }}>ძებნა (სახელი, ID)</label>
             <div style={{ position: "relative" }}>
@@ -154,28 +154,28 @@ const ClubsRegistryDashboard = ({ clubs, setClubs, selectedClubId, setSelectedCl
           </div>
           <div style={{ width: "200px", paddingBottom: "5px" }}>
             <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", display: "block", marginBottom: "5px" }}>მინ. წევრები: {memberRange}</label>
-            <input type="range" min="0" max="1000" step="10" value={memberRange} onChange={e => setMemberRange(parseInt(e.target.value))} style={{ width: "100%", accentColor: "#22d3ee" }} />
+            <input type="range" min="0" max="1000" step="10" value={memberRange} onChange={e => setMemberRange(parseInt(e.target.value))} style={{ width: "100%", accentColor: "var(--color-emerald-core)" }} />
           </div>
         </div>
 
-        <div style={{ flex: 1, backgroundColor: "rgba(15, 23, 42, 0.6)", borderRadius: "12px", border: "1px solid rgba(34, 211, 238, 0.1)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        <div style={{ flex: 1, backgroundColor: "rgba(15, 23, 42, 0.6)", borderRadius: "12px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
           {viewMode === 'table' ? (
             <div style={{ flex: 1, overflowY: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
                 <thead style={{ backgroundColor: "rgba(0,0,0,0.3)", position: "sticky", top: 0, zIndex: 10 }}>
                   <tr>
-                    <th style={{ padding: "15px", textAlign: "left", color: "#22d3ee", fontWeight: "bold" }}>დასახელება</th>
-                    <th style={{ padding: "15px", textAlign: "left", color: "#22d3ee", fontWeight: "bold" }}>სტატუსი / ID</th>
-                    <th style={{ padding: "15px", textAlign: "left", color: "#22d3ee", fontWeight: "bold" }}>რეგიონი</th>
-                    <th style={{ padding: "15px", textAlign: "center", color: "#22d3ee", fontWeight: "bold" }}>წევრები</th>
+                    <th style={{ padding: "15px", textAlign: "left", color: "var(--color-emerald-core)", fontWeight: "bold" }}>დასახელება</th>
+                    <th style={{ padding: "15px", textAlign: "left", color: "var(--color-emerald-core)", fontWeight: "bold" }}>სტატუსი / ID</th>
+                    <th style={{ padding: "15px", textAlign: "left", color: "var(--color-emerald-core)", fontWeight: "bold" }}>რეგიონი</th>
+                    <th style={{ padding: "15px", textAlign: "center", color: "var(--color-emerald-core)", fontWeight: "bold" }}>წევრები</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredClubs.map(c => (
-                    <tr key={c.id} onClick={() => { setSelectedClub(c); setIsFormOpen(false); setSelectedClubId(c.id); }} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", cursor: "pointer", backgroundColor: selectedClub?.id === c.id ? "rgba(34, 211, 238, 0.1)" : "transparent", transition: "0.2s" }} onMouseOver={e => { if(selectedClub?.id !== c.id) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)" }} onMouseOut={e => { if(selectedClub?.id !== c.id) e.currentTarget.style.backgroundColor = "transparent" }}>
+                    <tr key={c.id} onClick={() => { setSelectedClub(c); setIsFormOpen(false); setSelectedClubId(c.id); }} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", cursor: "pointer", backgroundColor: selectedClub?.id === c.id ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "transparent", transition: "0.2s" }} onMouseOver={e => { if(selectedClub?.id !== c.id) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)" }} onMouseOut={e => { if(selectedClub?.id !== c.id) e.currentTarget.style.backgroundColor = "transparent" }}>
                       <td style={{ padding: "15px", color: "#fff", fontWeight: "bold" }}>{c.name}</td>
                       <td style={{ padding: "15px", color: "rgba(255,255,255,0.7)" }}>
-                        <span style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", color: "#22d3ee", padding: "2px 8px", borderRadius: "10px", fontSize: "12px", marginRight: "8px" }}>{c.status}</span>
+                        <span style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", color: "var(--color-emerald-core)", padding: "2px 8px", borderRadius: "10px", fontSize: "12px", marginRight: "8px" }}>{c.status}</span>
                         {c.regNo}
                       </td>
                       <td style={{ padding: "15px", color: "rgba(255,255,255,0.7)" }}>{c.region}</td>
@@ -197,9 +197,9 @@ const ClubsRegistryDashboard = ({ clubs, setClubs, selectedClubId, setSelectedCl
       </div>
 
       {(isFormOpen || selectedClub) && (
-        <div style={{ width: "400px", minWidth: "400px", backgroundColor: "rgba(15, 23, 42, 0.8)", borderRadius: "12px", padding: "25px", border: "1px solid rgba(34, 211, 238, 0.2)", display: "flex", flexDirection: "column", gap: "20px", overflowY: "auto", boxShadow: "-5px 0 25px rgba(0,0,0,0.5)" }}>
+        <div style={{ width: "400px", minWidth: "400px", backgroundColor: "rgba(15, 23, 42, 0.8)", borderRadius: "12px", padding: "25px", border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", display: "flex", flexDirection: "column", gap: "20px", overflowY: "auto", boxShadow: "-5px 0 25px rgba(0,0,0,0.5)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "15px" }}>
-            <h3 style={{ margin: 0, color: "#22d3ee", fontSize: "18px" }}>{isFormOpen ? "რეგისტრაცია" : "კლუბის დოსიე"}</h3>
+            <h3 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "18px" }}>{isFormOpen ? "რეგისტრაცია" : "კლუბის დოსიე"}</h3>
             <i className="fa-solid fa-xmark" style={{ cursor: "pointer", fontSize: "18px", color: "rgba(255,255,255,0.5)" }} onClick={() => { setIsFormOpen(false); setSelectedClub(null); setSelectedClubId(null); }}></i>
           </div>
 
@@ -271,13 +271,13 @@ const ClubsRegistryDashboard = ({ clubs, setClubs, selectedClubId, setSelectedCl
                 <input type="email" value={formData.managerEmail} onChange={e => setFormData({...formData, managerEmail: e.target.value})} style={inputStyle} />
               </div>
 
-              <button onClick={handleSave} style={{ background: "#22d3ee", color: "#121418", border: "none", padding: "15px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", marginTop: "10px", boxShadow: "0 0 15px rgba(34, 211, 238, 0.4)" }}>შენახვა</button>
+              <button onClick={handleSave} style={{ background: "var(--color-emerald-core)", color: "#121418", border: "none", padding: "15px", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", marginTop: "10px", boxShadow: "0 0 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)" }}>შენახვა</button>
             </div>
           ) : selectedClub ? (
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ width: "80px", height: "80px", margin: "0 auto 15px", backgroundColor: "rgba(34, 211, 238, 0.1)", border: "2px solid #22d3ee", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <i className="fa-solid fa-building" style={{ fontSize: "32px", color: "#22d3ee" }}></i>
+                <div style={{ width: "80px", height: "80px", margin: "0 auto 15px", backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "2px solid var(--color-emerald-core)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <i className="fa-solid fa-building" style={{ fontSize: "32px", color: "var(--color-emerald-core)" }}></i>
                 </div>
                 <h3 style={{ margin: "0 0 5px 0", color: "#fff", fontSize: "22px" }}>{selectedClub.name}</h3>
                 <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px" }}>{selectedClub.region}</div>
@@ -302,7 +302,7 @@ const ClubsRegistryDashboard = ({ clubs, setClubs, selectedClubId, setSelectedCl
                 </div>
               </div>
 
-              <h4 style={{ margin: "10px 0 0", color: "#22d3ee", borderBottom: "1px solid rgba(34, 211, 238, 0.2)", paddingBottom: "5px" }}>ხელმძღვანელი</h4>
+              <h4 style={{ margin: "10px 0 0", color: "var(--color-emerald-core)", borderBottom: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", paddingBottom: "5px" }}>ხელმძღვანელი</h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <i className="fa-solid fa-user-tie" style={{ color: "rgba(255,255,255,0.5)", width: "20px" }}></i>

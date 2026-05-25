@@ -84,8 +84,8 @@ const ProfileHeaderCard = ({ athlete, isEditing, editForm, onClose, onEdit, onEx
             width: "fit-content",
             fontSize: "11px",
             fontWeight: "500",
-            color: athlete.isFederationMember ? "#22d3ee" : "#64748b",
-            backgroundColor: athlete.isFederationMember ? "rgba(34, 211, 238, 0.1)" : "rgba(100, 116, 139, 0.1)",
+            color: athlete.isFederationMember ? "var(--color-emerald-core)" : "#64748b",
+            backgroundColor: athlete.isFederationMember ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "rgba(100, 116, 139, 0.1)",
             padding: "2px 8px",
             borderRadius: "4px",
             marginTop: "2px"
@@ -98,13 +98,13 @@ const ProfileHeaderCard = ({ athlete, isEditing, editForm, onClose, onEdit, onEx
             <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
               {phoneVal && (
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <i className="fa-solid fa-phone" style={{ color: "#22d3ee", fontSize: "10px", width: "12px", textAlign: "center" }}></i>
+                  <i className="fa-solid fa-phone" style={{ color: "var(--color-emerald-core)", fontSize: "10px", width: "12px", textAlign: "center" }}></i>
                   <span>{phoneVal}</span>
                 </div>
               )}
               {emailVal && (
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  <i className="fa-solid fa-envelope" style={{ color: "#22d3ee", fontSize: "10px", width: "12px", textAlign: "center" }}></i>
+                  <i className="fa-solid fa-envelope" style={{ color: "var(--color-emerald-core)", fontSize: "10px", width: "12px", textAlign: "center" }}></i>
                   <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{emailVal}</span>
                 </div>
               )}

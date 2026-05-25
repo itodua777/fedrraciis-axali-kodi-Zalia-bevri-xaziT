@@ -51,7 +51,7 @@ const RanksValidationEngine: React.FC<RanksValidationEngineProps> = ({ athletes,
       case 'RANK_3': return { emoji: '🥉', color: '#cd7f32', label: 'III თანრიგი' };
       case 'RANK_2': return { emoji: '🥈', color: '#cbd5e1', label: 'II თანრიგი' };
       case 'RANK_1': return { emoji: '🥇', color: '#fbbf24', label: 'I თანრიგი' };
-      case 'CANDIDATE': return { emoji: '🔷', color: '#22d3ee', label: 'ოსტატობის კანდიდატი' };
+      case 'CANDIDATE': return { emoji: '🔷', color: 'var(--color-emerald-core)', label: 'ოსტატობის კანდიდატი' };
       case 'MASTER': return { emoji: '👑', color: '#f59e0b', label: 'სპორტის ოსტატი' };
       case 'INT_MASTER': return { emoji: '🌟', color: '#c084fc', label: 'საერთაშორისო ოსტატი' };
       default: return null;
@@ -338,13 +338,13 @@ const RanksValidationEngine: React.FC<RanksValidationEngineProps> = ({ athletes,
       {/* Top Switch Controls */}
       <div style={{
         backgroundColor: 'rgba(15, 23, 42, 0.8)',
-        border: '1px solid rgba(34, 211, 238, 0.2)',
+        border: '1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)',
         borderRadius: '12px',
         padding: '24px',
         display: 'flex',
         flexDirection: 'column',
         gap: '20px',
-        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(34, 211, 238, 0.05)',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4), inset 0 0 10px color-mix(in oklab, var(--color-emerald-core) 5%, transparent)',
         backdropFilter: 'blur(4px)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
@@ -417,9 +417,9 @@ const RanksValidationEngine: React.FC<RanksValidationEngineProps> = ({ athletes,
               <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase' }}>სულ სპორტსმენი</span>
               <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fff', marginTop: '5px' }}>{athletes.length}</div>
             </div>
-            <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(34, 211, 238, 0.2)', borderRadius: '10px', padding: '16px' }}>
-              <span style={{ color: '#22d3ee', fontSize: '11px', textTransform: 'uppercase' }}>რანგირებული მთამსვლელი</span>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#22d3ee', marginTop: '5px' }}>
+            <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)', border: '1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)', borderRadius: '10px', padding: '16px' }}>
+              <span style={{ color: 'var(--color-emerald-core)', fontSize: '11px', textTransform: 'uppercase' }}>რანგირებული მთამსვლელი</span>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-emerald-core)', marginTop: '5px' }}>
                 {athletes.filter(a => a.mountaineerRank && a.mountaineerRank !== 'NONE').length}
               </div>
             </div>

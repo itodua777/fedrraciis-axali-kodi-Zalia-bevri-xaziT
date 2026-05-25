@@ -105,7 +105,7 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
         height: "100%", 
         boxSizing: "border-box",
         backgroundColor: "#121418", 
-        border: "1px solid rgba(34, 211, 238, 0.15)", 
+        border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", 
         borderRadius: "12px", 
         padding: "20px", 
         display: "flex", 

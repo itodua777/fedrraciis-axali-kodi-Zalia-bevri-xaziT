@@ -186,16 +186,16 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
   }, [isPrintingBulk]);
 
   const badgeStyle = {
-    backgroundColor: "rgba(34, 211, 238, 0.1)",
-    color: "#22d3ee",
-    border: "1px solid rgba(34, 211, 238, 0.3)",
+    backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
+    color: "var(--color-emerald-core)",
+    border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
     padding: "4px 8px",
     borderRadius: "12px",
     fontSize: "12px",
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    boxShadow: "0 0 5px rgba(34, 211, 238, 0.15)"
+    boxShadow: "0 0 5px color-mix(in oklab, var(--color-emerald-core) 15%, transparent)"
   };
 
   const badgeCloseStyle = {
@@ -229,16 +229,16 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
         boxSizing: "border-box"
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h2 style={{ color: "#22d3ee", margin: 0, textShadow: "0 0 10px rgba(34, 211, 238, 0.5)" }}>
+          <h2 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)" }}>
             სპორტსმენები
           </h2>
           <div style={{ display: "flex", gap: "10px" }}>
             <button 
               style={{
                 backgroundColor: "transparent",
-                color: "#22d3ee",
-                border: "1px solid #22d3ee",
-                boxShadow: "0 0 10px rgba(34, 211, 238, 0.2)",
+                color: "var(--color-emerald-core)",
+                border: "1px solid var(--color-emerald-core)",
+                boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
                 padding: "6px 12px",
                 fontSize: "12px",
                 whiteSpace: "nowrap",
@@ -250,14 +250,14 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
                 gap: "8px"
               }}
               onClick={() => setIsPrintingBulk(true)}
-              onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "rgba(34, 211, 238, 0.1)"; }}
+              onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"; }}
               onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
             >
               <i className="fa-solid fa-print"></i> გაფილტრულის ამობეჭდვა
             </button>
             <button 
               style={{
-                backgroundColor: "#22d3ee",
+                backgroundColor: "var(--color-emerald-core)",
                 color: "#121418",
                 border: "none",
                 padding: "10px 20px",
@@ -265,7 +265,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
                 fontSize: "14px",
                 fontWeight: "bold",
                 cursor: "pointer",
-                boxShadow: "0 0 15px rgba(34, 211, 238, 0.5)",
+                boxShadow: "0 0 15px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)",
                 display: "flex",
                 alignItems: "center",
                 gap: "8px"
@@ -279,7 +279,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
 
         <div style={{ display: "flex", gap: "15px", alignItems: "center", position: "relative" }}>
           <div style={{ position: "relative", flex: 1 }}>
-            <i className="fa-solid fa-magnifying-glass" style={{ position: "absolute", left: "12px", top: "12px", color: searchQuery ? "#22d3ee" : "rgba(226, 232, 240, 0.4)" }}></i>
+            <i className="fa-solid fa-magnifying-glass" style={{ position: "absolute", left: "12px", top: "12px", color: searchQuery ? "var(--color-emerald-core)" : "rgba(226, 232, 240, 0.4)" }}></i>
             <input
               type="text"
               placeholder="მოძებნე სპორტსმენი..."
@@ -289,7 +289,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
                 width: "100%",
                 padding: "10px 10px 10px 35px",
                 backgroundColor: "rgba(15, 23, 42, 0.6)",
-                border: "1px solid rgba(34, 211, 238, 0.2)",
+                border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
                 borderRadius: "8px",
                 color: "#fff",
                 outline: "none",
@@ -302,9 +302,9 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
             id="filter-toggle-btn"
             onClick={() => setIsFilterOpen(!isFilterOpen)}
             style={{
-              backgroundColor: isFilterOpen ? "rgba(34, 211, 238, 0.15)" : "rgba(15, 23, 42, 0.6)",
-              color: "#22d3ee",
-              border: "1px solid rgba(34, 211, 238, 0.3)",
+              backgroundColor: isFilterOpen ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "rgba(15, 23, 42, 0.6)",
+              color: "var(--color-emerald-core)",
+              border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
               padding: "10px 15px",
               borderRadius: "8px",
               fontSize: "14px",
@@ -436,7 +436,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
         
         <div style={{ 
           backgroundColor: "rgba(15, 23, 42, 0.6)", 
-          border: "1px solid rgba(34, 211, 238, 0.1)", 
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", 
           borderRadius: "12px", 
           padding: "20px", 
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
@@ -471,7 +471,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
             />
           </div>
         ) : (
-          <div style={{ flex: 1, border: "1px dashed rgba(34, 211, 238, 0.2)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(34, 211, 238, 0.5)", marginTop: "10px", minHeight: "150px" }}>
+          <div style={{ flex: 1, border: "1px dashed color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", color: "color-mix(in oklab, var(--color-emerald-core) 50%, transparent)", marginTop: "10px", minHeight: "150px" }}>
             სპორტსმენის აქტივობების Timeline მოთავსდება აქ
           </div>
         )}

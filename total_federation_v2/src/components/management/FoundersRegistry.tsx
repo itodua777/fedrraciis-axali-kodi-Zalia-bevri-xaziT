@@ -183,8 +183,8 @@ export const FoundersRegistry: React.FC = () => {
 
   const toggleButtonStyle = (active: boolean) => ({
     padding: "8px 16px",
-    backgroundColor: active ? "rgba(34, 211, 238, 0.15)" : "transparent",
-    color: active ? "#22d3ee" : "rgba(255,255,255,0.6)",
+    backgroundColor: active ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "transparent",
+    color: active ? "var(--color-emerald-core)" : "rgba(255,255,255,0.6)",
     border: "none",
     fontSize: "13px",
     fontWeight: "bold" as const,
@@ -199,19 +199,19 @@ export const FoundersRegistry: React.FC = () => {
     width: "48px",
     height: "24px",
     borderRadius: "12px",
-    backgroundColor: isActive ? "rgba(34, 211, 238, 0.2)" : "rgba(255, 255, 255, 0.05)",
-    border: `1px solid ${isActive ? '#22d3ee' : 'rgba(255, 255, 255, 0.1)'}`,
+    backgroundColor: isActive ? "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" : "rgba(255, 255, 255, 0.05)",
+    border: `1px solid ${isActive ? 'var(--color-emerald-core)' : 'rgba(255, 255, 255, 0.1)'}`,
     padding: "2px",
     cursor: "pointer",
     transition: "all 0.3s",
-    boxShadow: isActive ? "0 0 10px rgba(34, 211, 238, 0.2)" : "none"
+    boxShadow: isActive ? "0 0 10px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" : "none"
   });
 
   const neonSwitchKnobStyle = (isActive: boolean) => ({
     width: "18px",
     height: "18px",
     borderRadius: "50%",
-    backgroundColor: isActive ? "#22d3ee" : "rgba(255, 255, 255, 0.3)",
+    backgroundColor: isActive ? "var(--color-emerald-core)" : "rgba(255, 255, 255, 0.3)",
     transition: "all 0.3s"
   });
 
@@ -225,7 +225,7 @@ export const FoundersRegistry: React.FC = () => {
       }}>
         <div style={{
           backgroundColor: "rgba(15, 23, 42, 0.4)",
-          border: "1px solid rgba(34, 211, 238, 0.2)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
           borderRadius: "12px",
           padding: "20px",
           boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
@@ -233,7 +233,7 @@ export const FoundersRegistry: React.FC = () => {
           <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "5px" }}>სუბიექტების სტრუქტურა</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
             <span style={{ fontSize: "28px", color: "#fff", fontWeight: "bold" }}>{totalFoundersCount}</span>
-            <span style={{ fontSize: "14px", color: "#22d3ee" }}>სუბიექტი</span>
+            <span style={{ fontSize: "14px", color: "var(--color-emerald-core)" }}>სუბიექტი</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "12px" }}>
             <span>ფიზიკური პირი: <strong>{physicalCount}</strong></span>
@@ -243,14 +243,14 @@ export const FoundersRegistry: React.FC = () => {
 
         <div style={{
           backgroundColor: "rgba(15, 23, 42, 0.4)",
-          border: "1px solid rgba(34, 211, 238, 0.2)",
+          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
           borderRadius: "12px",
           padding: "20px",
           boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
         }}>
           <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "5px" }}>ხმის უფლების მქონე წევრები (კვორუმი)</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-            <span style={{ fontSize: "28px", color: "#22d3ee", fontWeight: "bold", textShadow: "0 0 10px rgba(34, 211, 238, 0.3)" }}>
+            <span style={{ fontSize: "28px", color: "var(--color-emerald-core)", fontWeight: "bold", textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>
               {votingCount} / {totalFoundersCount}
             </span>
             <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>დამფუძნებელი</span>
@@ -268,7 +268,7 @@ export const FoundersRegistry: React.FC = () => {
         borderRadius: "12px",
         padding: "24px"
       }}>
-        <h3 style={{ margin: "0 0 20px 0", color: "#22d3ee", fontSize: "16px", textShadow: "0 0 8px rgba(34, 211, 238, 0.2)" }}>
+        <h3 style={{ margin: "0 0 20px 0", color: "var(--color-emerald-core)", fontSize: "16px", textShadow: "0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)" }}>
           <i className="fa-solid fa-gavel" style={{ marginRight: "8px" }}></i>
           დამფუძნებლის იურიდიული მონაცემების რეგისტრაცია
         </h3>
@@ -349,14 +349,14 @@ export const FoundersRegistry: React.FC = () => {
           {/* Submit button */}
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <button type="submit" style={{
-              backgroundColor: "#22d3ee",
+              backgroundColor: "var(--color-emerald-core)",
               color: "#121418",
               border: "none",
               padding: "12px 24px",
               borderRadius: "8px",
               fontWeight: "bold",
               cursor: "pointer",
-              boxShadow: "0 0 15px rgba(34, 211, 238, 0.3)",
+              boxShadow: "0 0 15px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
               display: "flex",
               alignItems: "center",
               gap: "8px"
@@ -397,7 +397,7 @@ export const FoundersRegistry: React.FC = () => {
                 <td style={{ padding: "12px 8px" }}>
                   {founder.type === 'physical' ? (
                     <span style={{ fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "5px", color: "rgba(255,255,255,0.7)" }}>
-                      <i className="fa-solid fa-user" style={{ color: "#22d3ee" }}></i> ფიზიკური
+                      <i className="fa-solid fa-user" style={{ color: "var(--color-emerald-core)" }}></i> ფიზიკური
                     </span>
                   ) : (
                     <span style={{ fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "5px", color: "rgba(255,255,255,0.7)" }}>
