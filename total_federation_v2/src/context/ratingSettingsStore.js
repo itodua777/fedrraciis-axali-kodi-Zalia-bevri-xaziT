@@ -5,7 +5,9 @@ const defaultSettings = {
   uiaaStyleMultipliers: { "On-sight": 1.5, "Flash": 1.2, "Solo": 2.0 },
   heightDivisor: 1000,
   ranksEnabled: true,
-  ratingCalculationEnabled: true
+  ratingCalculationEnabled: true,
+  honoraryTitlesEnabled: true,
+  awardsEnabled: true
 };
 
 const getPersistedSettings = () => {
@@ -54,10 +56,54 @@ export const useRatingSettingsStore = () => {
       ratingStoreData.setState({ uiaaStyleMultipliers: { ...ratingStoreData.state.uiaaStyleMultipliers, [style]: 1.0 } });
     },
     toggleRanksEnabled: () => {
-      ratingStoreData.setState({ ranksEnabled: ratingStoreData.state.ranksEnabled !== false ? false : true });
+      const newVal = ratingStoreData.state.ranksEnabled !== false ? false : true;
+      ratingStoreData.setState({ ranksEnabled: newVal });
+      fetch('/api/v1/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...ratingStoreData.getState(), ranksEnabled: newVal })
+      }).catch(err => console.error(err));
     },
     toggleRatingCalculationEnabled: () => {
-      ratingStoreData.setState({ ratingCalculationEnabled: ratingStoreData.state.ratingCalculationEnabled !== false ? false : true });
+      const newVal = ratingStoreData.state.ratingCalculationEnabled !== false ? false : true;
+      ratingStoreData.setState({ ratingCalculationEnabled: newVal });
+      fetch('/api/v1/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...ratingStoreData.getState(), ratingCalculationEnabled: newVal })
+      }).catch(err => console.error(err));
+    },
+    toggleHonoraryTitlesEnabled: () => {
+      const newVal = ratingStoreData.state.honoraryTitlesEnabled !== false ? false : true;
+      ratingStoreData.setState({ 
+        honoraryTitlesEnabled: newVal,
+        honorary_titles_enabled: newVal 
+      });
+      fetch('/api/v1/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          ...ratingStoreData.getState(), 
+          honoraryTitlesEnabled: newVal,
+          honorary_titles_enabled: newVal 
+        })
+      }).catch(err => console.error(err));
+    },
+    toggleAwardsEnabled: () => {
+      const newVal = ratingStoreData.state.awardsEnabled !== false ? false : true;
+      ratingStoreData.setState({ 
+        awardsEnabled: newVal,
+        awards_enabled: newVal 
+      });
+      fetch('/api/v1/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          ...ratingStoreData.getState(), 
+          awardsEnabled: newVal,
+          awards_enabled: newVal 
+        })
+      }).catch(err => console.error(err));
     }
   };
 };
@@ -65,6 +111,7 @@ export const useRatingSettingsStore = () => {
 useRatingSettingsStore.getState = () => ratingStoreData.getState();
 if (typeof window !== 'undefined') {
   window.useRatingSettingsStore = useRatingSettingsStore;
+  window.ratingStoreData = ratingStoreData;
 }
 
 export const calculateRating = (peakHeight, uiaaLevel, style) => {

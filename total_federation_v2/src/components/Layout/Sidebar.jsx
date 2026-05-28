@@ -112,7 +112,10 @@ const getViewTab = (view) => {
   return item ? item.node : '570';
 };
 
+import { useTranslation } from '../../context/LanguageContext.jsx';
+
 const Sidebar = ({ currentView, onViewChange, federation }) => {
+  const { t } = useTranslation();
   const [activeNode, setActiveNode] = React.useState(() => getViewTab(currentView));
   const [isCollapsed, setIsCollapsed] = React.useState(() => {
     return localStorage.getItem('sidebar_collapsed') === 'true';
@@ -180,12 +183,12 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
   };
 
   const FEDERATIONS = {
-    mountaineering: { name: "საქართველოს მთასვლელთა გაერთიანებული ფედერაცია", logo: "../logo.jpg" },
-    judo: { name: "საქართველოს ძიუდოს ფედერაცია", logo: "../logo.jpg" },
-    rugby: { name: "საქართველოს რაგბის კავშირი", logo: "../logo.jpg" }
+    mountaineering: { name: t('federation.mountaineering'), logo: "../logo.jpg" },
+    judo: { name: t('federation.judo'), logo: "../logo.jpg" },
+    rugby: { name: t('federation.rugby'), logo: "../logo.jpg" }
   };
   
-  const fedInfo = FEDERATIONS[federation] || { name: "საქართველოს მთასვლელთა გაერთიანებული ფედერაცია", logo: "../logo.jpg" };
+  const fedInfo = FEDERATIONS[federation] || { name: t('federation.mountaineering'), logo: "../logo.jpg" };
 
   const toggleContainerStyle = {
     display: "flex",
@@ -262,7 +265,7 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
       <button 
         className="sidebar-toggle-btn" 
         onClick={toggleCollapse} 
-        title={isCollapsed ? "გაშლა" : "შეკეცვა"}
+        title={isCollapsed ? t('sidebar.expand') : t('sidebar.collapse')}
       >
         <i className={`fa-solid ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'}`}></i>
       </button>
@@ -305,10 +308,10 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
               key={item.id}
               style={buttonStyle(item.id)}
               onClick={() => onViewChange(item.id)}
-              title={item.label}
+              title={t('sidebar.' + item.id)}
             >
               <i className={item.icon} style={item.iconStyle}></i>
-              <span style={{ display: isCollapsed ? "none" : "inline" }}> {item.label}</span>
+              <span style={{ display: isCollapsed ? "none" : "inline" }}> {t('sidebar.' + item.id)}</span>
             </button>
           ))
         }

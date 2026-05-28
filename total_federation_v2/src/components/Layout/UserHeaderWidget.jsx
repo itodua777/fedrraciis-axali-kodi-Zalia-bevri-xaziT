@@ -1,16 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslation } from '../../context/LanguageContext.jsx';
+import ProfileSettings from '../../views/Profile/Settings.jsx';
 
 const UserHeaderWidget = ({ onLogout }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
   const [showLogsModal, setShowLogsModal] = React.useState(false);
-
-  const [currentPassword, setCurrentPassword] = React.useState("");
-  const [newPassword, setNewPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [settingsMessage, setSettingsMessage] = React.useState("");
 
   const widgetRef = React.useRef(null);
 
@@ -35,22 +33,6 @@ const UserHeaderWidget = ({ onLogout }) => {
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
-  };
-
-  const handleSaveSettings = (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setSettingsMessage("ახალი პაროლები არ ემთხვევა ერთმანეთს!");
-      return;
-    }
-    setSettingsMessage("მონაცემები წარმატებით განახლდა!");
-    setTimeout(() => {
-      setShowSettingsModal(false);
-      setSettingsMessage("");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    }, 1500);
   };
 
   const widgetStyle = {
@@ -167,19 +149,6 @@ const UserHeaderWidget = ({ onLogout }) => {
     padding: "20px"
   };
 
-  const inputStyle = {
-    width: "100%",
-    padding: "10px",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid var(--color-iron-border)",
-    borderRadius: "8px",
-    color: "var(--color-bone-light)",
-    outline: "none",
-    boxSizing: "border-box",
-    marginBottom: "15px",
-    fontSize: "13px"
-  };
-
   return (
     <div ref={widgetRef} style={{ position: "relative" }}>
       <div 
@@ -213,7 +182,7 @@ const UserHeaderWidget = ({ onLogout }) => {
               fontWeight: "normal",
               marginTop: "4px"
             }}>
-              სისტემური ადმინისტრატორი
+              {t('user.role')}
             </span>
           </div>
 
@@ -224,7 +193,7 @@ const UserHeaderWidget = ({ onLogout }) => {
             onMouseOut={handleItemMouseOut}
           >
             <i className="fa-solid fa-gear" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
-            <span>პროფილის პარამეტრები</span>
+            <span>{t('user.profile_settings')}</span>
           </button>
 
           <button 
@@ -234,7 +203,7 @@ const UserHeaderWidget = ({ onLogout }) => {
             onMouseOut={handleItemMouseOut}
           >
             <i className="fa-solid fa-scroll" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
-            <span>უსაფრთხოების ლოგები</span>
+            <span>{t('user.security_logs')}</span>
           </button>
 
           <hr style={{ border: "0", borderTop: "1px solid var(--color-iron-border)", margin: "4px 0" }} />
@@ -260,86 +229,16 @@ const UserHeaderWidget = ({ onLogout }) => {
             }}
           >
             <i className="fa-solid fa-right-from-bracket" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
-            <span>სისტემიდან გამოსვლა</span>
+            <span>{t('user.logout')}</span>
           </button>
         </div>
       )}
 
       {showSettingsModal && ReactDOM.createPortal(
         <div style={overlayStyle}>
-          <div style={modalStyle}>
-            <div style={modalHeaderStyle}>
-              <h3 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>პროფილის პარამეტრები</h3>
-              <button 
-                onClick={() => setShowSettingsModal(false)}
-                style={{ backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px" }}
-              >
-                &times;
-              </button>
-            </div>
+          <div style={{ ...modalStyle, width: "90%", maxWidth: "700px" }}>
             <div style={modalContentStyle}>
-              <form onSubmit={handleSaveSettings}>
-                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>მომხმარებლის სახელი</label>
-                <input type="text" value="დავით მაისურაძე" disabled style={{ ...inputStyle, opacity: 0.6, cursor: "not-allowed" }} />
-
-                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>მიმდინარე პაროლი</label>
-                <input 
-                  type="password" 
-                  placeholder="••••••••" 
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  required 
-                  style={inputStyle} 
-                />
-
-                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>ახალი პაროლი</label>
-                <input 
-                  type="password" 
-                  placeholder="••••••••" 
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required 
-                  style={inputStyle} 
-                />
-
-                <label style={{ display: "block", color: "var(--color-silver-structure)", fontSize: "12px", marginBottom: "5px" }}>დაადასტურეთ ახალი პაროლი</label>
-                <input 
-                  type="password" 
-                  placeholder="••••••••" 
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required 
-                  style={inputStyle} 
-                />
-
-                {settingsMessage && (
-                  <div style={{ 
-                    color: settingsMessage.includes("წარმატებით") ? "var(--color-emerald-core)" : "var(--color-copper)", 
-                    fontSize: "12px", 
-                    marginBottom: "15px",
-                    textAlign: "center",
-                    fontWeight: "500"
-                  }}>
-                    {settingsMessage}
-                  </div>
-                )}
-
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
-                  <button 
-                    type="button" 
-                    onClick={() => setShowSettingsModal(false)}
-                    style={{ padding: "8px 16px", backgroundColor: "transparent", border: "1px solid var(--color-iron-border)", borderRadius: "6px", color: "var(--color-silver-structure)", cursor: "pointer" }}
-                  >
-                    გაუქმება
-                  </button>
-                  <button 
-                    type="submit"
-                    style={{ padding: "8px 16px", backgroundColor: "var(--color-emerald-core)", border: "none", borderRadius: "6px", color: "var(--color-iron)", fontWeight: "bold", cursor: "pointer", boxShadow: "0 0 10px var(--color-emerald-core)" }}
-                  >
-                    შენახვა
-                  </button>
-                </div>
-              </form>
+              <ProfileSettings onClose={() => setShowSettingsModal(false)} />
             </div>
           </div>
         </div>,
@@ -350,7 +249,7 @@ const UserHeaderWidget = ({ onLogout }) => {
         <div style={overlayStyle}>
           <div style={{ ...modalStyle, width: "600px" }}>
             <div style={modalHeaderStyle}>
-              <h3 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>უსაფრთხოების ლოგები</h3>
+              <h3 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>{t('logs.title')}</h3>
               <button 
                 onClick={() => setShowLogsModal(false)}
                 style={{ backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px" }}
@@ -362,35 +261,35 @@ const UserHeaderWidget = ({ onLogout }) => {
               <table style={{ width: "100%", borderCollapse: "collapse", color: "var(--color-silver-structure)", fontSize: "12px", textAlign: "left" }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>თარიღი/დრო</th>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>მოქმედება</th>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>სტატუსი</th>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>IP მისამართი</th>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.date_time')}</th>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.action')}</th>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.status')}</th>
+                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.ip')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-22 21:15:46</td>
                     <td style={{ padding: "10px 5px" }}>სისტემაში ავტორიზაცია</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
                   <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-22 17:11:34</td>
                     <td style={{ padding: "10px 5px" }}>სპორტსმენის რედაქტირება (გიორგი ბერიძე)</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
                   <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-22 15:48:49</td>
                     <td style={{ padding: "10px 5px" }}>ექსპორტი (სპორტსმენები)</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
                   <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
                     <td style={{ padding: "10px 5px" }}>2026-05-21 16:24:30</td>
                     <td style={{ padding: "10px 5px" }}>სისტემაში შესვლა</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>წარმატებული</td>
+                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
                     <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
                   </tr>
                 </tbody>
@@ -401,7 +300,7 @@ const UserHeaderWidget = ({ onLogout }) => {
                 onClick={() => setShowLogsModal(false)}
                 style={{ padding: "8px 16px", backgroundColor: "var(--color-emerald-core)", border: "none", borderRadius: "6px", color: "var(--color-iron)", fontWeight: "bold", cursor: "pointer" }}
               >
-                დახურვა
+                {t('user.close')}
               </button>
             </div>
           </div>

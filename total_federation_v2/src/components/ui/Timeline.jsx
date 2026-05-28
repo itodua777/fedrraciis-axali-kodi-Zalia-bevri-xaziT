@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRanksStore } from '../../context/ranksStore.js';
 import { getPersistedPeaks } from '../../utils/peaks.js';
+import { useRatingSettingsStore } from '../../context/ratingSettingsStore.js';
 import TimelineAddForm from './TimelineAddForm.jsx';
 
 const Timeline = ({ athlete, onUpdateAthlete }) => {
@@ -10,8 +11,16 @@ const Timeline = ({ athlete, onUpdateAthlete }) => {
   const activeTitles = (ranksStore?.honoraryTitles || []).filter(t => t.status === 'აქტიური');
   const peaksList = getPersistedPeaks();
 
+  const ratingSettings = useRatingSettingsStore();
   const achievements = athlete?.achievements || [];
-  const sortedActivities = [...achievements].sort((a, b) => Number(b.year) - Number(a.year));
+  const sortedActivities = [...achievements]
+    .filter(act => {
+      if (act.type === 'title' && ratingSettings.honoraryTitlesEnabled === false) return false;
+      if (act.type === 'award' && ratingSettings.awardsEnabled === false) return false;
+      if (act.type === 'rank_up' && ratingSettings.ranksEnabled === false) return false;
+      return true;
+    })
+    .sort((a, b) => Number(b.year) - Number(a.year));
 
   const getTypeStyles = (type) => {
     switch (type) {

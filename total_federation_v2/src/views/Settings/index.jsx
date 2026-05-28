@@ -71,6 +71,85 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
   const [newCat, setNewCat] = React.useState("");
   const [newStyle, setNewStyle] = React.useState("");
 
+  const [titles, setTitles] = React.useState([]);
+  const [awards, setAwards] = React.useState([]);
+  const [newTitleText, setNewTitleText] = React.useState("");
+  const [newAwardText, setNewAwardText] = React.useState("");
+
+  React.useEffect(() => {
+    fetch('/api/v1/honorary-titles')
+      .then(res => res.json())
+      .then(data => setTitles(data))
+      .catch(err => console.error(err));
+
+    fetch('/api/v1/federation-awards')
+      .then(res => res.json())
+      .then(data => setAwards(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  const handleCreateTitle = () => {
+    if (!newTitleText.trim()) return;
+    fetch('/api/v1/honorary-titles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title_name: newTitleText.trim() })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setTitles(prev => [...prev, { id: data.id, title_name: newTitleText.trim() }]);
+          setNewTitleText("");
+        }
+      })
+      .catch(err => console.error(err));
+  };
+
+  const handleDeleteTitle = (id) => {
+    if (!confirm("ნამდვილად გსურთ საპატიო წოდების წაშლა?")) return;
+    fetch(`/api/v1/honorary-titles?id=${id}`, {
+      method: 'DELETE'
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setTitles(prev => prev.filter(t => t.id !== id));
+        }
+      })
+      .catch(err => console.error(err));
+  };
+
+  const handleCreateAward = () => {
+    if (!newAwardText.trim()) return;
+    fetch('/api/v1/federation-awards', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ award_name: newAwardText.trim() })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setAwards(prev => [...prev, { id: data.id, award_name: newAwardText.trim() }]);
+          setNewAwardText("");
+        }
+      })
+      .catch(err => console.error(err));
+  };
+
+  const handleDeleteAward = (id) => {
+    if (!confirm("ნამდვილად გსურთ ჯილდოს წაშლა?")) return;
+    fetch(`/api/v1/federation-awards?id=${id}`, {
+      method: 'DELETE'
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setAwards(prev => prev.filter(a => a.id !== id));
+        }
+      })
+      .catch(err => console.error(err));
+  };
+
   const [simHeight, setSimHeight] = React.useState(5054);
   const [simLevel, setSimLevel] = React.useState("UIAA V");
   const [simStyle, setSimStyle] = React.useState("On-sight");
@@ -176,7 +255,7 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
             <span>{store.ranksEnabled !== false ? "🟢 ON" : "🔴 OFF"}</span>
           </button>
         </div>
-        <div style={{ ...switchRowStyle, borderBottom: "none" }}>
+        <div style={switchRowStyle}>
           <span style={switchLabelStyle}>რეიტინგის კალკულაციის აქტივაცია (გლობალური თოგლი)</span>
           <button 
             onClick={() => store.toggleRatingCalculationEnabled()}
@@ -185,11 +264,31 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
             <span>{store.ratingCalculationEnabled !== false ? "🟢 ON" : "🔴 OFF"}</span>
           </button>
         </div>
+        <div style={switchRowStyle}>
+          <span style={switchLabelStyle}>საპატიო წოდებების აქტივაცია (გლობალური თოგლი)</span>
+          <button 
+            onClick={() => store.toggleHonoraryTitlesEnabled()}
+            style={switchBtnStyle(store.honoraryTitlesEnabled !== false)}
+          >
+            <span>{store.honoraryTitlesEnabled !== false ? "🟢 ON" : "🔴 OFF"}</span>
+          </button>
+        </div>
+        <div style={{ ...switchRowStyle, borderBottom: "none" }}>
+          <span style={switchLabelStyle}>ჯილდოების / თასების აქტივაცია (გლობალური თოგლი)</span>
+          <button 
+            onClick={() => store.toggleAwardsEnabled()}
+            style={switchBtnStyle(store.awardsEnabled !== false)}
+          >
+            <span>{store.awardsEnabled !== false ? "🟢 ON" : "🔴 OFF"}</span>
+          </button>
+        </div>
       </div>
 
       <div style={tabContainerStyle}>
         <button style={tabButtonStyle('rating')} onClick={() => setActiveTab('rating')}>რეიტინგის კალკულაცია</button>
         <button style={tabButtonStyle('ranks')} onClick={() => setActiveTab('ranks')}>თანრიგთა სისტემა</button>
+        <button style={tabButtonStyle('honorary_title')} onClick={() => setActiveTab('honorary_title')}>საპატიო წოდება</button>
+        <button style={tabButtonStyle('award')} onClick={() => setActiveTab('award')}>ჯილდო</button>
       </div>
 
       {activeTab === 'rating' && (
@@ -290,6 +389,114 @@ const SettingsDashboard = ({ athletes, onUpdateAthlete }) => {
 
       {activeTab === 'ranks' && (
         <LazyRanksValidationEngine athletes={athletes} onUpdateAthlete={onUpdateAthlete} />
+      )}
+
+      {activeTab === 'honorary_title' && (
+        store.honoraryTitlesEnabled === false ? (
+          <div style={{ ...cardStyle, border: "1px dashed rgba(239, 68, 68, 0.3)", padding: "40px", textAlign: "center" }}>
+            <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: "36px", color: "#ef4444", marginBottom: "15px" }}></i>
+            <h3 style={{ color: "#fff", margin: "0 0 10px 0", fontSize: "18px" }}>საპატიო წოდებების მოდული დროებით გამორთულია</h3>
+            <p style={{ color: "rgba(255, 255, 255, 0.4)", margin: 0, fontSize: "13px" }}>
+              საპატიო წოდებების მართვა და ახალი წოდებების მინიჭება გაყინულია ადმინისტრაციის მიერ.
+            </p>
+          </div>
+        ) : (
+          <div style={{ maxWidth: "600px" }}>
+            <div style={cardStyle}>
+              <h3 style={{ color: "var(--color-emerald-core)", margin: "0 0 10px 0", fontSize: "16px" }}>
+                <i className="fa-solid fa-medal"></i> საპატიო წოდებების მართვა
+              </h3>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {titles.map(t => (
+                  <div key={t.id} style={rowStyle}>
+                    <span style={{ fontSize: "14px", fontWeight: "bold" }}>{t.title_name}</span>
+                    <button 
+                      onClick={() => handleDeleteTitle(t.id)} 
+                      style={{ background: "transparent", border: "none", color: "#ef4444", cursor: "pointer", fontSize: "14px" }}
+                      title="წაშლა"
+                    >
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                ))}
+                {titles.length === 0 && (
+                  <div style={{ padding: "20px 0", color: "rgba(255,255,255,0.4)", fontSize: "13px", textAlign: "center" }}>
+                    საპატიო წოდებები არ არის შექმნილი.
+                  </div>
+                )}
+              </div>
+              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <input 
+                  type="text" 
+                  placeholder="ახალი საპატიო წოდება" 
+                  style={inputStyle} 
+                  value={newTitleText} 
+                  onChange={e => setNewTitleText(e.target.value)} 
+                />
+                <button 
+                  onClick={handleCreateTitle} 
+                  style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "8px 16px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", whiteSpace: "nowrap" }}
+                >
+                  დამატება
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      )}
+
+      {activeTab === 'award' && (
+        store.awardsEnabled === false ? (
+          <div style={{ ...cardStyle, border: "1px dashed rgba(239, 68, 68, 0.3)", padding: "40px", textAlign: "center" }}>
+            <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: "36px", color: "#ef4444", marginBottom: "15px" }}></i>
+            <h3 style={{ color: "#fff", margin: "0 0 10px 0", fontSize: "18px" }}>ჯილდოების მოდული დროებით გამორთულია</h3>
+            <p style={{ color: "rgba(255, 255, 255, 0.4)", margin: 0, fontSize: "13px" }}>
+              ჯილდოების მართვა და სპორტსმენებისთვის გადაცემა გაყინულია ადმინისტრაციის მიერ.
+            </p>
+          </div>
+        ) : (
+          <div style={{ maxWidth: "600px" }}>
+            <div style={cardStyle}>
+              <h3 style={{ color: "var(--color-emerald-core)", margin: "0 0 10px 0", fontSize: "16px" }}>
+                <i className="fa-solid fa-trophy"></i> ფედერაციის ჯილდოების მართვა
+              </h3>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {awards.map(a => (
+                  <div key={a.id} style={rowStyle}>
+                    <span style={{ fontSize: "14px", fontWeight: "bold" }}>{a.award_name}</span>
+                    <button 
+                      onClick={() => handleDeleteAward(a.id)} 
+                      style={{ background: "transparent", border: "none", color: "#ef4444", cursor: "pointer", fontSize: "14px" }}
+                      title="წაშლა"
+                    >
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                ))}
+                {awards.length === 0 && (
+                  <div style={{ padding: "20px 0", color: "rgba(255,255,255,0.4)", fontSize: "13px", textAlign: "center" }}>
+                    ჯილდოები არ არის შექმნილი.
+                  </div>
+                )}
+              </div>
+              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <input 
+                  type="text" 
+                  placeholder="ახალი ჯილდო" 
+                  style={inputStyle} 
+                  value={newAwardText} 
+                  onChange={e => setNewAwardText(e.target.value)} 
+                />
+                <button 
+                  onClick={handleCreateAward} 
+                  style={{ backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", border: "1px solid var(--color-emerald-core)", color: "var(--color-emerald-core)", padding: "8px 16px", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", whiteSpace: "nowrap" }}
+                >
+                  დამატება
+                </button>
+              </div>
+            </div>
+          </div>
+        )
       )}
     </div>
   );

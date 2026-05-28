@@ -2,6 +2,7 @@ import React from '../../utils/react-shim.js';
 import AthleteSidePanel from './components/AthleteSidePanel.jsx';
 import AthleteFullscreen from './components/AthleteFullscreen.jsx';
 import AthletePrintDoc from './components/AthletePrintDoc.jsx';
+import { ratingStoreData } from '../../context/ratingSettingsStore.js';
 
 const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubClick }) => {
   const [isEditing, setIsEditing] = React.useState(false);
@@ -75,6 +76,23 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
         setIsFullscreenOpen(false);
         prevAthleteIdRef.current = athlete.id;
       }
+      // Fetch current settings on athlete profile initialization
+      fetch('/api/v1/dashboard/sync')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.system_settings) {
+            const { ranks_system_enabled, honorary_titles_enabled, awards_enabled } = data.system_settings;
+            ratingStoreData.setState({
+              ranksEnabled: ranks_system_enabled === 1,
+              ranks_system_enabled: ranks_system_enabled === 1,
+              honoraryTitlesEnabled: honorary_titles_enabled === 1,
+              honorary_titles_enabled: honorary_titles_enabled === 1,
+              awardsEnabled: awards_enabled === 1,
+              awards_enabled: awards_enabled === 1
+            });
+          }
+        })
+        .catch(err => console.error("Failed to sync settings on init:", err));
     } else {
       setEditForm(null);
       setIsFullscreenOpen(false);

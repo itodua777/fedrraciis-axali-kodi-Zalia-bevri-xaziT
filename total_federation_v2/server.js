@@ -305,8 +305,12 @@ function syncDatabase(data) {
     if (data.settings) {
         const ratingEnabled = data.settings.ratingCalculationEnabled !== false ? 'true' : 'false';
         const ranksEnabled = data.settings.ranksEnabled !== false ? 'true' : 'false';
+        const honoraryEnabled = data.settings.honoraryTitlesEnabled !== false ? 'true' : 'false';
+        const awardsEnabled = data.settings.awardsEnabled !== false ? 'true' : 'false';
         sql += `INSERT OR REPLACE INTO settings (key, value) VALUES ('ratingCalculationEnabled', '${ratingEnabled}');\n`;
         sql += `INSERT OR REPLACE INTO settings (key, value) VALUES ('ranksEnabled', '${ranksEnabled}');\n`;
+        sql += `INSERT OR REPLACE INTO settings (key, value) VALUES ('honorary_titles_enabled', '${honoraryEnabled}');\n`;
+        sql += `INSERT OR REPLACE INTO settings (key, value) VALUES ('awards_enabled', '${awardsEnabled}');\n`;
     }
 
     if (Array.isArray(data.athletes)) {
@@ -583,6 +587,52 @@ executeSql(`
     );
 `);
 
+// Ensure honorary_titles table exists
+executeSql(`
+    CREATE TABLE IF NOT EXISTS honorary_titles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title_name TEXT NOT NULL
+    );
+`);
+
+// Seed default honorary titles if empty
+const existingTitles = queryDb("SELECT COUNT(*) as count FROM honorary_titles;");
+if (existingTitles.length === 0 || existingTitles[0].count === 0) {
+    executeSql(`
+        INSERT INTO honorary_titles (title_name) VALUES 
+        ('თოვლის ჯიქი (Snow Leopard)'),
+        ('საქართველოს დამსახურებული მწვრთნელი'),
+        ('საპატიო მთამსვლელი');
+    `);
+}
+
+// Ensure federation_awards table exists
+executeSql(`
+    CREATE TABLE IF NOT EXISTS federation_awards (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        award_name TEXT NOT NULL
+    );
+`);
+
+// Seed default federation awards if empty
+const existingAwards = queryDb("SELECT COUNT(*) as count FROM federation_awards;");
+if (existingAwards.length === 0 || existingAwards[0].count === 0) {
+    executeSql(`
+        INSERT INTO federation_awards (award_name) VALUES 
+        ('წლის საუკეთესო სპორტსმენის თასი'),
+        ('ორდენი სპორტული დამსახურებისთვის');
+    `);
+}
+
+// Seed default settings for honorary_titles_enabled and awards_enabled if not exists
+executeSql(`
+    INSERT OR IGNORE INTO settings (key, value) VALUES ('honorary_titles_enabled', 'true');
+`);
+executeSql(`
+    INSERT OR IGNORE INTO settings (key, value) VALUES ('awards_enabled', 'true');
+`);
+
+
 const compiledCache = new Map(); // filePath -> { mtime, code }
 
 http.createServer((req, res) => {
@@ -726,6 +776,40 @@ http.createServer((req, res) => {
         return;
     }
 
+    // GET /api/v1/dashboard/sync
+    if (req.url === '/api/v1/dashboard/sync' && req.method === 'GET') {
+        try {
+            const rows = queryDb("SELECT key, value FROM settings;");
+            const settings = {};
+            rows.forEach(r => {
+                settings[r.key] = r.value;
+            });
+            const ranksVal = (settings['ranksEnabled'] === 'true' || settings['ranks_system_enabled'] === 'true') ? 1 : 0;
+            const honoraryVal = (settings['honorary_titles_enabled'] === 'true' || settings['honoraryTitlesEnabled'] === 'true') ? 1 : 0;
+            const awardsVal = (settings['awards_enabled'] === 'true' || settings['awardsEnabled'] === 'true') ? 1 : 0;
+
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({
+                system_settings: {
+                    ranks_system_enabled: ranksVal,
+                    honorary_titles_enabled: honoraryVal,
+                    awards_enabled: awardsVal
+                }
+            }));
+        } catch (err) {
+            console.error("GET sync settings error:", err);
+            res.writeHead(500, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
     // POST /api/v1/dashboard/sync
     if (req.url === '/api/v1/dashboard/sync' && req.method === 'POST') {
         let body = '';
@@ -748,6 +832,49 @@ http.createServer((req, res) => {
                 res.end(JSON.stringify({ success: false, error: err.message }));
             }
         });
+        return;
+    }
+
+    // GET /api/v1/athletes
+    if (req.url === '/api/v1/athletes' && req.method === 'GET') {
+        try {
+            const athletes = queryDb('SELECT * FROM athletes ORDER BY id DESC;');
+            const mapped = athletes.map(a => {
+                let achievements = [];
+                try {
+                    achievements = JSON.parse(a.achievements || '[]');
+                } catch (e) {
+                    console.error("Error parsing achievements for athlete ID:", a.id, e);
+                }
+                return {
+                    id: a.id,
+                    firstName: a.first_name || '',
+                    lastName: a.last_name || '',
+                    personalId: a.personal_id || '',
+                    status: a.status || '',
+                    memberSince: a.member_since || '',
+                    isFederationMember: a.is_federation_member === 1,
+                    isNationalTeamMember: a.is_national_team_member === 1,
+                    mountaineerRank: a.mountaineer_rank || 'NONE',
+                    locationStatus: a.location_status || 'ბაზაზეა',
+                    points: a.points || 0,
+                    achievements: achievements,
+                    medicalCertificateExpiry: a.medical_certificate_expiry || ''
+                };
+            });
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify(mapped));
+        } catch (err) {
+            console.error("GET athletes error:", err);
+            res.writeHead(500, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
         return;
     }
 
@@ -794,6 +921,187 @@ http.createServer((req, res) => {
                 res.end(JSON.stringify({ success: false, error: err.message }));
             }
         });
+        return;
+    }
+
+    // GET /api/v1/settings
+    if (req.url === '/api/v1/settings' && req.method === 'GET') {
+        const rows = queryDb("SELECT key, value FROM settings;");
+        const settings = {};
+        rows.forEach(r => {
+            if (r.value === 'true') settings[r.key] = true;
+            else if (r.value === 'false') settings[r.key] = false;
+            else settings[r.key] = r.value;
+        });
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(settings));
+        return;
+    }
+
+    // POST /api/v1/settings
+    if (req.url === '/api/v1/settings' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                let sql = 'BEGIN TRANSACTION;\n';
+                Object.entries(data).forEach(([k, v]) => {
+                    const valStr = typeof v === 'boolean' ? (v ? 'true' : 'false') : String(v);
+                    sql += `INSERT OR REPLACE INTO settings (key, value) VALUES ('${k.replace(/'/g, "''")}', '${valStr.replace(/'/g, "''")}');\n`;
+                });
+                sql += 'COMMIT;\n';
+                executeSql(sql);
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: true }));
+            } catch (err) {
+                res.writeHead(400, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // GET /api/v1/honorary-titles
+    if (req.url === '/api/v1/honorary-titles' && req.method === 'GET') {
+        const titles = queryDb("SELECT * FROM honorary_titles ORDER BY id ASC;");
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(titles));
+        return;
+    }
+
+    // POST /api/v1/honorary-titles
+    if (req.url === '/api/v1/honorary-titles' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                const title_name = data.title_name;
+                if (!title_name) {
+                    res.writeHead(400, {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify({ success: false, error: 'Missing title_name' }));
+                    return;
+                }
+                const sql = `INSERT INTO honorary_titles (title_name) VALUES ('${title_name.replace(/'/g, "''")}');`;
+                executeSql(sql);
+                const lastInserted = queryDb("SELECT * FROM honorary_titles WHERE rowid = last_insert_rowid();");
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: true, id: lastInserted[0]?.id }));
+            } catch (err) {
+                res.writeHead(400, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // DELETE /api/v1/honorary-titles
+    if (req.url.startsWith('/api/v1/honorary-titles') && req.method === 'DELETE') {
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        const id = urlObj.searchParams.get('id');
+        if (!id) {
+            res.writeHead(400, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: 'Missing id parameter' }));
+            return;
+        }
+        executeSql(`DELETE FROM honorary_titles WHERE id = ${parseInt(id) || 0};`);
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify({ success: true }));
+        return;
+    }
+
+    // GET /api/v1/federation-awards
+    if (req.url === '/api/v1/federation-awards' && req.method === 'GET') {
+        const awards = queryDb("SELECT * FROM federation_awards ORDER BY id ASC;");
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify(awards));
+        return;
+    }
+
+    // POST /api/v1/federation-awards
+    if (req.url === '/api/v1/federation-awards' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                const award_name = data.award_name;
+                if (!award_name) {
+                    res.writeHead(400, {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify({ success: false, error: 'Missing award_name' }));
+                    return;
+                }
+                const sql = `INSERT INTO federation_awards (award_name) VALUES ('${award_name.replace(/'/g, "''")}');`;
+                executeSql(sql);
+                const lastInserted = queryDb("SELECT * FROM federation_awards WHERE rowid = last_insert_rowid();");
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: true, id: lastInserted[0]?.id }));
+            } catch (err) {
+                res.writeHead(400, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // DELETE /api/v1/federation-awards
+    if (req.url.startsWith('/api/v1/federation-awards') && req.method === 'DELETE') {
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        const id = urlObj.searchParams.get('id');
+        if (!id) {
+            res.writeHead(400, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: 'Missing id parameter' }));
+            return;
+        }
+        executeSql(`DELETE FROM federation_awards WHERE id = ${parseInt(id) || 0};`);
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify({ success: true }));
         return;
     }
 
@@ -1158,7 +1466,12 @@ http.createServer((req, res) => {
             const mtime = stats.mtimeMs;
             const cached = compiledCache.get(filePath);
             if (cached && cached.mtime === mtime) {
-                res.writeHead(200, { 'Content-Type': 'text/javascript' });
+                res.writeHead(200, { 
+                    'Content-Type': 'text/javascript',
+                    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                });
                 res.end(cached.code, 'utf-8');
                 return;
             }
@@ -1176,7 +1489,12 @@ http.createServer((req, res) => {
                         filename: path.basename(filePath)
                     }).code;
                     compiledCache.set(filePath, { mtime, code: compiled });
-                    res.writeHead(200, { 'Content-Type': 'text/javascript' });
+                    res.writeHead(200, { 
+                        'Content-Type': 'text/javascript',
+                        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    });
                     res.end(compiled, 'utf-8');
                 } catch (compileErr) {
                     console.error("Transpilation error for", filePath, compileErr);
@@ -1200,7 +1518,12 @@ http.createServer((req, res) => {
             }
         }
         else {
-            res.writeHead(200, { 'Content-Type': contentType });
+            res.writeHead(200, { 
+                'Content-Type': contentType,
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            });
             res.end(content, 'utf-8');
         }
     });

@@ -81,12 +81,12 @@ export const checkAndApplyRankUp = (athlete, oldReferral, newReferral) => {
   return newAchievements;
 };
 
-export const getAthleteBadgeConfig = (athlete, ranks = []) => {
-  const isSnowLeopard = athlete?.achievements?.some(ach => 
+export const getAthleteBadgeConfig = (athlete, ranks = [], honoraryTitlesEnabled = true) => {
+  const isSnowLeopard = honoraryTitlesEnabled && (athlete?.achievements?.some(ach => 
     ach.type === 'title' && 
     (ach.title?.toLowerCase().includes('snow leopard') || 
      ach.title?.toLowerCase().includes('თოვლის ჯიქი'))
-  ) || false;
+  ) || false);
 
   if (isSnowLeopard) {
     return {

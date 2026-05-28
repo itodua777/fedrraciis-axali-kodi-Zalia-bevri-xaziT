@@ -1,7 +1,9 @@
 import React from 'react';
 import UserHeaderWidget from './UserHeaderWidget.jsx';
+import { useTranslation } from '../../context/LanguageContext.jsx';
 
 const Navbar = ({ federation, onLogout }) => {
+  const { t } = useTranslation();
   const [isFocused, setIsFocused] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
 
@@ -295,7 +297,7 @@ const Navbar = ({ federation, onLogout }) => {
         <input
           type="text"
           style={searchInputStyle}
-          placeholder="მოძებნე სპორტსმენი, მარშრუტი, მწვერვალი..."
+          placeholder={t('navbar.search_placeholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -311,7 +313,7 @@ const Navbar = ({ federation, onLogout }) => {
             onClick={toggleDropdown}
             onMouseEnter={() => setIsBellHovered(true)}
             onMouseLeave={() => setIsBellHovered(false)}
-            title="შეტყობინებები"
+            title={t('navbar.notifications')}
           >
             <i className="fa-solid fa-bell" style={{ fontSize: "16px" }}></i>
             {hasUnread && <div style={dotStyle}></div>}
@@ -320,7 +322,7 @@ const Navbar = ({ federation, onLogout }) => {
           {isDropdownOpen && (
             <div style={dropdownStyle}>
               <div style={dropdownHeaderStyle}>
-                <span>შეტყობინებები</span>
+                <span>{t('navbar.notifications')}</span>
                 {notifications.length > 0 && (
                   <span style={countBadgeStyle}>
                     {notifications.length}
@@ -331,7 +333,7 @@ const Navbar = ({ federation, onLogout }) => {
               <div style={dropdownListStyle}>
                 {notifications.length === 0 ? (
                   <div style={emptyStateStyle}>
-                    შეტყობინებები არ არის
+                    {t('navbar.no_notifications')}
                   </div>
                 ) : (
                   notifications.slice(0, 5).map((notif) => (

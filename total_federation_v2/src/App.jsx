@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from './utils/react-dom-shim.js';
 import Sidebar from './components/Layout/Sidebar.jsx';
+import { ratingStoreData } from './context/ratingSettingsStore.js';
 import Header from './components/Layout/Navbar.jsx';
 import Login from './views/Login/index.jsx';
 import Dashboard from './views/Dashboard/index.jsx';
@@ -22,16 +23,19 @@ import PeaksDashboard from './views/Peaks/index.jsx';
 import SettingsDashboard from './views/Settings/index.jsx';
 import CalendarDashboard from './views/Calendar/index.jsx';
 
+import { LanguageProvider } from './context/LanguageContext.jsx';
+
 import { MOCK_ATHLETES, MOCK_CLUBS, MOCK_INCIDENTS } from './utils/mockData.js';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [selectedFederation, setSelectedFederation] = React.useState("");
   const [currentView, setCurrentView] = React.useState("dashboard");
-  const [athletes, setAthletes] = React.useState(MOCK_ATHLETES);
+  const [athletes, setAthletes] = React.useState([]);
   const [clubs, setClubs] = React.useState(MOCK_CLUBS);
   const [selectedClubId, setSelectedClubId] = React.useState(null);
   const [incidents, setIncidents] = React.useState(MOCK_INCIDENTS);
+  const isLoadedRef = React.useRef(false);
 
   const handleClubClick = (clubId) => {
     setSelectedClubId(clubId);
@@ -44,7 +48,7 @@ const App = () => {
   };
 
   const handleAddAthlete = (newAthlete) => {
-    setAthletes([...athletes, newAthlete]);
+    setAthletes([newAthlete, ...athletes]);
   };
 
   const handleUpdateAthlete = (updatedAthlete) => {
@@ -52,6 +56,43 @@ const App = () => {
   };
 
   React.useEffect(() => {
+    fetch('/api/v1/settings')
+      .then(res => res.json())
+      .then(settings => {
+        const mappedSettings = { ...settings };
+        if (settings.honorary_titles_enabled !== undefined) {
+          mappedSettings.honoraryTitlesEnabled = settings.honorary_titles_enabled;
+        }
+        if (settings.awards_enabled !== undefined) {
+          mappedSettings.awardsEnabled = settings.awards_enabled;
+        }
+        ratingStoreData.setState(mappedSettings);
+      })
+      .catch(err => console.error("Failed to load settings in App.jsx:", err));
+
+    fetch('/api/v1/athletes')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          setAthletes(data);
+        } else {
+          setAthletes(MOCK_ATHLETES);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load athletes on startup:", err);
+        setAthletes(MOCK_ATHLETES);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    if (!isLoadedRef.current) {
+      if (athletes.length > 0) {
+        isLoadedRef.current = true;
+      }
+      return;
+    }
+
     const syncData = {
       athletes: athletes
     };
@@ -106,5 +147,9 @@ const App = () => {
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <LanguageProvider>
+    <App />
+  </LanguageProvider>
+);
 export default App;

@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from '../../../utils/react-dom-shim.js';
 import { calculateAge, getCountryName } from '../../../utils/helpers.js';
+import { useRatingSettingsStore } from '../../../context/ratingSettingsStore.js';
 
 const AthletePrintDoc = ({ athlete, clubs }) => {
   if (!athlete) return null;
 
+  const ratingSettings = useRatingSettingsStore();
   const age = calculateAge(athlete.birthDate);
   const ageText = age !== '' ? `, ${age} წლის` : '';
   const countryName = getCountryName(athlete.nationality);
@@ -142,30 +144,39 @@ const AthletePrintDoc = ({ athlete, clubs }) => {
 
       <div className="print-section" style={{ pageBreakInside: "avoid" }}>
         <div className="print-section-title">სპორტული აქტივობის ქრონოლოგია & მიღწევები</div>
-        {athlete.achievements && athlete.achievements.length > 0 ? (
-          <table className="print-table">
-            <thead>
-              <tr>
-                <th style={{ width: "10%" }}>წელი</th>
-                <th style={{ width: "30%" }}>აქტივობა / მწვერვალი</th>
-                <th style={{ width: "30%" }}>მარშრუტი</th>
-                <th style={{ width: "30%" }}>შედეგი / სტატუსი</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...athlete.achievements].sort((a, b) => Number(b.year) - Number(a.year)).map((act, idx) => (
-                <tr key={act.id || idx}>
-                  <td>{act.year}</td>
-                  <td>{act.title || act.peak}</td>
-                  <td>{act.route || '-'}</td>
-                  <td>{act.achievement || act.result}</td>
+        {(() => {
+          const printedActivities = [...(athlete.achievements || [])]
+            .filter(act => {
+              if (act.type === 'title' && ratingSettings.honoraryTitlesEnabled === false) return false;
+              if (act.type === 'award' && ratingSettings.awardsEnabled === false) return false;
+              return true;
+            });
+
+          return printedActivities.length > 0 ? (
+            <table className="print-table">
+              <thead>
+                <tr>
+                  <th style={{ width: "10%" }}>წელი</th>
+                  <th style={{ width: "30%" }}>აქტივობა / მწვერვალი</th>
+                  <th style={{ width: "30%" }}>მარშრუტი</th>
+                  <th style={{ width: "30%" }}>შედეგი / სტატუსი</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div style={{ fontSize: "12px", fontStyle: "italic", color: "#555" }}>მიღწევები არ არის რეგისტრირებული</div>
-        )}
+              </thead>
+              <tbody>
+                {[...printedActivities].sort((a, b) => Number(b.year) - Number(a.year)).map((act, idx) => (
+                  <tr key={act.id || idx}>
+                    <td>{act.year}</td>
+                    <td>{act.title || act.peak}</td>
+                    <td>{act.route || '-'}</td>
+                    <td>{act.achievement || act.result}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div style={{ fontSize: "12px", fontStyle: "italic", color: "#555" }}>მიღწევები არ არის რეგისტრირებული</div>
+          );
+        })()}
       </div>
     </div>
   );

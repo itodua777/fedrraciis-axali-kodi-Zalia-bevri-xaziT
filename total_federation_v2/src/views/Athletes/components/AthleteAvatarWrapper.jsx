@@ -1,12 +1,13 @@
 import React from 'react';
 import { useRanksStore } from '../../../context/ranksStore.js';
+import { useRatingSettingsStore } from '../../../context/ratingSettingsStore.js';
 
-export const getAthleteBadgeConfig = (athlete, ranks = []) => {
-  const isSnowLeopard = athlete?.achievements?.some(ach => 
+export const getAthleteBadgeConfig = (athlete, ranks = [], honoraryTitlesEnabled = true) => {
+  const isSnowLeopard = honoraryTitlesEnabled && (athlete?.achievements?.some(ach => 
     ach.type === 'title' && 
     (ach.title?.toLowerCase().includes('snow leopard') || 
      ach.title?.toLowerCase().includes('თოვლის ჯიქი'))
-  ) || false;
+  ) || false);
 
   if (isSnowLeopard) {
     return {
@@ -84,7 +85,9 @@ export const getAthleteBadgeConfig = (athlete, ranks = []) => {
 const AthleteAvatarWrapper = ({ athlete, size = 56 }) => {
   const ranksStore = useRanksStore();
   const ranks = ranksStore.ranks || [];
-  const badgeConfig = getAthleteBadgeConfig(athlete, ranks);
+  const ratingSettings = useRatingSettingsStore();
+  const honoraryTitlesEnabled = ratingSettings.honoraryTitlesEnabled !== false;
+  const badgeConfig = getAthleteBadgeConfig(athlete, ranks, honoraryTitlesEnabled);
 
   const borderSize = size >= 88 ? 3 : 2;
   const badgeSize = size >= 88 ? 24 : 18;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { generateUUID } from '../../utils/helpers.js';
+import { useRatingSettingsStore } from '../../context/ratingSettingsStore.js';
 
 const mapRankNameToKey = (name) => {
   if (!name) return 'NONE';
@@ -14,6 +15,10 @@ const mapRankNameToKey = (name) => {
 };
 
 const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activeTitles, peaksList }) => {
+  const store = useRatingSettingsStore();
+  const [dbTitles, setDbTitles] = React.useState([]);
+  const [dbAwards, setDbAwards] = React.useState([]);
+
   const [newAct, setNewAct] = React.useState({
     type: 'expedition',
     year: new Date().getFullYear(),
@@ -25,17 +30,52 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
     status: 'წარმატებული ასვლა',
     rankName: activeRanks[0]?.name || '',
     decreeNumber: '',
-    titleName: activeTitles[0]?.name || '',
+    titleName: '',
     organization: '',
     awardName: '',
     nomination: '',
     sportDiscipline: athlete?.sportsDiscipline || 'ალპინიზმი'
   });
 
+  React.useEffect(() => {
+    fetch('/api/v1/honorary-titles')
+      .then(res => res.json())
+      .then(data => {
+        setDbTitles(data);
+        if (data.length > 0) {
+          setNewAct(prev => ({ ...prev, titleName: data[0].title_name }));
+        }
+      })
+      .catch(err => console.error(err));
+
+    fetch('/api/v1/federation-awards')
+      .then(res => res.json())
+      .then(data => {
+        setDbAwards(data);
+        if (data.length > 0) {
+          setNewAct(prev => ({ ...prev, awardName: data[0].award_name }));
+        }
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+  React.useEffect(() => {
+    if (newAct.type === 'rank_up' && store.ranksEnabled === false) {
+      setNewAct(prev => ({ ...prev, type: 'expedition' }));
+    }
+    if (newAct.type === 'title' && store.honoraryTitlesEnabled === false) {
+      setNewAct(prev => ({ ...prev, type: 'expedition' }));
+    }
+    if (newAct.type === 'award' && store.awardsEnabled === false) {
+      setNewAct(prev => ({ ...prev, type: 'expedition' }));
+    }
+  }, [store.ranksEnabled, store.honoraryTitlesEnabled, store.awardsEnabled, newAct.type]);
+
   const handleAddActivity = (e) => {
     e.preventDefault();
     
     let titleVal = "";
+    let additionalProps = {};
     let achievementVal = "";
     let routeVal = "";
     let dateVal = newAct.date || "";
@@ -126,7 +166,7 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
       .catch(err => console.error("Database save to athlete_ranks failed:", err));
 
     } else if (newAct.type === 'title') {
-      const actualTitle = newAct.titleName || (activeTitles[0]?.name || '');
+      const actualTitle = newAct.titleName || (dbTitles[0]?.title_name || '');
       if (!actualTitle) {
         alert("გთხოვთ აირჩიოთ საპატიო წოდება!");
         return;
@@ -135,12 +175,13 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
       peakVal = `საპატიო წოდება: "${actualTitle}"`;
       achievementVal = `მიმნიჭებელი ორგანიზაცია: ${newAct.organization || 'N/A'}`;
     } else if (newAct.type === 'award') {
-      if (!newAct.awardName) {
-        alert("გთხოვთ შეიყვანოთ ჯილდოს დასახელება!");
+      const actualAward = newAct.awardName || (dbAwards[0]?.award_name || '');
+      if (!actualAward) {
+        alert("გთხოვთ აირჩიოთ ჯილდო!");
         return;
       }
-      titleVal = `ჯილდო: "${newAct.awardName}"`;
-      peakVal = `ჯილდო: "${newAct.awardName}"`;
+      titleVal = `ჯილდო: "${actualAward}"`;
+      peakVal = `ჯილდო: "${actualAward}"`;
       achievementVal = `ნომინაცია / საფუძველი: ${newAct.nomination || 'N/A'}`;
     }
 
@@ -176,18 +217,24 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
           <input type="radio" name="eventType" checked={newAct.type === 'expedition'} onChange={() => setNewAct(prev => ({ ...prev, type: 'expedition' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
           🧗 ექსპედიცია
         </label>
-        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
-          <input type="radio" name="eventType" checked={newAct.type === 'rank_up'} onChange={() => setNewAct(prev => ({ ...prev, type: 'rank_up' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
-          🥇 სპორტული თანრიგი
-        </label>
-        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
-          <input type="radio" name="eventType" checked={newAct.type === 'title'} onChange={() => setNewAct(prev => ({ ...prev, type: 'title' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
-          🎖️ საპატიო წოდება
-        </label>
-        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
-          <input type="radio" name="eventType" checked={newAct.type === 'award'} onChange={() => setNewAct(prev => ({ ...prev, type: 'award' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
-          🏆 ჯილდო
-        </label>
+        {store.ranksEnabled !== false && (
+          <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
+            <input type="radio" name="eventType" checked={newAct.type === 'rank_up'} onChange={() => setNewAct(prev => ({ ...prev, type: 'rank_up' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
+            🥇 სპორტული თანრიგი
+          </label>
+        )}
+        {store.honoraryTitlesEnabled !== false && (
+          <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
+            <input type="radio" name="eventType" checked={newAct.type === 'title'} onChange={() => setNewAct(prev => ({ ...prev, type: 'title' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
+            🎖️ საპატიო წოდება
+          </label>
+        )}
+        {store.awardsEnabled !== false && (
+          <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "12px", color: "#fff" }}>
+            <input type="radio" name="eventType" checked={newAct.type === 'award'} onChange={() => setNewAct(prev => ({ ...prev, type: 'award' }))} style={{ accentColor: "var(--color-emerald-core)" }} />
+            🏆 ჯილდო
+          </label>
+        )}
       </div>
 
       {newAct.type === 'expedition' && (
@@ -351,11 +398,11 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
                 onChange={e => setNewAct({ ...newAct, titleName: e.target.value })}
                 style={{ width: "100%", padding: "6px 10px", backgroundColor: "#1e222b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "12px", outline: "none" }}
               >
-                {activeTitles.length === 0 ? (
+                {dbTitles.length === 0 ? (
                   <option value="">-- წოდებები არ არის --</option>
                 ) : (
-                  activeTitles.map(t => (
-                    <option key={t.id} value={t.name}>{t.name}</option>
+                  dbTitles.map(t => (
+                    <option key={t.id} value={t.title_name}>{t.title_name}</option>
                   ))
                 )}
               </select>
@@ -394,13 +441,19 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>ჯილდოს დასახელება *</label>
-              <input
-                type="text"
-                placeholder="მაგ: ოქროს ყინულცული"
+              <select
                 value={newAct.awardName}
                 onChange={e => setNewAct({ ...newAct, awardName: e.target.value })}
-                style={{ width: "100%", padding: "6px 10px", backgroundColor: "#1e222b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "12px", boxSizing: "border-box", outline: "none" }}
-              />
+                style={{ width: "100%", padding: "6px 10px", backgroundColor: "#1e222b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "12px", outline: "none" }}
+              >
+                {dbAwards.length === 0 ? (
+                  <option value="">-- ჯილდოები არ არის --</option>
+                ) : (
+                  dbAwards.map(a => (
+                    <option key={a.id} value={a.award_name}>{a.award_name}</option>
+                  ))
+                )}
+              </select>
             </div>
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>წელი *</label>
