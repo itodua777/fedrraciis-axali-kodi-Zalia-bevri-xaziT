@@ -281,6 +281,7 @@ const AthletesFilterPanel = ({
                 options={[{ code: 'all', name: 'ყველა ქვეყანა' }, ...COUNTRIES]}
                 placeholder="ქვეყანა..."
                 style={dropdownStyle}
+                showFlags={true}
               />
             </div>
           </div>

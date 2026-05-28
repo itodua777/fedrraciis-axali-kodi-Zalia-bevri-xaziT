@@ -105,6 +105,9 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
               e.stopPropagation();
               updateData(field, null);
               document.getElementById(inputId).value = "";
+              if (field === 'healthDoc') {
+                updateData('medicalCertificateExpiry', '');
+              }
             }}
             style={{ 
               background: "rgba(239, 68, 68, 0.1)", 
@@ -131,9 +134,38 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
   };
 
   return (
-    <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+    <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", alignItems: "start" }}>
       {renderDocUploadSlot('idCardDoc', 'ID ბარათი / პასპორტი', 'fa-solid fa-id-card', '#94a3b8', 'rgba(148, 163, 184, 0.05)', 'idCardInput')}
-      {renderDocUploadSlot('healthDoc', 'ჯანმრთელობის ცნობა', 'fa-solid fa-heart-pulse', '#ec4899', 'rgba(236, 72, 153, 0.05)', 'healthInput')}
+      
+      <div style={{ display: "flex", gap: "10px", alignItems: "start" }}>
+        <div style={{ flex: 1 }}>
+          {renderDocUploadSlot('healthDoc', 'ჯანმრთელობის ცნობა', 'fa-solid fa-heart-pulse', '#ec4899', 'rgba(236, 72, 153, 0.05)', 'healthInput')}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px", flexShrink: 0, width: "150px" }}>
+          <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", fontWeight: "bold" }}>მოქმედების ვადა</label>
+          <input
+            type="date"
+            disabled={!formData.healthDoc}
+            value={formData.medicalCertificateExpiry || ''}
+            onChange={e => updateData('medicalCertificateExpiry', e.target.value)}
+            style={{
+              backgroundColor: "#09090b", // bg-zinc-950
+              border: "1px solid #27272a", // border-zinc-800
+              borderRadius: "8px",
+              padding: "8px 10px",
+              color: "#fff",
+              fontSize: "12px",
+              outline: "none",
+              height: "38px",
+              boxSizing: "border-box",
+              opacity: formData.healthDoc ? 1 : 0.5,
+              cursor: formData.healthDoc ? "text" : "not-allowed",
+              transition: "all 0.3s ease"
+            }}
+          />
+        </div>
+      </div>
+
       {renderDocUploadSlot('insuranceDoc', 'დაზღვევის დოკუმენტაცია', 'fa-solid fa-file-shield', '#3b82f6', 'rgba(59, 130, 246, 0.05)', 'insuranceInput')}
       {renderDocUploadSlot('dopingDoc', 'დოპინგ ტესტის შესაბამისი დოკუმენტი', 'fa-solid fa-vial', '#eab308', 'rgba(234, 179, 8, 0.05)', 'dopingInput')}
     </div>

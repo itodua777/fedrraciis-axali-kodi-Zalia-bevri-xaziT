@@ -137,8 +137,29 @@ const FullscreenRightCol = ({
                       <div style={{ fontSize: "12px", fontWeight: "bold", color: "#fff", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
                         {item.label}
                       </div>
-                      <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
-                        {doc.name} ({(doc.size / 1024 / 1024).toFixed(2)} MB)
+                      <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", display: "flex", flexWrap: "wrap", gap: "5px", alignItems: "center" }}>
+                        <span>{doc.name} ({(doc.size / 1024 / 1024).toFixed(2)} MB)</span>
+                        {item.key === 'healthDoc' && athlete.medicalCertificateExpiry && (() => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const expDate = new Date(athlete.medicalCertificateExpiry);
+                          expDate.setHours(0, 0, 0, 0);
+                          const isCritical = expDate - today <= 7 * 24 * 60 * 60 * 1000;
+                          return (
+                            <span style={{
+                              backgroundColor: isCritical ? "rgba(239, 68, 68, 0.15)" : "rgba(16, 185, 129, 0.15)",
+                              color: isCritical ? "#ef4444" : "var(--color-emerald-core)",
+                              border: isCritical ? "1px solid rgba(239, 68, 68, 0.3)" : "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
+                              padding: "1px 5px",
+                              borderRadius: "4px",
+                              fontSize: "9px",
+                              fontWeight: "bold",
+                              whiteSpace: "nowrap"
+                            }}>
+                              ვადა: {athlete.medicalCertificateExpiry}
+                            </span>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>

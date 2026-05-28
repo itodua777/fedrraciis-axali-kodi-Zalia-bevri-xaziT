@@ -60,9 +60,16 @@ const MentorForm = ({ onViewChange }) => {
       alert('გთხოვთ შეავსოთ სახელი და გვარი!');
       return;
     }
-    if (!formData.personalId || formData.personalId.length !== 11) {
-      alert('პირადი ნომერი უნდა შედგებოდეს 11 ციფრისგან!');
-      return;
+    if (formData.nationality === 'GE') {
+      if (!formData.personalId || formData.personalId.length !== 11) {
+        alert('საქართველოს მოქალაქის პირადი ნომერი უნდა შედგებოდეს 11 ციფრისგან!');
+        return;
+      }
+    } else {
+      if (!formData.personalId || !formData.personalId.trim()) {
+        alert('გთხოვთ მიუთითოთ პირადი ნომერი!');
+        return;
+      }
     }
     
     const phoneRegex = /^\+?[0-9]{9,15}$/;
@@ -195,7 +202,20 @@ const MentorForm = ({ onViewChange }) => {
                 </div>
                 <div>
                   <label style={labelStyle}>პირადი ნომერი</label>
-                  <input type="text" maxLength="11" style={inputStyle} value={formData.personalId} onChange={e => updateData('personalId', e.target.value)} />
+                  <input 
+                    type="text" 
+                    maxLength={formData.nationality === 'GE' ? 11 : undefined} 
+                    style={inputStyle} 
+                    value={formData.personalId} 
+                    onChange={e => {
+                      let val = e.target.value;
+                      if (formData.nationality === 'GE') {
+                        val = val.replace(/\D/g, '').slice(0, 11);
+                      }
+                      updateData('personalId', val);
+                    }} 
+                    placeholder={formData.nationality === 'GE' ? "11-ნიშნა პირადი ნომერი" : "ID ნომერი"}
+                  />
                 </div>
                 <div>
                   <label style={labelStyle}>დაბადების თარიღი</label>
@@ -214,9 +234,17 @@ const MentorForm = ({ onViewChange }) => {
                   <SearchableDropdown
                     value={formData.nationality}
                     options={COUNTRIES}
-                    onChange={val => updateData('nationality', val)}
+                    onChange={val => {
+                      updateData('nationality', val);
+                      if (val === 'GE') {
+                        if (formData.personalId) {
+                          updateData('personalId', formData.personalId.replace(/\D/g, '').slice(0, 11));
+                        }
+                      }
+                    }}
                     placeholder="აირჩიეთ მოქალაქეობა..."
                     style={inputStyle}
+                    showFlags={true}
                   />
                 </div>
               </div>

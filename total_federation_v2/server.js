@@ -63,7 +63,8 @@ function initializeDatabase() {
             mountaineer_rank TEXT,
             location_status TEXT,
             points INTEGER,
-            achievements TEXT
+            achievements TEXT,
+            medical_certificate_expiry TEXT
         );
 
         CREATE TABLE IF NOT EXISTS warehouse_items (
@@ -315,8 +316,9 @@ function syncDatabase(data) {
             const isNat = a.isNationalTeamMember ? 1 : 0;
             const points = a.points || 0;
             const achievementsStr = a.achievements ? JSON.stringify(a.achievements).replace(/'/g, "''") : '[]';
+            const medicalExpiryVal = a.medicalCertificateExpiry || '';
             
-            sql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements) VALUES (` +
+            sql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements, medical_certificate_expiry) VALUES (` +
                 `'${a.id.replace(/'/g, "''")}', ` +
                 `'${(a.firstName || '').replace(/'/g, "''")}', ` +
                 `'${(a.lastName || '').replace(/'/g, "''")}', ` +
@@ -327,8 +329,66 @@ function syncDatabase(data) {
                 `'${(a.mountaineerRank || 'NONE').replace(/'/g, "''")}', ` +
                 `'${(a.locationStatus || 'ბაზაზეა').replace(/'/g, "''")}', ` +
                 `${points}, ` +
-                `'${achievementsStr}'` +
+                `'${achievementsStr}', ` +
+                `'${medicalExpiryVal.replace(/'/g, "''")}'` +
                 `);\n`;
+        }
+    }
+
+    if (Array.isArray(data.athlete_ranks)) {
+        sql += 'DELETE FROM athlete_ranks;\n';
+        for (const ar of data.athlete_ranks) {
+            const arId = ar.id || 'ar-' + Math.random().toString(36).substr(2, 9);
+            const athleteId = ar.athlete_id || ar.athleteId || '';
+            const sportType = ar.sport_type || ar.sportDiscipline || ar.sportsDiscipline || ar.sportType || '';
+            const rankName = ar.rank_name || ar.rankName || '';
+            const org = ar.organization || '';
+            const assDate = ar.assignment_date || ar.assignmentDate || ar.date || '';
+            
+            sql += `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date) VALUES (` +
+                `'${arId.replace(/'/g, "''")}', ` +
+                `'${athleteId.replace(/'/g, "''")}', ` +
+                `'${sportType.replace(/'/g, "''")}', ` +
+                `'${rankName.replace(/'/g, "''")}', ` +
+                `'${org.replace(/'/g, "''")}', ` +
+                `'${assDate.replace(/'/g, "''")}'` +
+                `);\n`;
+        }
+    } else {
+        // Fallback: populate athlete_ranks from achievements of all athletes
+        sql += 'DELETE FROM athlete_ranks;\n';
+        if (Array.isArray(data.athletes)) {
+            for (const a of data.athletes) {
+                if (Array.isArray(a.achievements)) {
+                    for (const ach of a.achievements) {
+                        if (ach.type === 'rank_up') {
+                            const arId = ach.id || 'ar-' + Math.random().toString(36).substr(2, 9);
+                            const rankName = (ach.peak || ach.title || '').replace(/^მიენიჭა\s+["']?|["']?$/g, '');
+                            const sportType = ach.route || a.sportsDiscipline || 'ალპინიზმი';
+                            let org = '';
+                            if (ach.achievement) {
+                                const orgMatch = ach.achievement.match(/ორგანიზაცია:\s*([^.]+)/);
+                                if (orgMatch) {
+                                    org = orgMatch[1].trim();
+                                } else {
+                                    const basisMatch = ach.achievement.match(/საფუძველი:\s*([^.]+)/);
+                                    org = basisMatch ? basisMatch[1].trim() : '';
+                                }
+                            }
+                            const assDate = ach.date || ach.year || '';
+
+                            sql += `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date) VALUES (` +
+                                `'${arId.replace(/'/g, "''")}', ` +
+                                `'${a.id.replace(/'/g, "''")}', ` +
+                                `'${sportType.replace(/'/g, "''")}', ` +
+                                `'${rankName.replace(/'/g, "''")}', ` +
+                                `'${org.replace(/'/g, "''")}', ` +
+                                `'${String(assDate).replace(/'/g, "''")}'` +
+                                `);\n`;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -454,6 +514,11 @@ try {
 } catch (e) {
     // Column already exists, safe to ignore
 }
+try {
+    executeSql("ALTER TABLE athletes ADD COLUMN medical_certificate_expiry TEXT;");
+} catch (e) {
+    // Column already exists, safe to ignore
+}
 
 // Ensure mentors table exists
 executeSql(`
@@ -504,6 +569,19 @@ try {
 } catch (e) {
     // Column already exists, safe to ignore
 }
+
+// Ensure athlete_ranks table exists
+executeSql(`
+    CREATE TABLE IF NOT EXISTS athlete_ranks (
+        id TEXT PRIMARY KEY,
+        athlete_id TEXT,
+        sport_type TEXT,
+        rank_name TEXT,
+        organization TEXT,
+        assignment_date TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+`);
 
 const compiledCache = new Map(); // filePath -> { mtime, code }
 
@@ -614,6 +692,32 @@ http.createServer((req, res) => {
             });
         });
         
+        // Critical alerts for medical certificate expiry
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const medicalExpiries = queryDb("SELECT id, first_name, last_name, medical_certificate_expiry FROM athletes WHERE medical_certificate_expiry IS NOT NULL AND medical_certificate_expiry != '';");
+            
+            medicalExpiries.forEach((row, idx) => {
+                const expDate = new Date(row.medical_certificate_expiry);
+                expDate.setHours(0, 0, 0, 0);
+                const diffTime = expDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays <= 7) {
+                    notifications.push({
+                        id: `medical-expiry-${row.id}-${row.medical_certificate_expiry}`,
+                        type: 'critical',
+                        text: `ყურადღება: ${row.first_name} ${row.last_name}-ს სამედიცინო ცნობას ვადა ამოეწურა (${row.medical_certificate_expiry}), საჭიროა განახლება!`,
+                        timestamp: Date.now() - (idx + overdue.length + sponsors.length) * 1000
+                    });
+                }
+            });
+        } catch (e) {
+            console.error("Error generating medical expiry notifications:", e);
+        }
+        
         res.writeHead(200, {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -637,6 +741,52 @@ http.createServer((req, res) => {
                 res.end(JSON.stringify({ success: true }));
             } catch (err) {
                 console.error("Sync error:", err);
+                res.writeHead(400, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // POST /api/v1/athletes/ranks
+    if (req.url === '/api/v1/athletes/ranks' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk; });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                const { athlete_id, sport_type, rank_name, organization, assignment_date } = data;
+                
+                if (!athlete_id || !rank_name) {
+                    res.writeHead(400, {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify({ success: false, error: 'Missing athlete_id or rank_name' }));
+                    return;
+                }
+
+                const id = 'ar-' + Math.random().toString(36).substr(2, 9);
+                const sql = `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date) VALUES (` +
+                    `'${id}', ` +
+                    `'${athlete_id.replace(/'/g, "''")}', ` +
+                    `'${(sport_type || '').replace(/'/g, "''")}', ` +
+                    `'${rank_name.replace(/'/g, "''")}', ` +
+                    `'${(organization || '').replace(/'/g, "''")}', ` +
+                    `'${(assignment_date || '').replace(/'/g, "''")}'` +
+                    `);`;
+                executeSql(sql);
+
+                res.writeHead(200, {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: true, id }));
+            } catch (err) {
+                console.error("Save athlete rank error:", err);
                 res.writeHead(400, {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'

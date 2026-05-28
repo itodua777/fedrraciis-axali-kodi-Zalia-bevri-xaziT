@@ -500,10 +500,7 @@ const FullscreenFederationHistory = ({
         gap: "12px",
         flex: 1
       }}>
-        <h4 style={{ margin: 0, color: "var(--color-emerald-core)", fontSize: "14px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-          🏆 სპორტული ისტორია & მიღწევები
-        </h4>
-        <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: "12px", flex: 1 }}>
+        <div style={{ flex: 1 }}>
           <Timeline 
             athlete={athlete} 
             onUpdateAthlete={onUpdateAthlete} 

@@ -1,6 +1,7 @@
 import React from 'react';
+import { getFlagEmoji } from '../../utils/helpers.js';
 
-const SearchableDropdown = ({ value, onChange, options, placeholder, style }) => {
+const SearchableDropdown = ({ value, onChange, options, placeholder, style, showFlags }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const containerRef = React.useRef(null);
@@ -41,7 +42,16 @@ const SearchableDropdown = ({ value, onChange, options, placeholder, style }) =>
           userSelect: 'none'
         }}
       >
-        <span>{selectedOption ? selectedOption.name : placeholder}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {selectedOption ? (
+            <>
+              {showFlags && selectedOption.code && getFlagEmoji(selectedOption.code) && (
+                <span style={{ fontSize: '16px', lineHeight: '1' }}>{getFlagEmoji(selectedOption.code)}</span>
+              )}
+              <span>{selectedOption.name}</span>
+            </>
+          ) : placeholder}
+        </span>
         <i className={`fa-solid fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ fontSize: '11px', opacity: 0.7 }}></i>
       </div>
       {isOpen && (
@@ -100,7 +110,12 @@ const SearchableDropdown = ({ value, onChange, options, placeholder, style }) =>
                   onMouseEnter={e => e.target.style.backgroundColor = 'rgba(255,255,255,0.04)'}
                   onMouseLeave={e => e.target.style.backgroundColor = value === opt.code ? 'color-mix(in oklab, var(--color-emerald-core) 8%, transparent)' : 'transparent'}
                 >
-                  {opt.name}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {showFlags && opt.code && getFlagEmoji(opt.code) && (
+                      <span style={{ fontSize: '16px', lineHeight: '1' }}>{getFlagEmoji(opt.code)}</span>
+                    )}
+                    <span>{opt.name}</span>
+                  </div>
                 </div>
               ))
             ) : (

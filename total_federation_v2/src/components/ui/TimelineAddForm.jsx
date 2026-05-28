@@ -1,6 +1,18 @@
 import React from 'react';
 import { generateUUID } from '../../utils/helpers.js';
 
+const mapRankNameToKey = (name) => {
+  if (!name) return 'NONE';
+  if (name.includes('III') || name.includes('3')) return 'RANK_3';
+  if (name.includes('II') || name.includes('2')) return 'RANK_2';
+  if (name.includes('I') || name.includes('1')) return 'RANK_1';
+  if (name.toLowerCase() === 'სოკ' || name.includes('კანდიდატი')) return 'CANDIDATE';
+  if (name.includes('ოსტატი') && !name.includes('საერთაშორისო')) return 'MASTER';
+  if (name.includes('საერთაშორისო')) return 'INT_MASTER';
+  if (name.includes('ნიშანი') || name.includes('ნიშნოსანი')) return 'BADGE';
+  return 'NONE';
+};
+
 const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activeTitles, peaksList }) => {
   const [newAct, setNewAct] = React.useState({
     type: 'expedition',
@@ -16,7 +28,8 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
     titleName: activeTitles[0]?.name || '',
     organization: '',
     awardName: '',
-    nomination: ''
+    nomination: '',
+    sportDiscipline: athlete?.sportsDiscipline || 'ალპინიზმი'
   });
 
   const handleAddActivity = (e) => {
@@ -40,23 +53,78 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
       achievementVal = `სტატუსი: ${newAct.status}${newAct.difficulty ? ` (${newAct.difficulty} კატეგორია)` : ''}`;
     } else if (newAct.type === 'rank_up') {
       const actualRank = newAct.rankName || (activeRanks[0]?.name || '');
+      const actualSport = newAct.sportDiscipline || '';
+      const actualOrg = newAct.organization || '';
+      
+      if (!actualSport) {
+        alert("გთხოვთ აირჩიოთ სპორტის სახეობა!");
+        return;
+      }
       if (!actualRank) {
         alert("გთხოვთ აირჩიოთ სპორტული თანრიგი!");
+        return;
+      }
+      if (!actualOrg) {
+        alert("გთხოვთ მიუთითოთ ორგანიზაციის დასახელება!");
         return;
       }
       if (!newAct.date) {
         alert("გთხოვთ მიუთითოთ მინიჭების თარიღი!");
         return;
       }
-      titleVal = `მიენიჭა "${actualRank}"`;
+
+      titleVal = `მიენიჭა "${actualRank}" (${actualSport})`;
       peakVal = `მიენიჭა "${actualRank}"`;
+      routeVal = actualSport;
       
       const parts = newAct.date.split('-');
       if (parts.length === 3) {
         dateVal = `${parts[2]}/${parts[1]}/${parts[0]}`;
+      } else {
+        dateVal = newAct.date;
       }
       
-      achievementVal = `სტატუსი: მიენიჭა "${actualRank}"-ის წოდება. საფუძველი: ოქმი/ბრძანება #${newAct.decreeNumber || 'N/A'}`;
+      achievementVal = `ორგანიზაცია: ${actualOrg}. მინიჭების თარიღი: ${dateVal}`;
+
+      const targetRankKey = mapRankNameToKey(actualRank);
+      let isNational = athlete.isNationalTeamMember ?? false;
+      let nationalStatus = athlete.nationalTeamStatus;
+
+      if (targetRankKey === 'CANDIDATE') {
+        isNational = true;
+        nationalStatus = 'CANDIDATE';
+      } else if (targetRankKey === 'MASTER') {
+        isNational = true;
+        nationalStatus = 'MASTER';
+      } else if (targetRankKey === 'INT_MASTER') {
+        isNational = true;
+        nationalStatus = 'INT_MASTER';
+      } else {
+        isNational = false;
+        nationalStatus = undefined;
+      }
+
+      additionalProps = {
+        mountaineerRank: targetRankKey,
+        isNationalTeamMember: isNational,
+        nationalTeamStatus: nationalStatus
+      };
+
+      // POST to backend athlete_ranks table
+      fetch('/api/v1/athletes/ranks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          athlete_id: athlete.id,
+          sport_type: actualSport,
+          rank_name: actualRank,
+          organization: actualOrg,
+          assignment_date: newAct.date
+        })
+      })
+      .then(res => res.json())
+      .catch(err => console.error("Database save to athlete_ranks failed:", err));
+
     } else if (newAct.type === 'title') {
       const actualTitle = newAct.titleName || (activeTitles[0]?.name || '');
       if (!actualTitle) {
@@ -93,6 +161,7 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
     
     onUpdateAthlete({
       ...athlete,
+      ...additionalProps,
       achievements: updatedAchievements
     });
 
@@ -217,7 +286,21 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
         <>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
             <div>
-              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>სპორტული თანრიგი *</label>
+              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>🥋 სპორტის სახეობა *</label>
+              <select
+                value={newAct.sportDiscipline || ''}
+                onChange={e => setNewAct({ ...newAct, sportDiscipline: e.target.value })}
+                style={{ width: "100%", padding: "6px 10px", backgroundColor: "#1e222b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "12px", outline: "none" }}
+              >
+                <option value="">-- აირჩიეთ სახეობა --</option>
+                <option value="ალპინიზმი">ალპინიზმი</option>
+                <option value="მეკლდეურობა">მეკლდეურობა</option>
+                <option value="ყინულზე ცოცვა">ყინულზე ცოცვა</option>
+                <option value="სკაირანინგი">სკაირანინგი</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>🎖️ სპორტული თანრიგი / რანგი *</label>
               <select
                 value={newAct.rankName}
                 onChange={e => setNewAct({ ...newAct, rankName: e.target.value })}
@@ -232,37 +315,25 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
                 )}
               </select>
             </div>
-            <div>
-              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>წელი *</label>
-              <select
-                value={newAct.year}
-                onChange={e => setNewAct({ ...newAct, year: parseInt(e.target.value) || new Date().getFullYear() })}
-                style={{ width: "100%", padding: "6px 10px", backgroundColor: "#1e222b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "12px", outline: "none" }}
-              >
-                {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - i).map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
             <div>
-              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>მინიჭების თარიღი *</label>
+              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>🏢 ფედერაციის/ორგანიზაციის დასახელება *</label>
               <input
-                type="date"
-                value={newAct.date}
-                onChange={e => setNewAct({ ...newAct, date: e.target.value })}
+                type="text"
+                placeholder="მაგ: საქართველოს მთამსვლელთა გაერთიანებული ფედერაცია"
+                value={newAct.organization || ''}
+                onChange={e => setNewAct({ ...newAct, organization: e.target.value })}
                 style={{ width: "100%", padding: "6px 10px", backgroundColor: "#1e222b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "12px", boxSizing: "border-box", outline: "none" }}
               />
             </div>
             <div>
-              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>ბრძანების / ოქმის ნომერი</label>
+              <label style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>📅 მინიჭების თარიღი *</label>
               <input
-                type="text"
-                placeholder="მაგ: #120-A"
-                value={newAct.decreeNumber}
-                onChange={e => setNewAct({ ...newAct, decreeNumber: e.target.value })}
+                type="date"
+                value={newAct.date}
+                onChange={e => setNewAct({ ...newAct, date: e.target.value })}
                 style={{ width: "100%", padding: "6px 10px", backgroundColor: "#1e222b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "12px", boxSizing: "border-box", outline: "none" }}
               />
             </div>
@@ -365,16 +436,26 @@ const TimelineAddForm = ({ athlete, onUpdateAthlete, onClose, activeRanks, activ
           backgroundColor: "var(--color-emerald-core)",
           color: "#121418",
           border: "none",
-          padding: "6px 12px",
+          padding: "8px 16px",
           borderRadius: "6px",
           fontSize: "12px",
           fontWeight: "bold",
           cursor: "pointer",
           alignSelf: "flex-end",
-          marginTop: "5px"
+          marginTop: "5px",
+          transition: "all 0.3s ease",
+          boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)"
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.boxShadow = "0 0 15px var(--color-emerald-core)";
+          e.currentTarget.style.transform = "scale(1.02)";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
+          e.currentTarget.style.transform = "scale(1)";
         }}
       >
-        დამატება
+        {newAct.type === 'rank_up' ? 'თანრიგის მინიჭება / შენახვა' : 'დამატება'}
       </button>
     </div>
   );

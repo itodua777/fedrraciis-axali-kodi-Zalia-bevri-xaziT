@@ -120,7 +120,19 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
           </div>
           <div style={{ ...inputGroupStyle, minWidth: "200px" }}>
             <label style={labelStyle}>პირადი ნომერი</label>
-            <input style={inputStyle} value={formData.personalId} onChange={e => updateData('personalId', e.target.value)} placeholder="ID ნომერი" />
+            <input 
+              style={inputStyle} 
+              value={formData.personalId} 
+              onChange={e => {
+                let val = e.target.value;
+                if (formData.nationality === 'GE') {
+                  val = val.replace(/\D/g, '').slice(0, 11);
+                }
+                updateData('personalId', val);
+              }} 
+              placeholder={formData.nationality === 'GE' ? "11-ნიშნა პირადი ნომერი" : "ID ნომერი"} 
+              maxLength={formData.nationality === 'GE' ? 11 : undefined}
+            />
           </div>
           <div style={{ ...inputGroupStyle, minWidth: "200px" }}>
             <label style={labelStyle}>დაბადების თარიღი</label>
@@ -138,10 +150,21 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
             <label style={labelStyle}>მოქალაქეობა</label>
             <SearchableDropdown
               value={formData.nationality}
-              onChange={val => updateData('nationality', val)}
+              onChange={val => {
+                updateData('nationality', val);
+                if (val === 'GE') {
+                  if (formData.personalId) {
+                    updateData('personalId', formData.personalId.replace(/\D/g, '').slice(0, 11));
+                  }
+                  if (formData.representativePersonalId) {
+                    updateData('representativePersonalId', formData.representativePersonalId.replace(/\D/g, '').slice(0, 11));
+                  }
+                }
+              }}
               options={COUNTRIES}
               placeholder="აირჩიეთ მოქალაქეობა"
               style={inputStyle}
+              showFlags={true}
             />
           </div>
           <div style={{ ...inputGroupStyle, minWidth: "200px" }}>

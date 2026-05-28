@@ -35,6 +35,7 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
     representativeDoc: null,
     idCardDoc: null,
     healthDoc: null,
+    medicalCertificateExpiry: '',
     insuranceDoc: null,
     dopingDoc: null
   });
@@ -71,7 +72,7 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
         setError("გთხოვთ მიუთითოთ პირადი ნომერი");
         return;
       }
-      if (formData.personalId.trim().length !== 11) {
+      if (formData.nationality === 'GE' && formData.personalId.trim().length !== 11) {
         setError("პირადი ნომერი უნდა შედგებოდეს 11 ციფრისგან");
         return;
       }
@@ -96,7 +97,7 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
           setError("გთხოვთ მიუთითოთ წარმომადგენლის პირადი ნომერი");
           return;
         }
-        if (formData.representativePersonalId.trim().length !== 11) {
+        if (formData.nationality === 'GE' && formData.representativePersonalId.trim().length !== 11) {
           setError("წარმომადგენლის პირადი ნომერი უნდა შედგებოდეს 11 ციფრისგან");
           return;
         }
@@ -245,7 +246,7 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
                   if (isMinor) {
                     if (!formData.representativeName || !formData.representativeName.trim() ||
                         !formData.representativePersonalId || !formData.representativePersonalId.trim() ||
-                        formData.representativePersonalId.trim().length !== 11 ||
+                        (formData.nationality === 'GE' && formData.representativePersonalId.trim().length !== 11) ||
                         !formData.representativePhone || !formData.representativePhone.trim() ||
                         !formData.representativeDoc) {
                       setError("გთხოვთ შეავსოთ კანონიერი წარმომადგენლის ყველა ველი და ატვირთოთ დოკუმენტი პირველ ეტაპზე");
@@ -260,6 +261,10 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
                   }
                   if (!formData.healthDoc) {
                     setError("გთხოვთ ატვირთოთ ჯანმრთელობის ცნობა");
+                    return;
+                  }
+                  if (formData.healthDoc && !formData.medicalCertificateExpiry) {
+                    setError("გთხოვთ მიუთითოთ სამედიცინო ცნობის მოქმედების ვადა");
                     return;
                   }
 
@@ -305,6 +310,7 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
                     representativeDoc: isMinor ? formData.representativeDoc : null,
                     idCardDoc: formData.idCardDoc,
                     healthDoc: formData.healthDoc,
+                    medicalCertificateExpiry: formData.medicalCertificateExpiry,
                     insuranceDoc: formData.insuranceDoc,
                     dopingDoc: formData.dopingDoc,
                     sportsDiscipline: formData.sportsDiscipline,

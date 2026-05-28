@@ -51,6 +51,19 @@ const App = () => {
     setAthletes(prev => prev.map(a => a.id === updatedAthlete.id ? updatedAthlete : a));
   };
 
+  React.useEffect(() => {
+    const syncData = {
+      athletes: athletes
+    };
+    fetch('/api/v1/dashboard/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(syncData)
+    }).catch(err => console.error("Database sync failed from App.jsx:", err));
+  }, [athletes]);
+
   const handleAddIncident = (newIncident) => {
     setIncidents([...incidents, { ...newIncident, id: String(Date.now()) }]);
   };
