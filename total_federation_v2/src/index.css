@@ -15,6 +15,7 @@
   --color-copper: #D97736;
   --color-gold-raw: #D4AF37;
   --color-bone-light: #F5F5F7;
+  --header-height: 70px;
 }
 
 body {
@@ -304,7 +305,8 @@ body {
 
 /* Webkit ბრაუზერებისთვის (Chrome, Safari, Edge) */
 .custom-scrollbar::-webkit-scrollbar {
-  height: 4px; /* ძალიან თხელი სქროლი */
+  width: 4px; /* ძალიან თხელი ვერტიკალური სქროლი */
+  height: 4px; /* ძალიან თხელი ჰორიზონტალური სქროლი */
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: var(--color-iron); /* დეშბორდის ფონის ფერი */
@@ -315,6 +317,68 @@ body {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--color-emerald-core); /* მაუსის მიტანისას ხდება ნეონისფერი ლურჯი */
+}
+
+/* Custom scrollbar utility classes */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+.scrollbar-thumb-zinc-800 {
+  --scrollbar-thumb: #27272a;
+  --scrollbar-track: transparent;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Webkit fallback for custom scrollbar color and thin size */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 3px;
+}
+.scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Responsive Profile Header Grid */
+.profile-header-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+  align-items: center;
+}
+.profile-header-grid .vertical-separator {
+  grid-column: span 1;
+  height: 48px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  justify-self: center;
+}
+.profile-header-grid .medical-grid-section {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  padding-left: 16px;
+}
+
+@media (max-width: 1200px) {
+  .profile-header-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .profile-header-grid .vertical-separator {
+    display: none;
+  }
+  .profile-header-grid .medical-grid-section {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-left: 0;
+    padding-top: 16px;
+  }
 }
 
 .settings-dual-grid {

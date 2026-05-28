@@ -121,7 +121,7 @@ const App = () => {
   return (
     <div style={{ display: "flex", height: "100vh", backgroundColor: "#121418", overflow: "hidden" }}>
       <Sidebar currentView={currentView} onViewChange={setCurrentView} federation={selectedFederation} />
-      <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
         <Header federation={selectedFederation} onLogout={handleLogout} />
         {currentView === 'dashboard' && <Dashboard incidents={incidents} />}
         {currentView === 'athletes' && <AthletesLibrary onViewChange={setCurrentView} athletes={athletes} onUpdateAthlete={handleUpdateAthlete} clubs={clubs} onClubClick={handleClubClick} />}

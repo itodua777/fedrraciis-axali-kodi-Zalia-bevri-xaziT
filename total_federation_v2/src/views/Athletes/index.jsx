@@ -4,7 +4,6 @@ import AthletesFilterPanel from './components/AthletesFilterPanel.jsx';
 import AthletesTable from './components/AthletesTable.jsx';
 import BulkPrintDoc from './components/BulkPrintDoc.jsx';
 import AthleteDetailView from './AthleteDetailView.jsx';
-import Timeline from '../../components/ui/Timeline.jsx';
 import { calculateAge } from '../../utils/helpers.js';
 import { COUNTRIES } from '../../utils/countries.js';
 
@@ -13,6 +12,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const [isPrintingBulk, setIsPrintingBulk] = React.useState(false);
+  const [isTableExpanded, setIsTableExpanded] = React.useState(false);
 
   const initialFilters = React.useMemo(() => ({
     status: 'all',
@@ -208,25 +208,29 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
   return (
     <div style={{ 
       height: "calc(100vh - 70px)", 
+      width: "100%",
+      minWidth: 0,
       boxSizing: "border-box", 
       padding: "30px", 
       backgroundColor: "#121418", 
       color: "#e2e8f0", 
       fontFamily: "sans-serif", 
       overflow: "hidden", 
-      display: "grid", 
-      gridTemplateColumns: "repeat(12, 1fr)", 
-      gap: "20px" 
+      display: "flex", 
+      gap: isTableExpanded ? "0px" : "20px", 
+      transition: "gap 300ms cubic-bezier(0.4, 0, 0.2, 1)"
     }}>
       <div style={{ 
-        gridColumn: "span 8", 
         display: "flex", 
         flexDirection: "column", 
         gap: "20px", 
         height: "100%", 
         overflowY: "auto", 
         minWidth: 0,
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        width: isTableExpanded ? "100%" : "calc(50% - 10px)",
+        transition: "width 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+        flexShrink: 0
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h2 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 50%, transparent)" }}>
@@ -317,6 +321,38 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
             }}
           >
             <i className="fa-solid fa-sliders"></i> ფილტრები {activeCount > 0 ? `(${activeCount})` : ''}
+          </button>
+
+          <button
+            id="table-maximize-btn"
+            onClick={() => setIsTableExpanded(!isTableExpanded)}
+            style={{
+              backgroundColor: "#09090b",
+              color: "#a1a1aa",
+              border: "1px solid #27272a",
+              padding: "10px 12px",
+              borderRadius: "8px",
+              fontSize: "14px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s",
+              outline: "none"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.color = "var(--color-emerald-core)";
+              e.currentTarget.style.borderColor = "var(--color-emerald-core)";
+              e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color = "#a1a1aa";
+              e.currentTarget.style.borderColor = "#27272a";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+            title={isTableExpanded ? "შეკუმშვა" : "გაფართოება"}
+          >
+            <i className={`fa-solid ${isTableExpanded ? "fa-compress" : "fa-expand"}`}></i>
           </button>
 
           <AthletesFilterPanel
@@ -436,7 +472,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
         
         <div style={{ 
           backgroundColor: "rgba(15, 23, 42, 0.6)", 
-          border: "1px solid color-mix(in oklab, var(--color-emerald-core) 10%, transparent)", 
+          border: "1px solid #27272a", 
           borderRadius: "12px", 
           padding: "20px", 
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
@@ -451,44 +487,37 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
             setSelectedAthlete={setSelectedAthlete}
             clubs={clubs}
             onClubClick={onClubClick}
+            isExpanded={isTableExpanded}
           />
 
           <div style={{ marginTop: "15px", fontSize: "12px", color: "rgba(226, 232, 240, 0.5)", textAlign: "left" }}>
             ნაჩვენებია {filteredAthletes.length} ჩანაწერი (სულ {athletes.length}-დან)
           </div>
         </div>
-
-        {selectedAthlete ? (
-          <div style={{ flex: 1, backgroundColor: "#16191f", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "12px", padding: "20px", marginTop: "10px", overflowY: "auto", maxHeight: "600px", display: "flex", flexDirection: "column", gap: "15px" }}>
-            <Timeline 
-              athlete={athletes.find(a => a.id === selectedAthlete.id) || selectedAthlete} 
-              onUpdateAthlete={(updated) => {
-                if (onUpdateAthlete) {
-                  onUpdateAthlete(updated);
-                }
-                setSelectedAthlete(updated);
-              }} 
-            />
-          </div>
-        ) : (
-          <div style={{ flex: 1, border: "1px dashed color-mix(in oklab, var(--color-emerald-core) 20%, transparent)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", color: "color-mix(in oklab, var(--color-emerald-core) 50%, transparent)", marginTop: "10px", minHeight: "150px" }}>
-            სპორტსმენის აქტივობების Timeline მოთავსდება აქ
-          </div>
-        )}
       </div>
 
-      <AthleteDetailView 
-        athlete={selectedAthlete ? (athletes.find(a => a.id === selectedAthlete.id) || selectedAthlete) : null} 
-        onClose={() => setSelectedAthlete(null)} 
-        onUpdateAthlete={(updated) => {
-          if (onUpdateAthlete) {
-            onUpdateAthlete(updated);
-          }
-          setSelectedAthlete(updated);
-        }} 
-        clubs={clubs}
-        onClubClick={onClubClick}
-      />
+      <div style={{
+        width: isTableExpanded ? "0px" : "calc(50% - 10px)",
+        display: isTableExpanded ? "none" : "block",
+        opacity: isTableExpanded ? 0 : 1,
+        transition: "width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+        overflow: "hidden",
+        flexShrink: 0,
+        height: "100%"
+      }}>
+        <AthleteDetailView 
+          athlete={selectedAthlete ? (athletes.find(a => a.id === selectedAthlete.id) || selectedAthlete) : null} 
+          onClose={() => setSelectedAthlete(null)} 
+          onUpdateAthlete={(updated) => {
+            if (onUpdateAthlete) {
+              onUpdateAthlete(updated);
+            }
+            setSelectedAthlete(updated);
+          }} 
+          clubs={clubs}
+          onClubClick={onClubClick}
+        />
+      </div>
 
       <BulkPrintDoc
         filteredAthletes={filteredAthletes}

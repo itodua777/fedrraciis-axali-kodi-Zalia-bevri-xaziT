@@ -4,8 +4,7 @@ const AthleteSidePanelRead = ({
   athlete,
   isMinor,
   clubs,
-  onClubClick,
-  setIsEditing
+  onClubClick
 }) => {
   return (
     <>
@@ -299,40 +298,6 @@ const AthleteSidePanelRead = ({
           )}
         </div>
       </div>
-
-      {/* Edit Button for Read Mode */}
-      {athlete.membershipStatus !== 'Deceased' && (
-        <div style={{ display: "flex", justifyContent: "flex-end", borderTop: "1px solid rgba(30, 41, 59, 0.8)", paddingTop: "15px" }}>
-          <button
-            onClick={() => setIsEditing(true)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              fontSize: "13px",
-              backgroundColor: "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)",
-              border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
-              color: "var(--color-emerald-core)",
-              padding: "8px 16px",
-              borderRadius: "20px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              transition: "all 0.3s",
-              boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 20%, transparent)";
-              e.currentTarget.style.boxShadow = "0 0 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            <i className="fa-regular fa-pen-to-square"></i> რედაქტირება
-          </button>
-        </div>
-      )}
 
       {/* Block H: Locked Profile message */}
       {athlete.membershipStatus === 'Deceased' && (

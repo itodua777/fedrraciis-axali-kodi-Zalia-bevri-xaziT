@@ -3,6 +3,7 @@ import AthleteSidePanel from './components/AthleteSidePanel.jsx';
 import AthleteFullscreen from './components/AthleteFullscreen.jsx';
 import AthletePrintDoc from './components/AthletePrintDoc.jsx';
 import { ratingStoreData } from '../../context/ratingSettingsStore.js';
+import Timeline from '../../components/ui/Timeline.jsx';
 
 const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubClick }) => {
   const [isEditing, setIsEditing] = React.useState(false);
@@ -117,13 +118,11 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
   if (!athlete) {
     return (
       <div style={{ 
-        gridColumn: "span 4", 
         width: "100%", 
-        maxWidth: "420px", 
-        height: "100%", 
+        height: "calc(100vh - var(--header-height) - 60px)", 
         boxSizing: "border-box",
         backgroundColor: "#121418", 
-        border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", 
+        border: "1px solid #27272a", 
         borderRadius: "12px", 
         padding: "32px", 
         display: "flex", 
@@ -177,7 +176,15 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
   }
 
   return (
-    <>
+    <div className="custom-scrollbar scrollbar-thin scrollbar-thumb-zinc-800" style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "20px",
+      height: "calc(100vh - var(--header-height) - 60px)",
+      overflowY: "auto",
+      boxSizing: "border-box",
+      paddingRight: "4px"
+    }}>
       <AthleteSidePanel
         athlete={athlete}
         isEditing={isEditing}
@@ -191,6 +198,21 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
         handleSave={handleSave}
         handleCancel={handleCancel}
       />
+
+      {!isEditing && (
+        <div style={{
+          backgroundColor: "#121418",
+          border: "1px solid var(--color-emerald-core)",
+          borderRadius: "12px",
+          padding: "20px",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px color-mix(in oklab, var(--color-emerald-core) 2%, transparent)"
+        }}>
+          <Timeline 
+            athlete={athlete} 
+            onUpdateAthlete={onUpdateAthlete} 
+          />
+        </div>
+      )}
 
       <AthleteFullscreen
         athlete={athlete}
@@ -211,7 +233,7 @@ const AthleteDetailView = ({ athlete, onClose, onUpdateAthlete, clubs, onClubCli
       {isFullscreenOpen && (
         <AthletePrintDoc athlete={athlete} clubs={clubs} />
       )}
-    </>
+    </div>
   );
 };
 

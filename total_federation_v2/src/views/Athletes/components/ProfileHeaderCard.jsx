@@ -3,6 +3,7 @@ import AthleteAvatarWrapper from './AthleteAvatarWrapper.jsx';
 import { calculateAge, getFlagEmoji, getCountryName } from '../../../utils/helpers.js';
 
 const ProfileHeaderCard = ({ athlete, isEditing, editForm, onClose, onEdit, onExpand }) => {
+  const [isEditHovered, setIsEditHovered] = React.useState(false);
   const age = calculateAge(athlete.birthDate);
   const flag = getFlagEmoji(athlete.nationality);
   const countryName = getCountryName(athlete.nationality);
@@ -26,16 +27,12 @@ const ProfileHeaderCard = ({ athlete, isEditing, editForm, onClose, onEdit, onEx
   const allergiesVal = isEditing && editForm ? editForm.allergies : athlete.allergies;
 
   return (
-    <div style={{
+    <div className="profile-header-grid" style={{
       position: "relative",
-      display: "grid",
-      gridTemplateColumns: "repeat(12, 1fr)",
-      gap: "16px",
       padding: "20px",
       backgroundColor: "#121418",
       border: "1px solid rgba(255, 255, 255, 0.08)",
       borderRadius: "12px",
-      alignItems: "center",
       boxSizing: "border-box",
       width: "100%"
     }}>
@@ -49,23 +46,55 @@ const ProfileHeaderCard = ({ athlete, isEditing, editForm, onClose, onEdit, onEx
       }}>
         <AthleteAvatarWrapper athlete={athlete} size={56} />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
-          <h2 style={{
-            margin: 0,
-            color: "#e2e8f0",
-            fontSize: "16px",
-            fontWeight: "600",
-            lineHeight: "1.2",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis"
-          }}>
-            {athlete.firstName} {athlete.lastName}
-            {athlete.membershipStatus === 'Deceased' && <span title="ლეგენდარული სპორტსმენები">🕯️</span>}
-          </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: 0, flex: 1 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: "12px" }}>
+            <h2 style={{
+              margin: 0,
+              color: "#e2e8f0",
+              fontSize: "16px",
+              fontWeight: "600",
+              lineHeight: "1.2",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis"
+            }}>
+              {athlete.firstName} {athlete.lastName}
+              {athlete.membershipStatus === 'Deceased' && <span title="ლეგენდარული სპორტსმენები">🕯️</span>}
+            </h2>
+            {!isEditing && athlete.membershipStatus !== 'Deceased' && (
+              <button
+                onClick={onEdit}
+                onMouseEnter={() => setIsEditHovered(true)}
+                onMouseLeave={() => setIsEditHovered(false)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  backgroundColor: "#09090b",
+                  border: isEditHovered 
+                    ? "1px solid var(--color-emerald-core)" 
+                    : "1px solid #27272a",
+                  color: isEditHovered 
+                    ? "var(--color-emerald-core)" 
+                    : "var(--color-silver-structure)",
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease-in-out",
+                  boxShadow: isEditHovered 
+                    ? "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" 
+                    : "none"
+                }}
+              >
+                <i className="fa-regular fa-pen-to-square"></i> რედაქტირება
+              </button>
+            )}
+          </div>
           
           <div style={{
             color: "#94a3b8",
@@ -114,23 +143,16 @@ const ProfileHeaderCard = ({ athlete, isEditing, editForm, onClose, onEdit, onEx
       </div>
 
       {/* Vertical Separator Line (Col-Span 1) */}
-      <div style={{
-        gridColumn: "span 1",
-        height: "48px",
-        borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
-        justifySelf: "center"
-      }} />
+      <div className="vertical-separator" />
 
       {/* 2. Consolidated Medical Grid (Right, Col-Span 5) */}
-      <div style={{
+      <div className="medical-grid-section" style={{
         gridColumn: "span 5",
         display: "flex",
         flexDirection: "column",
         gap: "6px",
         justifyContent: "center",
         fontSize: "12px",
-        borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
-        paddingLeft: "16px",
         boxSizing: "border-box"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#e2e8f0" }}>

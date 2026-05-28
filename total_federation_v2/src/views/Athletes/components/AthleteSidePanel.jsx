@@ -20,13 +20,11 @@ const AthleteSidePanel = ({
   if (!athlete) {
     return (
       <div style={{ 
-        gridColumn: "span 4", 
         width: "100%", 
-        maxWidth: "420px", 
         height: "100%", 
         boxSizing: "border-box",
         backgroundColor: "#121418", 
-        border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", 
+        border: "1px solid #27272a", 
         borderRadius: "12px", 
         padding: "32px", 
         display: "flex", 
@@ -86,20 +84,18 @@ const AthleteSidePanel = ({
 
   return (
     <div style={{ 
-      gridColumn: "span 4", 
       width: "100%", 
-      maxWidth: "420px", 
       backgroundColor: "#121418", 
-      border: "1px solid color-mix(in oklab, var(--color-emerald-core) 15%, transparent)", 
+      border: "1px solid var(--color-emerald-core)", 
       borderRadius: "12px", 
       padding: "16px", 
       display: "flex", 
       flexDirection: "column", 
       gap: "12px", 
       boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px color-mix(in oklab, var(--color-emerald-core) 2%, transparent)", 
-      height: "100%", 
-      maxHeight: "100%", 
-      overflowY: "auto",
+      height: "auto", 
+      maxHeight: "none", 
+      overflowY: "visible",
       boxSizing: "border-box"
     }}>
       {/* Header Panel */}
@@ -160,7 +156,6 @@ const AthleteSidePanel = ({
           isMinor={isMinor}
           clubs={clubs}
           onClubClick={onClubClick}
-          setIsEditing={setIsEditing}
         />
       ) : (
         <AthleteSidePanelEdit
