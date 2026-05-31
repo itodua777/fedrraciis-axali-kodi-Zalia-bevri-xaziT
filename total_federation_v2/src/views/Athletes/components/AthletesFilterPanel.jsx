@@ -1,6 +1,7 @@
 import React from '../../../utils/react-shim.js';
 import SearchableDropdown from '../../../components/ui/SearchableDropdown.jsx';
 import { COUNTRIES } from '../../../utils/countries.js';
+import { useRanksStore } from '../../../context/ranksStore.js';
 
 const AthletesFilterPanel = ({
   filters,
@@ -13,6 +14,29 @@ const AthletesFilterPanel = ({
   popoverRef
 }) => {
   if (!isFilterOpen) return null;
+
+  const ranksStore = useRanksStore();
+  const activeRanks = (ranksStore?.ranks || []).filter(r => r.status === 'აქტიური');
+
+  const [dbTitles, setDbTitles] = React.useState([]);
+  const [dbAwards, setDbAwards] = React.useState([]);
+  const [localFilters, setLocalFilters] = React.useState({ ...filters });
+
+  React.useEffect(() => {
+    setLocalFilters({ ...filters });
+  }, [filters]);
+
+  React.useEffect(() => {
+    fetch('/api/v1/honorary-titles')
+      .then(res => res.json())
+      .then(data => setDbTitles(data))
+      .catch(err => console.error(err));
+
+    fetch('/api/v1/federation-awards')
+      .then(res => res.json())
+      .then(data => setDbAwards(data))
+      .catch(err => console.error(err));
+  }, []);
 
   const dropdownStyle = {
     width: "100%",
@@ -38,6 +62,24 @@ const AthletesFilterPanel = ({
     boxSizing: "border-box"
   };
 
+  const getDropdownStyle = (val) => {
+    const isActive = val !== 'all' && val !== '';
+    return {
+      ...dropdownStyle,
+      border: isActive ? "1px solid var(--color-emerald-core)" : "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
+      boxShadow: isActive ? "0 0 10px rgba(0, 230, 118, 0.15)" : "none"
+    };
+  };
+
+  const getInputStyle = (val) => {
+    const isActive = val !== '';
+    return {
+      ...inputStyle,
+      border: isActive ? "1px solid var(--color-emerald-core)" : "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
+      boxShadow: isActive ? "0 0 10px rgba(0, 230, 118, 0.15)" : "none"
+    };
+  };
+
   const checkboxLabelStyle = {
     display: "flex",
     alignItems: "center",
@@ -55,27 +97,41 @@ const AthletesFilterPanel = ({
     cursor: "pointer"
   };
 
+  const handleApply = () => {
+    setFilters(localFilters);
+    setIsFilterOpen(false);
+  };
+
   return (
     <div ref={popoverRef} style={{
       position: "absolute",
       top: "45px",
       right: 0,
       width: "550px",
+      maxHeight: "calc(100vh - 160px)",
       backgroundColor: "#161920",
-      border: "1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
+      border: "1px solid var(--color-emerald-core)",
       borderRadius: "12px",
       padding: "20px",
-      boxShadow: "0 10px 25px rgba(0, 0, 0, 0.7)",
+      boxShadow: "0 10px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 230, 118, 0.15)",
       zIndex: 200,
       display: "flex",
       flexDirection: "column",
-      gap: "15px"
+      gap: "15px",
+      boxSizing: "border-box",
+      overflow: "hidden"
     }}>
+      <style>{`
+        .filter-select:focus, .filter-input:focus {
+          border-color: var(--color-emerald-core) !important;
+          box-shadow: 0 0 15px rgba(0, 230, 118, 0.25) !important;
+        }
+      `}</style>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", paddingBottom: "8px" }}>
         <span style={{ fontWeight: "bold", color: "var(--color-emerald-core)" }}>🎛️ გაფართოებული ფილტრაცია</span>
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
           <button 
-            onClick={() => setFilters(initialFilters)}
+            onClick={() => setLocalFilters(initialFilters)}
             style={{ background: "none", border: "none", color: "rgba(255, 255, 255, 0.5)", cursor: "pointer", fontSize: "12px" }}
             onMouseOver={(e) => { e.currentTarget.style.color = "#ef4444"; }}
             onMouseOut={(e) => { e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"; }}
@@ -91,7 +147,18 @@ const AthletesFilterPanel = ({
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxHeight: "400px", overflowY: "auto", paddingRight: "5px" }}>
+      <div 
+        className="custom-scrollbar scrollbar-thin scrollbar-thumb-zinc-800"
+        style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: "12px", 
+          overflowY: "auto", 
+          paddingRight: "5px",
+          flex: 1,
+          minHeight: 0
+        }}
+      >
         {/* Section 1: Sport & Status */}
         <div>
           <div style={{ fontSize: "12px", color: "color-mix(in oklab, var(--color-emerald-core) 70%, transparent)", fontWeight: "bold", marginBottom: "8px", textTransform: "uppercase" }}>
@@ -101,22 +168,25 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>წევრობის სტატუსი</label>
               <select 
-                value={filters.status}
-                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.status}
+                onChange={(e) => setLocalFilters({ ...localFilters, status: e.target.value })}
+                style={getDropdownStyle(localFilters.status)}
+                className="filter-select"
               >
                 <option value="all">ყველა</option>
-                <option value="active">მოქმედი</option>
-                <option value="suspended">შეჩერებული</option>
-                <option value="inactive">არაქტიური</option>
+                <option value="Active">მოქმედი</option>
+                <option value="Suspended">შეჩერებული</option>
+                <option value="Terminated">შეწყვეტილი</option>
+                <option value="Deceased">გარდაცვლილი</option>
               </select>
             </div>
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>საწევრო გადასახადი</label>
               <select 
-                value={filters.feePaid}
-                onChange={(e) => setFilters({ ...filters, feePaid: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.feePaid}
+                onChange={(e) => setLocalFilters({ ...localFilters, feePaid: e.target.value })}
+                style={getDropdownStyle(localFilters.feePaid)}
+                className="filter-select"
               >
                 <option value="all">ყველა</option>
                 <option value="paid">გადახდილი</option>
@@ -128,9 +198,10 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>კლუბური კავშირი</label>
               <select 
-                value={filters.clubId}
-                onChange={(e) => setFilters({ ...filters, clubId: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.clubId}
+                onChange={(e) => setLocalFilters({ ...localFilters, clubId: e.target.value })}
+                style={getDropdownStyle(localFilters.clubId)}
+                className="filter-select"
               >
                 <option value="all">ყველა კლუბი</option>
                 <option value="none">კლუბის გარეშე</option>
@@ -142,13 +213,80 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>სპორტის სახეობა</label>
               <select 
-                value={filters.discipline}
-                onChange={(e) => setFilters({ ...filters, discipline: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.discipline}
+                onChange={(e) => setLocalFilters({ ...localFilters, discipline: e.target.value })}
+                style={getDropdownStyle(localFilters.discipline)}
+                className="filter-select"
               >
                 <option value="all">ყველა დისციპლინა</option>
                 {uniqueDisciplines.map(disc => (
                   <option key={disc} value={disc}>{disc}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 1b: Ranks, Titles, Awards & Gender */}
+        <div>
+          <div style={{ fontSize: "12px", color: "color-mix(in oklab, var(--color-emerald-core) 70%, transparent)", fontWeight: "bold", marginBottom: "8px", textTransform: "uppercase", marginTop: "4px" }}>
+            სპორტული მიღწევები და სქესი
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
+            <div>
+              <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>🚻 სქესი</label>
+              <select 
+                value={localFilters.gender}
+                onChange={(e) => setLocalFilters({ ...localFilters, gender: e.target.value })}
+                style={getDropdownStyle(localFilters.gender)}
+                className="filter-select"
+              >
+                <option value="all">ყველა</option>
+                <option value="male">მამრობითი</option>
+                <option value="female">მდედრობითი</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>🎖️ სპორტული თანრიგი</label>
+              <select 
+                value={localFilters.rankId}
+                onChange={(e) => setLocalFilters({ ...localFilters, rankId: e.target.value })}
+                style={getDropdownStyle(localFilters.rankId)}
+                className="filter-select"
+              >
+                <option value="all">ყველა</option>
+                {activeRanks.map(r => (
+                  <option key={r.id} value={r.id}>{r.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            <div>
+              <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>🏅 საპატიო წოდება</label>
+              <select 
+                value={localFilters.titleId}
+                onChange={(e) => setLocalFilters({ ...localFilters, titleId: e.target.value })}
+                style={getDropdownStyle(localFilters.titleId)}
+                className="filter-select"
+              >
+                <option value="all">ყველა</option>
+                {dbTitles.map(t => (
+                  <option key={t.id} value={t.id}>{t.title_name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>🏆 ჯილდო</label>
+              <select 
+                value={localFilters.awardId}
+                onChange={(e) => setLocalFilters({ ...localFilters, awardId: e.target.value })}
+                style={getDropdownStyle(localFilters.awardId)}
+                className="filter-select"
+              >
+                <option value="all">ყველა</option>
+                {dbAwards.map(aw => (
+                  <option key={aw.id} value={aw.id}>{aw.award_name}</option>
                 ))}
               </select>
             </div>
@@ -162,10 +300,10 @@ const AthletesFilterPanel = ({
             <label style={checkboxLabelStyle}>
               <input 
                 type="checkbox" 
-                checked={filters.roles.isFounder} 
-                onChange={(e) => setFilters({
-                  ...filters,
-                  roles: { ...filters.roles, isFounder: e.target.checked }
+                checked={localFilters.roles.isFounder} 
+                onChange={(e) => setLocalFilters({
+                  ...localFilters,
+                  roles: { ...localFilters.roles, isFounder: e.target.checked }
                 })} 
                 style={checkboxStyle}
               />
@@ -174,10 +312,10 @@ const AthletesFilterPanel = ({
             <label style={checkboxLabelStyle}>
               <input 
                 type="checkbox" 
-                checked={filters.roles.hasVotingRight} 
-                onChange={(e) => setFilters({
-                  ...filters,
-                  roles: { ...filters.roles, hasVotingRight: e.target.checked }
+                checked={localFilters.roles.hasVotingRight} 
+                onChange={(e) => setLocalFilters({
+                  ...localFilters,
+                  roles: { ...localFilters.roles, hasVotingRight: e.target.checked }
                 })} 
                 style={checkboxStyle}
               />
@@ -186,10 +324,10 @@ const AthletesFilterPanel = ({
             <label style={checkboxLabelStyle}>
               <input 
                 type="checkbox" 
-                checked={filters.roles.isNationalTeamMember} 
-                onChange={(e) => setFilters({
-                  ...filters,
-                  roles: { ...filters.roles, isNationalTeamMember: e.target.checked }
+                checked={localFilters.roles.isNationalTeamMember} 
+                onChange={(e) => setLocalFilters({
+                  ...localFilters,
+                  roles: { ...localFilters.roles, isNationalTeamMember: e.target.checked }
                 })} 
                 style={checkboxStyle}
               />
@@ -198,10 +336,10 @@ const AthletesFilterPanel = ({
             <label style={checkboxLabelStyle}>
               <input 
                 type="checkbox" 
-                checked={filters.roles.isMentorOrVeteran} 
-                onChange={(e) => setFilters({
-                  ...filters,
-                  roles: { ...filters.roles, isMentorOrVeteran: e.target.checked }
+                checked={localFilters.roles.isMentorOrVeteran} 
+                onChange={(e) => setLocalFilters({
+                  ...localFilters,
+                  roles: { ...localFilters.roles, isMentorOrVeteran: e.target.checked }
                 })} 
                 style={checkboxStyle}
               />
@@ -219,9 +357,10 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>სისხლის ჯგუფი</label>
               <select 
-                value={filters.bloodType}
-                onChange={(e) => setFilters({ ...filters, bloodType: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.bloodType}
+                onChange={(e) => setLocalFilters({ ...localFilters, bloodType: e.target.value })}
+                style={getDropdownStyle(localFilters.bloodType)}
+                className="filter-select"
               >
                 <option value="all">ყველა</option>
                 <option value="O+">O+</option>
@@ -237,9 +376,10 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>ასთმა</label>
               <select 
-                value={filters.asthma}
-                onChange={(e) => setFilters({ ...filters, asthma: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.asthma}
+                onChange={(e) => setLocalFilters({ ...localFilters, asthma: e.target.value })}
+                style={getDropdownStyle(localFilters.asthma)}
+                className="filter-select"
               >
                 <option value="all">ყველა</option>
                 <option value="yes">კი</option>
@@ -249,9 +389,10 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>დიაბეტი</label>
               <select 
-                value={filters.diabetes}
-                onChange={(e) => setFilters({ ...filters, diabetes: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.diabetes}
+                onChange={(e) => setLocalFilters({ ...localFilters, diabetes: e.target.value })}
+                style={getDropdownStyle(localFilters.diabetes)}
+                className="filter-select"
               >
                 <option value="all">ყველა</option>
                 <option value="yes">კი</option>
@@ -264,9 +405,10 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>ალერგია</label>
               <select 
-                value={filters.allergy}
-                onChange={(e) => setFilters({ ...filters, allergy: e.target.value })}
-                style={dropdownStyle}
+                value={localFilters.allergy}
+                onChange={(e) => setLocalFilters({ ...localFilters, allergy: e.target.value })}
+                style={getDropdownStyle(localFilters.allergy)}
+                className="filter-select"
               >
                 <option value="all">ყველა</option>
                 <option value="yes">აქვს</option>
@@ -276,11 +418,12 @@ const AthletesFilterPanel = ({
             <div>
               <label style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", display: "block", marginBottom: "4px" }}>ქვეყანა</label>
               <SearchableDropdown
-                value={filters.countryCode}
-                onChange={(val) => setFilters({ ...filters, countryCode: val })}
+                value={localFilters.countryCode}
+                onChange={(val) => setLocalFilters({ ...localFilters, countryCode: val })}
                 options={[{ code: 'all', name: 'ყველა ქვეყანა' }, ...COUNTRIES]}
                 placeholder="ქვეყანა..."
-                style={dropdownStyle}
+                style={getDropdownStyle(localFilters.countryCode)}
+                className="filter-select"
                 showFlags={true}
               />
             </div>
@@ -292,9 +435,10 @@ const AthletesFilterPanel = ({
               <input 
                 type="number"
                 placeholder="მაგ. 18"
-                value={filters.minAge}
-                onChange={(e) => setFilters({ ...filters, minAge: e.target.value })}
-                style={inputStyle}
+                value={localFilters.minAge}
+                onChange={(e) => setLocalFilters({ ...localFilters, minAge: e.target.value })}
+                style={getInputStyle(localFilters.minAge)}
+                className="filter-input"
               />
             </div>
             <div>
@@ -302,13 +446,72 @@ const AthletesFilterPanel = ({
               <input 
                 type="number"
                 placeholder="მაგ. 60"
-                value={filters.maxAge}
-                onChange={(e) => setFilters({ ...filters, maxAge: e.target.value })}
-                style={inputStyle}
+                value={localFilters.maxAge}
+                onChange={(e) => setLocalFilters({ ...localFilters, maxAge: e.target.value })}
+                style={getInputStyle(localFilters.maxAge)}
+                className="filter-input"
               />
             </div>
           </div>
         </div>
+      </div>
+
+      <div style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        gap: "10px",
+        borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+        paddingTop: "12px",
+        marginTop: "5px"
+      }}>
+        <button
+          onClick={() => {
+            setLocalFilters(initialFilters);
+          }}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "transparent",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: "6px",
+            color: "#fff",
+            cursor: "pointer",
+            fontSize: "12px",
+            transition: "all 0.2s"
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.borderColor = "#ef4444";
+            e.currentTarget.style.color = "#ef4444";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+            e.currentTarget.style.color = "#fff";
+          }}
+        >
+          გასუფთავება
+        </button>
+        <button
+          onClick={handleApply}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "var(--color-emerald-core)",
+            border: "none",
+            borderRadius: "6px",
+            color: "#121418",
+            fontWeight: "bold",
+            cursor: "pointer",
+            fontSize: "12px",
+            boxShadow: "0 0 15px rgba(0, 230, 118, 0.25)",
+            transition: "all 0.2s"
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 20px #00E676";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 230, 118, 0.25)";
+          }}
+        >
+          გამოყენება
+        </button>
       </div>
     </div>
   );

@@ -62,10 +62,10 @@ const SearchableDropdown = ({ value, onChange, options, placeholder, style, show
           right: 0,
           zIndex: 1000,
           backgroundColor: '#1b1f24',
-          border: '1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent)',
+          border: '1px solid var(--color-emerald-core)',
           borderRadius: '8px',
           marginTop: '4px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(0, 230, 118, 0.15)',
           maxHeight: '220px',
           overflowY: 'auto'
         }}>
@@ -85,6 +85,14 @@ const SearchableDropdown = ({ value, onChange, options, placeholder, style, show
                 outline: 'none',
                 boxSizing: 'border-box',
                 fontSize: '12px'
+              }}
+              onFocus={e => {
+                e.currentTarget.style.borderColor = 'var(--color-emerald-core)';
+                e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 230, 118, 0.2)';
+              }}
+              onBlur={e => {
+                e.currentTarget.style.borderColor = 'color-mix(in oklab, var(--color-emerald-core) 20%, transparent)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
               onClick={e => e.stopPropagation()}
             />

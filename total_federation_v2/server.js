@@ -64,7 +64,9 @@ function initializeDatabase() {
             location_status TEXT,
             points INTEGER,
             achievements TEXT,
-            medical_certificate_expiry TEXT
+            medical_certificate_expiry TEXT,
+            membership_status TEXT,
+            gender TEXT
         );
 
         CREATE TABLE IF NOT EXISTS warehouse_items (
@@ -287,9 +289,9 @@ function initializeDatabase() {
       else if (finalFirstName === "გიორგი" && finalLastName === "ლეკიშვილი") points = 310;
       else if (finalFirstName === "ლუკა" && finalLastName === "ლომიძე") points = 380;
       
-      seedSql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements) VALUES (` +
+      seedSql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements, membership_status, gender) VALUES (` +
           `'${athleteId}', '${finalFirstName}', '${finalLastName}', '${personalId}', 'აქტიური', '15/01/2020', 1, ${finalRank !== 'NONE' ? 1 : 0}, ` +
-          `'${finalRank}', '${locationStatus}', ${points}, '[]');\n`;
+          `'${finalRank}', '${locationStatus}', ${points}, '[]', 'Active', '${i % 2 === 0 ? 'male' : 'female'}');\n`;
     }
     
     seedSql += 'COMMIT;\n';
@@ -322,7 +324,7 @@ function syncDatabase(data) {
             const achievementsStr = a.achievements ? JSON.stringify(a.achievements).replace(/'/g, "''") : '[]';
             const medicalExpiryVal = a.medicalCertificateExpiry || '';
             
-            sql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements, medical_certificate_expiry) VALUES (` +
+            sql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements, medical_certificate_expiry, membership_status, gender) VALUES (` +
                 `'${a.id.replace(/'/g, "''")}', ` +
                 `'${(a.firstName || '').replace(/'/g, "''")}', ` +
                 `'${(a.lastName || '').replace(/'/g, "''")}', ` +
@@ -334,62 +336,90 @@ function syncDatabase(data) {
                 `'${(a.locationStatus || 'ბაზაზეა').replace(/'/g, "''")}', ` +
                 `${points}, ` +
                 `'${achievementsStr}', ` +
-                `'${medicalExpiryVal.replace(/'/g, "''")}'` +
+                `'${medicalExpiryVal.replace(/'/g, "''")}', ` +
+                `'${(a.membershipStatus || 'Active').replace(/'/g, "''")}', ` +
+                `'${(a.gender || '').replace(/'/g, "''")}'` +
                 `);\n`;
         }
     }
 
-    if (Array.isArray(data.athlete_ranks)) {
-        sql += 'DELETE FROM athlete_ranks;\n';
-        for (const ar of data.athlete_ranks) {
-            const arId = ar.id || 'ar-' + Math.random().toString(36).substr(2, 9);
-            const athleteId = ar.athlete_id || ar.athleteId || '';
-            const sportType = ar.sport_type || ar.sportDiscipline || ar.sportsDiscipline || ar.sportType || '';
-            const rankName = ar.rank_name || ar.rankName || '';
-            const org = ar.organization || '';
-            const assDate = ar.assignment_date || ar.assignmentDate || ar.date || '';
-            
-            sql += `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date) VALUES (` +
-                `'${arId.replace(/'/g, "''")}', ` +
-                `'${athleteId.replace(/'/g, "''")}', ` +
-                `'${sportType.replace(/'/g, "''")}', ` +
-                `'${rankName.replace(/'/g, "''")}', ` +
-                `'${org.replace(/'/g, "''")}', ` +
-                `'${assDate.replace(/'/g, "''")}'` +
-                `);\n`;
-        }
-    } else {
-        // Fallback: populate athlete_ranks from achievements of all athletes
-        sql += 'DELETE FROM athlete_ranks;\n';
-        if (Array.isArray(data.athletes)) {
-            for (const a of data.athletes) {
-                if (Array.isArray(a.achievements)) {
-                    for (const ach of a.achievements) {
-                        if (ach.type === 'rank_up') {
-                            const arId = ach.id || 'ar-' + Math.random().toString(36).substr(2, 9);
-                            const rankName = (ach.peak || ach.title || '').replace(/^მიენიჭა\s+["']?|["']?$/g, '');
-                            const sportType = ach.route || a.sportsDiscipline || 'ალპინიზმი';
-                            let org = '';
-                            if (ach.achievement) {
-                                const orgMatch = ach.achievement.match(/ორგანიზაცია:\s*([^.]+)/);
-                                if (orgMatch) {
-                                    org = orgMatch[1].trim();
-                                } else {
-                                    const basisMatch = ach.achievement.match(/საფუძველი:\s*([^.]+)/);
-                                    org = basisMatch ? basisMatch[1].trim() : '';
-                                }
+    // Always clear and rebuild ranks, titles, awards tables based on full athlete achievements to keep databases clean and synced
+    sql += 'DELETE FROM athlete_ranks;\n';
+    sql += 'DELETE FROM athlete_titles;\n';
+    sql += 'DELETE FROM athlete_awards;\n';
+    if (Array.isArray(data.athletes)) {
+        for (const a of data.athletes) {
+            if (Array.isArray(a.achievements)) {
+                for (const ach of a.achievements) {
+                    if (ach.type === 'rank_up') {
+                        const arId = ach.id || 'ar-' + Math.random().toString(36).substr(2, 9);
+                        const rankName = (ach.peak || ach.title || '').replace(/^მიენიჭა\s+["']?|["']?$/g, '');
+                        const sportType = ach.route || a.sportsDiscipline || 'ალპინიზმი';
+                        let org = '';
+                        if (ach.achievement) {
+                            const orgMatch = ach.achievement.match(/ორგანიზაცია:\s*([^.]+)/);
+                            if (orgMatch) {
+                                org = orgMatch[1].trim();
+                            } else {
+                                const basisMatch = ach.achievement.match(/საფუძველი:\s*([^.]+)/);
+                                org = basisMatch ? basisMatch[1].trim() : '';
                             }
-                            const assDate = ach.date || ach.year || '';
-
-                            sql += `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date) VALUES (` +
-                                `'${arId.replace(/'/g, "''")}', ` +
-                                `'${a.id.replace(/'/g, "''")}', ` +
-                                `'${sportType.replace(/'/g, "''")}', ` +
-                                `'${rankName.replace(/'/g, "''")}', ` +
-                                `'${org.replace(/'/g, "''")}', ` +
-                                `'${String(assDate).replace(/'/g, "''")}'` +
-                                `);\n`;
                         }
+                        const assDate = ach.date || ach.year || '';
+
+                        let rankId = '';
+                        if (rankName.includes('III') || rankName.includes('3')) rankId = '1';
+                        else if (rankName.includes('II') || rankName.includes('2')) rankId = '2';
+                        else if (rankName.includes('I') || rankName.includes('1')) rankId = '3';
+                        else if (rankName.includes('სოკ')) rankId = '4';
+                        else if (rankName.includes('ოსტატი')) rankId = '5';
+                        else rankId = rankName;
+
+                        sql += `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date, rank_id) VALUES (` +
+                            `'${arId.replace(/'/g, "''")}', ` +
+                            `'${a.id.replace(/'/g, "''")}', ` +
+                            `'${sportType.replace(/'/g, "''")}', ` +
+                            `'${rankName.replace(/'/g, "''")}', ` +
+                            `'${org.replace(/'/g, "''")}', ` +
+                            `'${String(assDate).replace(/'/g, "''")}', ` +
+                            `'${rankId.replace(/'/g, "''")}'` +
+                            `);\n`;
+                    } else if (ach.type === 'title') {
+                        const tId = ach.id || 'at-' + Math.random().toString(36).substr(2, 9);
+                        const titleName = (ach.peak || ach.title || '').replace(/^საპატიო წოდება:\s*["']?|["']?$/g, '');
+                        let org = '';
+                        if (ach.achievement) {
+                            const orgMatch = ach.achievement.match(/მიმნიჭებელი ორგანიზაცია:\s*([^.]+)/);
+                            org = orgMatch ? orgMatch[1].trim() : '';
+                        }
+                        const assYear = ach.year || new Date().getFullYear();
+
+                        sql += `INSERT INTO athlete_titles (id, athlete_id, title_name, organization, assignment_year, title_id) VALUES (` +
+                            `'${tId.replace(/'/g, "''")}', ` +
+                            `'${a.id.replace(/'/g, "''")}', ` +
+                            `'${titleName.replace(/'/g, "''")}', ` +
+                            `'${org.replace(/'/g, "''")}', ` +
+                            `${parseInt(assYear) || new Date().getFullYear()}, ` +
+                            `(SELECT id FROM honorary_titles WHERE title_name = '${titleName.replace(/'/g, "''")}' LIMIT 1)` +
+                            `);\n`;
+                    } else if (ach.type === 'award') {
+                        const awId = ach.id || 'aw-' + Math.random().toString(36).substr(2, 9);
+                        const awardName = (ach.peak || ach.title || '').replace(/^ჯილდო:\s*["']?|["']?$/g, '');
+                        let nomination = '';
+                        if (ach.achievement) {
+                            const nomMatch = ach.achievement.match(/ნომინაცია \/ საფუძველი:\s*([^.]+)/);
+                            nomination = nomMatch ? nomMatch[1].trim() : '';
+                        }
+                        const assYear = ach.year || new Date().getFullYear();
+
+                        sql += `INSERT INTO athlete_awards (id, athlete_id, award_name, nomination, assignment_year, award_id) VALUES (` +
+                            `'${awId.replace(/'/g, "''")}', ` +
+                            `'${a.id.replace(/'/g, "''")}', ` +
+                            `'${awardName.replace(/'/g, "''")}', ` +
+                            `'${nomination.replace(/'/g, "''")}', ` +
+                            `${parseInt(assYear) || new Date().getFullYear()}, ` +
+                            `(SELECT id FROM federation_awards WHERE award_name = '${awardName.replace(/'/g, "''")}' LIMIT 1)` +
+                            `);\n`;
                     }
                 }
             }
@@ -523,6 +553,50 @@ try {
 } catch (e) {
     // Column already exists, safe to ignore
 }
+try {
+    executeSql("ALTER TABLE athletes ADD COLUMN membership_status TEXT;");
+} catch (e) {
+    // Column already exists, safe to ignore
+}
+try {
+    executeSql("ALTER TABLE athletes ADD COLUMN gender TEXT;");
+} catch (e) {
+    // Column already exists, safe to ignore
+}
+
+// Create joining tables for honorary titles and awards
+executeSql(`
+    CREATE TABLE IF NOT EXISTS athlete_titles (
+        id TEXT PRIMARY KEY,
+        athlete_id TEXT,
+        title_id INTEGER,
+        title_name TEXT,
+        organization TEXT,
+        assignment_year INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
+executeSql(`
+    CREATE TABLE IF NOT EXISTS athlete_awards (
+        id TEXT PRIMARY KEY,
+        athlete_id TEXT,
+        award_id INTEGER,
+        award_name TEXT,
+        nomination TEXT,
+        assignment_year INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
+// Populate columns for existing records
+try {
+    executeSql("UPDATE athletes SET membership_status = 'Active' WHERE membership_status IS NULL OR membership_status = '';");
+    executeSql("UPDATE athletes SET gender = 'male' WHERE (gender IS NULL OR gender = '') AND (rowid % 2 = 0);");
+    executeSql("UPDATE athletes SET gender = 'female' WHERE (gender IS NULL OR gender = '') AND (rowid % 2 = 1);");
+} catch (e) {
+    console.error("Failed to migrate existing athlete values:", e);
+}
 
 // Ensure mentors table exists
 executeSql(`
@@ -583,9 +657,16 @@ executeSql(`
         rank_name TEXT,
         organization TEXT,
         assignment_date TEXT,
+        rank_id TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 `);
+
+try {
+    executeSql("ALTER TABLE athlete_ranks ADD COLUMN rank_id TEXT;");
+} catch (e) {
+    // Column already exists, safe to ignore
+}
 
 // Ensure honorary_titles table exists
 executeSql(`
@@ -836,9 +917,35 @@ http.createServer((req, res) => {
     }
 
     // GET /api/v1/athletes
-    if (req.url === '/api/v1/athletes' && req.method === 'GET') {
+    if (req.url.startsWith('/api/v1/athletes') && req.method === 'GET') {
         try {
-            const athletes = queryDb('SELECT * FROM athletes ORDER BY id DESC;');
+            const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+            const membershipStatus = urlObj.searchParams.get('membership_status');
+            const gender = urlObj.searchParams.get('gender');
+            const rankId = urlObj.searchParams.get('rank_id');
+            const titleId = urlObj.searchParams.get('title_id');
+            const awardId = urlObj.searchParams.get('award_id');
+
+            const statusVal = (membershipStatus && membershipStatus !== 'all') ? `'${membershipStatus.replace(/'/g, "''")}'` : 'NULL';
+            const genderVal = (gender && gender !== 'all') ? `'${gender.replace(/'/g, "''")}'` : 'NULL';
+            const rankIdVal = (rankId && rankId !== 'all') ? `'${rankId.replace(/'/g, "''")}'` : 'NULL';
+            const titleIdVal = (titleId && titleId !== 'all') ? `'${titleId.replace(/'/g, "''")}'` : 'NULL';
+            const awardIdVal = (awardId && awardId !== 'all') ? `'${awardId.replace(/'/g, "''")}'` : 'NULL';
+
+            const sql = `
+                SELECT DISTINCT a.* FROM athletes a
+                LEFT JOIN athlete_ranks r ON a.id = r.athlete_id
+                LEFT JOIN athlete_titles t ON a.id = t.athlete_id
+                LEFT JOIN athlete_awards aw ON a.id = aw.athlete_id
+                WHERE (${statusVal} IS NULL OR a.membership_status = ${statusVal})
+                  AND (${genderVal} IS NULL OR a.gender = ${genderVal})
+                  AND (${rankIdVal} IS NULL OR r.rank_id = ${rankIdVal})
+                  AND (${titleIdVal} IS NULL OR t.title_id = ${titleIdVal})
+                  AND (${awardIdVal} IS NULL OR aw.award_id = ${awardIdVal})
+                ORDER BY a.id DESC;
+            `;
+
+            const athletes = queryDb(sql);
             const mapped = athletes.map(a => {
                 let achievements = [];
                 try {
@@ -859,7 +966,9 @@ http.createServer((req, res) => {
                     locationStatus: a.location_status || 'ბაზაზეა',
                     points: a.points || 0,
                     achievements: achievements,
-                    medicalCertificateExpiry: a.medical_certificate_expiry || ''
+                    medicalCertificateExpiry: a.medical_certificate_expiry || '',
+                    membershipStatus: a.membership_status || 'Active',
+                    gender: a.gender || ''
                 };
             });
             res.writeHead(200, {
@@ -897,13 +1006,22 @@ http.createServer((req, res) => {
                 }
 
                 const id = 'ar-' + Math.random().toString(36).substr(2, 9);
-                const sql = `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date) VALUES (` +
+                let rankId = '';
+                if (rank_name.includes('III') || rank_name.includes('3')) rankId = '1';
+                else if (rank_name.includes('II') || rank_name.includes('2')) rankId = '2';
+                else if (rank_name.includes('I') || rank_name.includes('1')) rankId = '3';
+                else if (rank_name.includes('სოკ')) rankId = '4';
+                else if (rank_name.includes('ოსტატი')) rankId = '5';
+                else rankId = rank_name;
+
+                const sql = `INSERT INTO athlete_ranks (id, athlete_id, sport_type, rank_name, organization, assignment_date, rank_id) VALUES (` +
                     `'${id}', ` +
                     `'${athlete_id.replace(/'/g, "''")}', ` +
                     `'${(sport_type || '').replace(/'/g, "''")}', ` +
                     `'${rank_name.replace(/'/g, "''")}', ` +
                     `'${(organization || '').replace(/'/g, "''")}', ` +
-                    `'${(assignment_date || '').replace(/'/g, "''")}'` +
+                    `'${(assignment_date || '').replace(/'/g, "''")}', ` +
+                    `'${rankId.replace(/'/g, "''")}'` +
                     `);`;
                 executeSql(sql);
 
@@ -1287,8 +1405,8 @@ http.createServer((req, res) => {
         return;
     }
 
-    // GET /api/mentors
-    if (req.url === '/api/mentors' && req.method === 'GET') {
+    // GET /api/mentors and GET /api/v1/mentors
+    if ((req.url === '/api/mentors' || req.url === '/api/v1/mentors') && req.method === 'GET') {
         const mentors = queryDb('SELECT * FROM mentors;');
         const mapped = mentors.map(m => ({
             id: m.id,
@@ -1321,13 +1439,27 @@ http.createServer((req, res) => {
         return;
     }
 
-    // POST /api/mentors
-    if (req.url === '/api/mentors' && req.method === 'POST') {
+    // POST /api/mentors and POST /api/v1/mentors
+    if ((req.url === '/api/mentors' || req.url === '/api/v1/mentors') && req.method === 'POST') {
         let body = '';
         req.on('data', chunk => { body += chunk; });
         req.on('end', () => {
             try {
                 const data = JSON.parse(body);
+
+                // Server-side safety validation for Georgian personal number
+                if (data.nationality === 'GE' || data.country === 'GE') {
+                    const pId = data.personalId || '';
+                    if (pId.length !== 11 || !/^[0-9]+$/.test(pId)) {
+                        res.writeHead(400, {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        });
+                        res.end(JSON.stringify({ error: "Invalid Georgian Personal Number. Must be exactly 11 digits." }));
+                        return;
+                    }
+                }
+
                 const id = data.id || 'M-' + Date.now();
                 const status = (data.status || '').replace(/'/g, "''");
                 const first_name = (data.firstName || '').replace(/'/g, "''");

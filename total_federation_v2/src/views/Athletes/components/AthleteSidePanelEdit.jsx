@@ -321,7 +321,7 @@ const AthleteSidePanelEdit = ({
                 placeholder="აირჩიეთ კლუბი..."
               />
               {editForm.clubId && (
-                <div style={{ fontSize: "11px", color: "#10b981", display: "flex", alignItems: "center", gap: "4px" }}>
+                <div style={{ fontSize: "11px", color: "var(--color-emerald-core)", display: "flex", alignItems: "center", gap: "4px" }}>
                   <i className="fa-solid fa-circle-check"></i>
                   <span>✓ ID: #{editForm.clubId}</span>
                 </div>

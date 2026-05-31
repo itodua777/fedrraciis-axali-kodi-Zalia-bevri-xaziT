@@ -234,7 +234,7 @@ const AddAthleteStep1 = ({ formData, updateData, clubs, isMinor, error }) => {
                 placeholder="აირჩიეთ კლუბი..."
               />
               {formData.clubId && (
-                <div style={{ fontSize: "11px", color: "#10b981", display: "flex", alignItems: "center", gap: "4px", marginTop: "4px" }}>
+                <div style={{ fontSize: "11px", color: "var(--color-emerald-core)", display: "flex", alignItems: "center", gap: "4px", marginTop: "4px" }}>
                   <i className="fa-solid fa-circle-check"></i>
                   <span>✓ სისტემამ გადაამოწმა: კლუბი აქტიურია, ID: #{formData.clubId}</span>
                 </div>

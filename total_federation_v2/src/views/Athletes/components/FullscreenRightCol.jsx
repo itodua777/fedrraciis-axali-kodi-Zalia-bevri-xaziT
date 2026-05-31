@@ -116,7 +116,7 @@ const FullscreenRightCol = ({
               if (!doc) return null;
               const isPdf = doc.name?.endsWith('.pdf') || doc.type === 'application/pdf';
               const docIcon = isPdf ? "fa-solid fa-file-pdf" : "fa-solid fa-file-image";
-              const docColor = isPdf ? "#ef4444" : "#10b981";
+              const docColor = isPdf ? "#ef4444" : "var(--color-emerald-core)";
               return (
                 <div 
                   key={item.key} 
@@ -147,7 +147,7 @@ const FullscreenRightCol = ({
                           const isCritical = expDate - today <= 7 * 24 * 60 * 60 * 1000;
                           return (
                             <span style={{
-                              backgroundColor: isCritical ? "rgba(239, 68, 68, 0.15)" : "rgba(16, 185, 129, 0.15)",
+                              backgroundColor: isCritical ? "rgba(239, 68, 68, 0.15)" : "rgba(0, 230, 118, 0.15)",
                               color: isCritical ? "#ef4444" : "var(--color-emerald-core)",
                               border: isCritical ? "1px solid rgba(239, 68, 68, 0.3)" : "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
                               padding: "1px 5px",

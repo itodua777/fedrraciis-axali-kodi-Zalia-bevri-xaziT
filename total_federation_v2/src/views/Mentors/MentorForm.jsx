@@ -18,6 +18,11 @@ const MentorForm = ({ onViewChange }) => {
   const [awardName, setAwardName] = React.useState('');
   const [awardYear, setAwardYear] = React.useState('');
 
+  const [attemptedSubmit, setAttemptedSubmit] = React.useState(false);
+
+  const personalIdInvalid = formData.nationality === 'GE' && (!formData.personalId || formData.personalId.length !== 11);
+  const showIdError = attemptedSubmit && personalIdInvalid;
+
   const updateData = (field, val) => setFormData(p => ({ ...p, [field]: val }));
 
   const handleAddCert = () => {
@@ -62,7 +67,7 @@ const MentorForm = ({ onViewChange }) => {
     }
     if (formData.nationality === 'GE') {
       if (!formData.personalId || formData.personalId.length !== 11) {
-        alert('საქართველოს მოქალაქის პირადი ნომერი უნდა შედგებოდეს 11 ციფრისგან!');
+        setAttemptedSubmit(true);
         return;
       }
     } else {
@@ -205,17 +210,30 @@ const MentorForm = ({ onViewChange }) => {
                   <input 
                     type="text" 
                     maxLength={formData.nationality === 'GE' ? 11 : undefined} 
-                    style={inputStyle} 
+                    style={{
+                      ...inputStyle,
+                      border: showIdError ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.1)',
+                      boxShadow: showIdError ? '0 0 0 2px rgba(239, 68, 68, 0.2)' : 'none',
+                      transition: 'border-color 0.2s, box-shadow 0.2s'
+                    }} 
                     value={formData.personalId} 
                     onChange={e => {
-                      let val = e.target.value;
+                      const val = e.target.value;
                       if (formData.nationality === 'GE') {
-                        val = val.replace(/\D/g, '').slice(0, 11);
+                        if (/^[0-9]*$/.test(val)) {
+                          updateData('personalId', val);
+                        }
+                      } else {
+                        updateData('personalId', val);
                       }
-                      updateData('personalId', val);
                     }} 
                     placeholder={formData.nationality === 'GE' ? "11-ნიშნა პირადი ნომერი" : "ID ნომერი"}
                   />
+                  {showIdError && (
+                    <div style={{ color: '#ef4444', fontSize: '11px', marginTop: '4px' }}>
+                      საქართველოს მოქალაქის პირადი ნომერი უნდა შედგებოდეს მკაცრად 11 ციფრისგან
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label style={labelStyle}>დაბადების თარიღი</label>
@@ -240,6 +258,8 @@ const MentorForm = ({ onViewChange }) => {
                         if (formData.personalId) {
                           updateData('personalId', formData.personalId.replace(/\D/g, '').slice(0, 11));
                         }
+                      } else {
+                        setAttemptedSubmit(false);
                       }
                     }}
                     placeholder="აირჩიეთ მოქალაქეობა..."
@@ -388,7 +408,23 @@ const MentorForm = ({ onViewChange }) => {
             </div>
           </div>
 
-          <button onClick={handleSubmit} style={{ width: "100%", background: "var(--color-emerald-core)", color: "#121418", padding: "15px", border: "none", borderRadius: "12px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)" }}>
+          <button 
+            onClick={handleSubmit} 
+            disabled={showIdError}
+            style={{ 
+              width: "100%", 
+              background: showIdError ? "rgba(255, 255, 255, 0.1)" : "var(--color-emerald-core)", 
+              color: showIdError ? "rgba(255, 255, 255, 0.3)" : "#121418", 
+              padding: "15px", 
+              border: "none", 
+              borderRadius: "12px", 
+              fontSize: "16px", 
+              fontWeight: "bold", 
+              cursor: showIdError ? "not-allowed" : "pointer", 
+              boxShadow: showIdError ? "none" : "0 4px 15px color-mix(in oklab, var(--color-emerald-core) 40%, transparent)",
+              transition: "all 0.2s ease"
+            }}
+          >
             <i className="fa-solid fa-check"></i> ბაზაში შენახვა
           </button>
         </div>

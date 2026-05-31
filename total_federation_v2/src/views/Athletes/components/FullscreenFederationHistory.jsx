@@ -109,7 +109,7 @@ const FullscreenFederationHistory = ({
                   placeholder="აირჩიეთ კლუბი..."
                 />
                 {editForm.clubId && (
-                  <div style={{ fontSize: "11px", color: "#10b981", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <div style={{ fontSize: "11px", color: "var(--color-emerald-core)", display: "flex", alignItems: "center", gap: "4px" }}>
                     <i className="fa-solid fa-circle-check"></i>
                     <span>✓ სისტემამ გადაამოწმა: კლუბი აქტიურია, ID: #{editForm.clubId}</span>
                   </div>
@@ -397,7 +397,7 @@ const FullscreenFederationHistory = ({
                     <span style={{ color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontSize: "11px", display: "block", marginBottom: "4px" }}>წევრობის სტატუსი</span>
                     <div>
                       {athlete.membershipStatus === 'Active' && (
-                        <span style={{ backgroundColor: "rgba(16, 185, 129, 0.15)", color: "#10b981", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>
+                        <span style={{ backgroundColor: "rgba(0, 230, 118, 0.15)", color: "var(--color-emerald-core)", border: "1px solid rgba(0, 230, 118, 0.3)", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>
                           მოქმედი
                         </span>
                       )}
@@ -422,7 +422,7 @@ const FullscreenFederationHistory = ({
                     <span style={{ color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontSize: "11px", display: "block", marginBottom: "4px" }}>საწევრო გადასახადი</span>
                     <div>
                       {athlete.membershipFeePaid ? (
-                        <span style={{ backgroundColor: "rgba(16, 185, 129, 0.15)", color: "#10b981", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>
+                        <span style={{ backgroundColor: "rgba(0, 230, 118, 0.15)", color: "var(--color-emerald-core)", border: "1px solid rgba(0, 230, 118, 0.3)", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>
                           გადახდილი
                         </span>
                       ) : (
@@ -461,7 +461,7 @@ const FullscreenFederationHistory = ({
                     </span>
                   )}
                   {athlete.isMentor && (
-                    <span style={{ backgroundColor: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.3)", color: "#10b981", padding: "4px 10px", borderRadius: "6px", fontSize: "12px" }}>
+                    <span style={{ backgroundColor: "rgba(0, 230, 118, 0.15)", border: "1px solid rgba(0, 230, 118, 0.3)", color: "var(--color-emerald-core)", padding: "4px 10px", borderRadius: "6px", fontSize: "12px" }}>
                       🎓 მენტორი
                     </span>
                   )}

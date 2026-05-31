@@ -165,14 +165,16 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
     padding: "10px 20px",
     borderRadius: "8px",
     border: primary ? "none" : "1px solid rgba(255,255,255,0.2)",
-    backgroundColor: primary ? "#3b82f6" : "transparent",
-    color: "#fff",
+    backgroundColor: primary ? "var(--color-emerald-core)" : "transparent",
+    color: primary ? "#121418" : "#fff",
+    fontWeight: primary ? "bold" : "normal",
     cursor: "pointer",
     fontSize: "14px",
     display: "flex",
     alignItems: "center",
     gap: "8px",
-    transition: "all 0.3s"
+    transition: "all 0.3s",
+    boxShadow: primary ? "0 0 10px rgba(0, 230, 118, 0.25)" : "none"
   });
 
   return (
@@ -240,7 +242,7 @@ const AddAthleteForm = ({ onViewChange, federation, onAdd, clubs }) => {
               </button>
             ) : (
               <button 
-                style={{ ...btnStyle(true), backgroundColor: "#10b981" }} 
+                style={btnStyle(true)} 
                 onClick={() => {
                   setError("");
                   if (isMinor) {

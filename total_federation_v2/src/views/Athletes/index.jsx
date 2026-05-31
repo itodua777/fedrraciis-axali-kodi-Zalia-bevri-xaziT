@@ -6,13 +6,18 @@ import BulkPrintDoc from './components/BulkPrintDoc.jsx';
 import AthleteDetailView from './AthleteDetailView.jsx';
 import { calculateAge } from '../../utils/helpers.js';
 import { COUNTRIES } from '../../utils/countries.js';
+import { useRanksStore } from '../../context/ranksStore.js';
+import { useTranslation } from '../../context/LanguageContext.jsx';
 
 const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, onClubClick }) => {
+  const { i18n } = useTranslation();
+  const lang = i18n.language;
   const [selectedAthlete, setSelectedAthlete] = React.useState(null);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const [isPrintingBulk, setIsPrintingBulk] = React.useState(false);
   const [isTableExpanded, setIsTableExpanded] = React.useState(false);
+  const [isSearchFocused, setIsSearchFocused] = React.useState(false);
 
   const initialFilters = React.useMemo(() => ({
     status: 'all',
@@ -31,10 +36,31 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
     allergy: 'all',
     countryCode: 'all',
     minAge: '',
-    maxAge: ''
+    maxAge: '',
+    gender: 'all',
+    rankId: 'all',
+    titleId: 'all',
+    awardId: 'all'
   }), []);
 
   const [filters, setFilters] = React.useState({ ...initialFilters });
+
+  const ranksStore = useRanksStore();
+  const activeRanks = (ranksStore?.ranks || []).filter(r => r.status === 'აქტიური');
+
+  const [dbTitles, setDbTitles] = React.useState([]);
+  const [dbAwards, setDbAwards] = React.useState([]);
+  React.useEffect(() => {
+    fetch('/api/v1/honorary-titles')
+      .then(res => res.json())
+      .then(data => setDbTitles(data))
+      .catch(err => console.error(err));
+
+    fetch('/api/v1/federation-awards')
+      .then(res => res.json())
+      .then(data => setDbAwards(data))
+      .catch(err => console.error(err));
+  }, []);
 
   const uniqueDisciplines = React.useMemo(() => {
     return Array.from(new Set(athletes.map(a => a.sportsDiscipline).filter(Boolean)));
@@ -57,6 +83,10 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
     if (filters.countryCode !== 'all') count++;
     if (filters.minAge !== '') count++;
     if (filters.maxAge !== '') count++;
+    if (filters.gender !== 'all') count++;
+    if (filters.rankId !== 'all') count++;
+    if (filters.titleId !== 'all') count++;
+    if (filters.awardId !== 'all') count++;
     return count;
   }, [filters]);
 
@@ -74,14 +104,63 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
       }
 
       if (filters.status !== 'all') {
-        if (filters.status === 'active') {
-          if (!athlete.isFederationMember || athlete.membershipStatus !== 'Active') return false;
-        } else if (filters.status === 'suspended') {
-          if (!athlete.isFederationMember || athlete.membershipStatus !== 'Suspended') return false;
-        } else if (filters.status === 'inactive') {
-          const isActiveOrSuspended = athlete.isFederationMember && (athlete.membershipStatus === 'Active' || athlete.membershipStatus === 'Suspended');
-          if (isActiveOrSuspended) return false;
-        }
+        if (athlete.membershipStatus !== filters.status) return false;
+      }
+
+      if (filters.gender !== 'all') {
+        if (athlete.gender !== filters.gender) return false;
+      }
+
+      if (filters.rankId !== 'all') {
+        const targetRank = activeRanks.find(r => String(r.id) === String(filters.rankId));
+        if (!targetRank) return false;
+        
+        const rankName = targetRank.name;
+        const mapRankNameToKey = (name) => {
+          if (!name) return 'NONE';
+          if (name.includes('III') || name.includes('3')) return 'RANK_3';
+          if (name.includes('II') || name.includes('2')) return 'RANK_2';
+          if (name.includes('I') || name.includes('1')) return 'RANK_1';
+          if (name.toLowerCase() === 'სოკ' || name.includes('კანდიდატი')) return 'CANDIDATE';
+          if (name.includes('ოსტატი') && !name.includes('საერთაშორისო')) return 'MASTER';
+          if (name.includes('საერთაშორისო')) return 'INT_MASTER';
+          if (name.includes('ნიშანი') || name.includes('ნიშნოსანი')) return 'BADGE';
+          return 'NONE';
+        };
+        const rankKey = mapRankNameToKey(rankName);
+
+        const hasMatchingRank = (athlete.mountaineerRank === rankKey) || 
+          (athlete.achievements || []).some(ach => {
+            if (ach.type !== 'rank_up') return false;
+            const achRankName = (ach.peak || ach.title || '').replace(/^მიენიჭა\s+["']?|["']?$/g, '');
+            return achRankName.trim() === rankName.trim();
+          });
+
+        if (!hasMatchingRank) return false;
+      }
+
+      if (filters.titleId !== 'all') {
+        const targetTitle = dbTitles.find(t => String(t.id) === String(filters.titleId));
+        if (!targetTitle) return false;
+        
+        const hasTitle = (athlete.achievements || []).some(ach => {
+          if (ach.type !== 'title') return false;
+          const achTitleName = (ach.peak || ach.title || '').replace(/^საპატიო წოდება:\s*["']?|["']?$/g, '');
+          return achTitleName.trim() === targetTitle.title_name.trim();
+        });
+        if (!hasTitle) return false;
+      }
+
+      if (filters.awardId !== 'all') {
+        const targetAward = dbAwards.find(aw => String(aw.id) === String(filters.awardId));
+        if (!targetAward) return false;
+        
+        const hasAward = (athlete.achievements || []).some(ach => {
+          if (ach.type !== 'award') return false;
+          const achAwardName = (ach.peak || ach.title || '').replace(/^ჯილდო:\s*["']?|["']?$/g, '');
+          return achAwardName.trim() === targetAward.award_name.trim();
+        });
+        if (!hasAward) return false;
       }
 
       if (filters.feePaid !== 'all') {
@@ -149,7 +228,7 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
 
       return true;
     });
-  }, [athletes, searchQuery, filters]);
+  }, [athletes, searchQuery, filters, activeRanks, dbTitles, dbAwards]);
 
   const popoverRef = React.useRef(null);
   React.useEffect(() => {
@@ -239,28 +318,6 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
           <div style={{ display: "flex", gap: "10px" }}>
             <button 
               style={{
-                backgroundColor: "transparent",
-                color: "var(--color-emerald-core)",
-                border: "1px solid var(--color-emerald-core)",
-                boxShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
-                padding: "6px 12px",
-                fontSize: "12px",
-                whiteSpace: "nowrap",
-                borderRadius: "8px",
-                fontWeight: "bold",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px"
-              }}
-              onClick={() => setIsPrintingBulk(true)}
-              onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)"; }}
-              onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
-            >
-              <i className="fa-solid fa-print"></i> გაფილტრულის ამობეჭდვა
-            </button>
-            <button 
-              style={{
                 backgroundColor: "var(--color-emerald-core)",
                 color: "#121418",
                 border: "none",
@@ -283,32 +340,69 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
 
         <div style={{ display: "flex", gap: "15px", alignItems: "center", position: "relative" }}>
           <div style={{ position: "relative", flex: 1 }}>
-            <i className="fa-solid fa-magnifying-glass" style={{ position: "absolute", left: "12px", top: "12px", color: searchQuery ? "var(--color-emerald-core)" : "rgba(226, 232, 240, 0.4)" }}></i>
+            <i className="fa-solid fa-magnifying-glass" style={{ position: "absolute", left: "12px", top: "12px", color: searchQuery || isSearchFocused ? "var(--color-emerald-core)" : "rgba(226, 232, 240, 0.4)" }}></i>
             <input
               type="text"
               placeholder="მოძებნე სპორტსმენი..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               style={{
                 width: "100%",
                 padding: "10px 10px 10px 35px",
                 backgroundColor: "rgba(15, 23, 42, 0.6)",
-                border: "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
+                border: isSearchFocused ? "1px solid var(--color-emerald-core)" : "1px solid color-mix(in oklab, var(--color-emerald-core) 20%, transparent)",
                 borderRadius: "8px",
                 color: "#fff",
                 outline: "none",
-                boxSizing: "border-box"
+                boxSizing: "border-box",
+                boxShadow: isSearchFocused ? "0 0 15px rgba(0, 230, 118, 0.25)" : "none"
               }}
             />
           </div>
+
+          <button
+            id="print-filtered-btn"
+            onClick={() => setIsPrintingBulk(true)}
+            style={{
+              backgroundColor: "#09090b",
+              color: "var(--color-silver-structure)",
+              border: "1px solid #27272a",
+              padding: "10px 15px",
+              borderRadius: "8px",
+              fontSize: "14px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontWeight: "500",
+              transition: "all 0.2s",
+              outline: "none",
+              whiteSpace: "nowrap"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.color = "var(--color-emerald-core)";
+              e.currentTarget.style.borderColor = "var(--color-emerald-core)";
+              e.currentTarget.style.boxShadow = "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color = "var(--color-silver-structure)";
+              e.currentTarget.style.borderColor = "#27272a";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
+            <i className="fa-solid fa-print"></i> ამობეჭდვა
+          </button>
           
           <button
             id="filter-toggle-btn"
             onClick={() => setIsFilterOpen(!isFilterOpen)}
             style={{
-              backgroundColor: isFilterOpen ? "color-mix(in oklab, var(--color-emerald-core) 15%, transparent)" : "rgba(15, 23, 42, 0.6)",
+              backgroundColor: isFilterOpen ? "rgba(0, 230, 118, 0.15)" : "rgba(15, 23, 42, 0.6)",
               color: "var(--color-emerald-core)",
-              border: "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
+              border: (isFilterOpen || activeCount > 0) ? "1px solid var(--color-emerald-core)" : "1px solid color-mix(in oklab, var(--color-emerald-core) 30%, transparent)",
+              boxShadow: (isFilterOpen || activeCount > 0) ? "0 0 15px rgba(0, 230, 118, 0.25)" : "none",
               padding: "10px 15px",
               borderRadius: "8px",
               fontSize: "14px",
@@ -373,8 +467,32 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
             <span style={{ fontSize: "12px", color: "rgba(226, 232, 240, 0.6)" }}>აქტიური ფილტრები:</span>
             {filters.status !== 'all' && (
               <span style={badgeStyle}>
-                სტატუსი: {filters.status === 'active' ? 'მოქმედი' : filters.status === 'suspended' ? 'შეჩერებული' : 'არაქტიური'}
+                სტატუსი: {filters.status === 'Active' ? 'მოქმედი' : filters.status === 'Suspended' ? 'შეჩერებული' : filters.status === 'Terminated' ? 'შეწყვეტილი' : 'გარდაცვლილი'}
                 <i className="fa-solid fa-xmark" style={badgeCloseStyle} onClick={() => setFilters({ ...filters, status: 'all' })}></i>
+              </span>
+            )}
+            {filters.gender !== 'all' && (
+              <span style={badgeStyle}>
+                სქესი: {filters.gender === 'male' ? 'მამრობითი' : 'მდედრობითი'}
+                <i className="fa-solid fa-xmark" style={badgeCloseStyle} onClick={() => setFilters({ ...filters, gender: 'all' })}></i>
+              </span>
+            )}
+            {filters.rankId !== 'all' && (
+              <span style={badgeStyle}>
+                თანრიგი: {activeRanks.find(r => String(r.id) === String(filters.rankId))?.name || filters.rankId}
+                <i className="fa-solid fa-xmark" style={badgeCloseStyle} onClick={() => setFilters({ ...filters, rankId: 'all' })}></i>
+              </span>
+            )}
+            {filters.titleId !== 'all' && (
+              <span style={badgeStyle}>
+                წოდება: {dbTitles.find(t => String(t.id) === String(filters.titleId))?.title_name || filters.titleId}
+                <i className="fa-solid fa-xmark" style={badgeCloseStyle} onClick={() => setFilters({ ...filters, titleId: 'all' })}></i>
+              </span>
+            )}
+            {filters.awardId !== 'all' && (
+              <span style={badgeStyle}>
+                ჯილდო: {dbAwards.find(aw => String(aw.id) === String(filters.awardId))?.award_name || filters.awardId}
+                <i className="fa-solid fa-xmark" style={badgeCloseStyle} onClick={() => setFilters({ ...filters, awardId: 'all' })}></i>
               </span>
             )}
             {filters.feePaid !== 'all' && (
@@ -470,6 +588,12 @@ const AthletesLibrary = ({ onViewChange, athletes = [], onUpdateAthlete, clubs, 
           </div>
         )}
         
+        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", paddingLeft: "4px", margin: "5px 0 -5px 0" }}>
+          <span style={{ fontSize: "12px", color: "var(--color-silver-structure)", fontWeight: "500" }}>
+            {lang === 'ENG' ? `Found: ${filteredAthletes.length} athletes` : `ნაპოვნია: ${filteredAthletes.length} სპორტსმენი`}
+          </span>
+        </div>
+
         <div style={{ 
           backgroundColor: "rgba(15, 23, 42, 0.6)", 
           border: "1px solid #27272a", 

@@ -135,8 +135,6 @@ const AthletesTable = ({
   onClubClick,
   isExpanded
 }) => {
-  const { ranksEnabled } = useRatingSettingsStore();
-
   const tableStyle = {
     width: "100%",
     borderCollapse: "collapse"
@@ -145,7 +143,7 @@ const AthletesTable = ({
   const thStyle = {
     color: "var(--color-emerald-core)",
     textAlign: "left",
-    padding: "8px 12px",
+    padding: "6px 12px",
     borderBottom: "1px solid var(--color-iron-border)",
     textTransform: "uppercase",
     fontSize: "12px",
@@ -154,24 +152,19 @@ const AthletesTable = ({
   };
 
   const tdStyle = {
-    padding: "8px 12px",
+    padding: "6px 12px",
     borderBottom: "1px solid var(--color-iron-border)",
     color: "var(--color-bone-light)",
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    fontSize: "13px"
   };
 
-  const avatarContainerStyle = {
-    width: "30px",
-    height: "30px",
-    borderRadius: "50%",
-    border: "1.5px solid var(--color-iron-border)",
-    boxShadow: "none",
-    overflow: "hidden",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "var(--color-iron-surface)",
-    flexShrink: 0
+  const getStatusColor = (status) => {
+    if (status === 'Active' || status === 'მოქმედი') return '#00E676'; // Emerald Core
+    if (status === 'Suspended' || status === 'შეჩერებული') return '#f59e0b'; // Amber/Yellow
+    if (status === 'Terminated' || status === 'შეწყვეტილი') return '#ef4444'; // Rose/Red
+    if (status === 'Deceased' || status === 'გარდაცვლილი') return '#71717a'; // Zinc/Gray
+    return '#71717a';
   };
 
   return (
@@ -179,20 +172,17 @@ const AthletesTable = ({
       <table style={{ ...tableStyle, minWidth: "100%" }}>
         <thead>
           <tr>
-            <th style={{ ...thStyle, width: "60px" }}>ფოტო</th>
+            <th style={{ ...thStyle, width: "40px", textAlign: "center" }}>#</th>
+            <th style={{ ...thStyle, width: "50px", textAlign: "center" }}>ავატარი</th>
             <th style={{ ...thStyle, width: "auto" }}>სახელი / გვარი</th>
-            {isExpanded && <th style={{ ...thStyle, width: "130px" }}>პირადი ნომერი</th>}
-            <th style={{ ...thStyle, width: "60px" }}>ასაკი</th>
+            <th style={{ ...thStyle, width: "130px" }}>პირადი ნომერი</th>
             <th style={{ ...thStyle, width: "150px" }}>სპორტის სახეობა</th>
-            {ranksEnabled && <th style={{ ...thStyle, width: "140px" }}>თანრიგი</th>}
-            {isExpanded && <th style={{ ...thStyle, width: "120px" }}>სტატუსი</th>}
-            <th className="max-w-[180px]" style={{ ...thStyle, width: "180px", maxWidth: "180px" }}>კლუბი</th>
+            <th style={{ ...thStyle, width: "140px" }}>სპორტული თანრიგი</th>
           </tr>
         </thead>
         <tbody>
-          {filteredAthletes.map((athlete) => {
-            const age = computeAge(athlete.birthday || athlete.birthDate);
-            const rankBadge = ranksEnabled ? getRankBadgeContent(athlete.rank || athlete.mountaineerRank) : null;
+          {filteredAthletes.map((athlete, index) => {
+            const rankBadge = getRankBadgeContent(athlete.rank || athlete.mountaineerRank);
             
             return (
               <tr 
@@ -205,7 +195,7 @@ const AthletesTable = ({
                 }}
                 onMouseOver={(e) => {
                   if (selectedAthlete?.id !== athlete.id) {
-                    e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-bone-light) 5%, transparent)";
+                    e.currentTarget.style.backgroundColor = "rgba(24, 24, 27, 0.5)";
                   }
                 }}
                 onMouseOut={(e) => {
@@ -214,139 +204,90 @@ const AthletesTable = ({
                   }
                 }}
               >
-                {/* 1. Photo */}
-                <td style={tdStyle}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {athlete.photo ? (
-                      <div style={avatarContainerStyle}>
+                {/* 1. Numbering (#) */}
+                <td style={{ ...tdStyle, width: "40px", textAlign: "center", color: "var(--color-silver-structure)" }}>
+                  {index + 1}
+                </td>
+
+                {/* 2. Avatar + Status Dot */}
+                <td style={{ ...tdStyle, width: "50px", textAlign: "center" }}>
+                  <div style={{ position: "relative", display: "inline-block", flexShrink: 0 }}>
+                    <div style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                      border: "1.5px solid var(--color-iron-border)",
+                      overflow: "hidden",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "var(--color-iron-surface)"
+                    }}>
+                      {athlete.photo ? (
                         <img src={athlete.photo} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />
-                      </div>
-                    ) : (
-                      <div style={avatarContainerStyle}>
+                      ) : (
                         <i className="fa-solid fa-user" style={{ color: "var(--color-silver-structure)", fontSize: "12px" }}></i>
-                      </div>
-                    )}
+                      )}
+                    </div>
+                    <div style={{
+                      position: "absolute",
+                      bottom: "-1px",
+                      right: "-1px",
+                      width: "10px",
+                      height: "10px",
+                      borderRadius: "50%",
+                      border: "1.5px solid #121418",
+                      backgroundColor: getStatusColor(athlete.membershipStatus),
+                      boxShadow: "0 0 4px rgba(0,0,0,0.5)"
+                    }} title={
+                      athlete.membershipStatus === 'Active' ? 'მოქმედი' :
+                      athlete.membershipStatus === 'Suspended' ? 'შეჩერებული' :
+                      athlete.membershipStatus === 'Terminated' ? 'შეწყვეტილი' :
+                      athlete.membershipStatus === 'Deceased' ? 'გარდაცვლილი' : athlete.membershipStatus || '—'
+                    } />
                   </div>
                 </td>
 
-                {/* 2. Name / Surname */}
-                <td style={{ ...tdStyle, fontWeight: "500", whiteSpace: "nowrap" }}>
-                  {athlete.firstName} {athlete.lastName}
+                {/* 3. Name / Surname */}
+                <td style={tdStyle}>
+                  <span style={{ fontWeight: "700", color: "var(--color-bone-light)", whiteSpace: "nowrap" }}>
+                    {athlete.firstName} {athlete.lastName}
+                  </span>
                 </td>
 
-                {/* 2.5 Personal ID */}
-                {isExpanded && (
-                  <td style={{ ...tdStyle, whiteSpace: "nowrap", fontFamily: "monospace", letterSpacing: "0.5px" }}>
-                    {athlete.personalId || <span style={{ color: "var(--color-silver-structure)" }}>—</span>}
-                  </td>
-                )}
-
-                {/* 3. Age */}
-                <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>
-                  {age !== '' ? age : <span style={{ color: "var(--color-silver-structure)" }}>—</span>}
+                {/* 4. Personal ID */}
+                <td style={{ ...tdStyle, whiteSpace: "nowrap", fontFamily: "monospace", letterSpacing: "0.5px" }}>
+                  {athlete.personalId || <span style={{ color: "var(--color-silver-structure)" }}>-</span>}
                 </td>
 
-                {/* 4. Sport */}
+                {/* 5. Sport */}
                 <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>
                   {athlete.sportsDiscipline ? (
                     athlete.sportsDiscipline
                   ) : (
-                    <span style={{ color: "var(--color-silver-structure)" }}>—</span>
+                    <span style={{ color: "var(--color-silver-structure)" }}>-</span>
                   )}
                 </td>
 
-                {/* 5. Rank */}
-                {ranksEnabled && (
-                  <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>
-                    {rankBadge ? (
-                      <span style={{ 
-                        backgroundColor: rankBadge.backgroundColor, 
-                        color: rankBadge.color, 
-                        border: rankBadge.border, 
-                        padding: "4px 10px", 
-                        borderRadius: "12px", 
-                        fontSize: "12px", 
-                        fontWeight: "bold",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px"
-                      }}>
-                        <i className={rankBadge.icon} style={{ fontSize: "11px" }}></i>
-                        {rankBadge.label}
-                      </span>
-                    ) : (
-                      <span style={{ color: "var(--color-silver-structure)" }}>—</span>
-                    )}
-                  </td>
-                )}
-
-                {/* 5.5 Status */}
-                {isExpanded && (
-                  <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>
-                    {(() => {
-                      const badge = getStatusBadge(athlete.membershipStatus);
-                      return (
-                        <span style={{
-                          backgroundColor: badge.backgroundColor,
-                          color: badge.color,
-                          border: badge.border,
-                          padding: "4px 10px",
-                          borderRadius: "12px",
-                          fontSize: "12px",
-                          fontWeight: "bold",
-                          display: "inline-flex",
-                          alignItems: "center"
-                        }}>
-                          {badge.label}
-                        </span>
-                      );
-                    })()}
-                  </td>
-                )}
-
-                {/* 6. Club */}
-                <td className="max-w-[180px]" style={{ ...tdStyle, maxWidth: "180px" }}>
-                  {(() => {
-                    const clubName = athlete.clubName || (athlete.clubId ? (clubs?.find(c => String(c.id) === String(athlete.clubId))?.name || `კლუბი ID: #${athlete.clubId}`) : "");
-                    const hasClub = athlete.isClubMember && clubName;
-                    return hasClub ? (
-                      <div 
-                        className="truncate block max-w-[180px]"
-                        title={athlete.club || clubName}
-                        style={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "180px",
-                          display: "block"
-                        }}
-                      >
-                        <a 
-                          href={`/clubs/${athlete.clubId || ''}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (onClubClick && athlete.clubId) {
-                              onClubClick(athlete.clubId);
-                            }
-                          }}
-                          style={{
-                            color: "var(--color-emerald-core)",
-                            textShadow: "0 0 8px var(--color-emerald-core)",
-                            textDecoration: "none",
-                            fontWeight: "500",
-                            cursor: "pointer"
-                          }}
-                          onMouseOver={(e) => { e.currentTarget.style.textDecoration = "underline"; }}
-                          onMouseOut={(e) => { e.currentTarget.style.textDecoration = "none"; }}
-                        >
-                          {clubName}
-                        </a>
-                      </div>
-                    ) : (
-                      <span style={{ color: "var(--color-silver-structure)" }}>—</span>
-                    );
-                  })()}
+                {/* 6. Rank (Only if exists) */}
+                <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>
+                  {rankBadge ? (
+                    <span style={{ 
+                      backgroundColor: rankBadge.backgroundColor, 
+                      color: rankBadge.color, 
+                      border: rankBadge.border, 
+                      padding: "2px 8px", 
+                      borderRadius: "12px", 
+                      fontSize: "11px", 
+                      fontWeight: "bold",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px"
+                    }}>
+                      <i className={rankBadge.icon} style={{ fontSize: "10px" }}></i>
+                      {rankBadge.label}
+                    </span>
+                  ) : null}
                 </td>
               </tr>
             );
@@ -354,7 +295,7 @@ const AthletesTable = ({
           {filteredAthletes.length === 0 && (
             <tr>
               <td 
-                colSpan={(ranksEnabled ? 6 : 5) + (isExpanded ? 2 : 0)} 
+                colSpan={6} 
                 style={{ ...tdStyle, textAlign: "center", color: "var(--color-silver-structure)" }}
               >
                 ჩანაწერები არ მოიძებნა

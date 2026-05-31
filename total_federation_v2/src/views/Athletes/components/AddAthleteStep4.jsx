@@ -6,7 +6,7 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
     const isUploaded = !!doc;
 
     const slotStyle = {
-      border: isUploaded ? `1.5px solid #10b981` : `1.5px dashed ${colorHex}`,
+      border: isUploaded ? `1.5px solid var(--color-emerald-core)` : `1.5px dashed ${colorHex}`,
       borderRadius: "12px",
       padding: "20px",
       display: "flex",
@@ -14,9 +14,9 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
       justifyContent: "space-between",
       gap: "15px",
       cursor: "pointer",
-      backgroundColor: isUploaded ? "rgba(16, 185, 129, 0.05)" : bgLight,
+      backgroundColor: isUploaded ? "rgba(0, 230, 118, 0.05)" : bgLight,
       transition: "all 0.3s ease",
-      boxShadow: isUploaded ? "0 0 15px rgba(16, 185, 129, 0.15)" : "none",
+      boxShadow: isUploaded ? "0 0 15px rgba(0, 230, 118, 0.15)" : "none",
       position: "relative",
       overflow: "hidden"
     };
@@ -25,7 +25,7 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
       width: "42px",
       height: "42px",
       borderRadius: "50%",
-      backgroundColor: isUploaded ? "#10b981" : colorHex,
+      backgroundColor: isUploaded ? "var(--color-emerald-core)" : colorHex,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -34,7 +34,7 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
     };
 
     const iconStyle = {
-      color: "#fff",
+      color: isUploaded ? "#121418" : "#fff",
       fontSize: "16px"
     };
 
@@ -86,7 +86,7 @@ const AddAthleteStep4 = ({ formData, updateData }) => {
               {title}
             </div>
             {isUploaded ? (
-              <div style={{ fontSize: "12px", color: "#10b981", display: "flex", alignItems: "center", gap: "5px", minWidth: 0, marginTop: "4px" }}>
+              <div style={{ fontSize: "12px", color: "var(--color-emerald-core)", display: "flex", alignItems: "center", gap: "5px", minWidth: 0, marginTop: "4px" }}>
                 <i className={doc.name.endsWith('.pdf') || doc.type === 'application/pdf' ? "fa-solid fa-file-pdf" : "fa-solid fa-file-image"}></i>
                 <span style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", flex: 1 }}>
                   {doc.name} ({(doc.size / 1024 / 1024).toFixed(2)} MB)
