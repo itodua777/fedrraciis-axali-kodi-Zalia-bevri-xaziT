@@ -35,32 +35,211 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Georgian:wght@300;400;500;600;700;800&family=Noto+Serif+Georgian:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
     :root {
-      /* Tempered Iron // ნაწვრთობი რკინა (ბაზისი) */
-      --color-iron: #121418;
-      --color-iron-surface: #1A1D23;
-      --color-iron-border: #232730;
+      /* ═══ ARTRON FEDERATION — BRANDBOOK DESIGN TOKENS ═══ */
 
-      /* Silver Structure // ძველი ვერცხლი (სტრუქტურა) */
-      --color-silver-structure: #9CA3AF;
+      /* Core Palette */
+      --fed-blue:      #0885ed;
+      --fed-blue-20:   rgba(8,133,237,.20);
+      --fed-blue-08:   rgba(8,133,237,.08);
+      --fed-blue-04:   rgba(8,133,237,.04);
 
-      /* Emerald Core // ზურმუხტისფერი ბირთვი (აქტივაცია და ენერგია) */
-      --color-emerald-core: #00E676;
+      /* Forged Iron Scale */
+      --iron:          #121418;
+      --iron-1:        #15181e;
+      --iron-2:        #1a1e26;
+      --iron-3:        #20252f;
+      --iron-line:     #232c3d;
 
-      /* Active Node Elements // კვანძების აქტიური ფერები */
-      --color-sapphire: #0F52BA;
-      --color-copper: #D97736;
-      --color-gold-raw: #D4AF37;
-      --color-bone-light: #F5F5F7;
-      --header-height: 70px;
+      /* Status & Semantic */
+      --emerald:       #00E676;
+      --crisis-from:   #b40307;
+      --crisis-to:     #5b0204;
+      --gold:          #D4AF37;
+      --copper:        #D97736;
+
+      /* Neutral */
+      --silver:        #9CA3AF;
+      --bone:          #F5F5F7;
+      --bone-60:       rgba(245,245,247,.60);
+      --bone-30:       rgba(245,245,247,.30);
+      --bone-10:       rgba(245,245,247,.10);
+
+      /* Legacy aliases (backwards compat with components) */
+      --color-iron:               var(--iron);
+      --color-iron-surface:       var(--iron-1);
+      --color-iron-border:        var(--iron-line);
+      --color-silver-structure:   var(--silver);
+      --color-emerald-core:       var(--fed-blue);
+      --color-sapphire:           var(--fed-blue);
+      --color-copper:             var(--copper);
+      --color-gold-raw:           var(--gold);
+      --color-bone-light:         var(--bone);
+
+      /* Typography */
+      --font-primary:  'Inter', 'Noto Sans Georgian', sans-serif;
+      --font-heading:  'Outfit', 'Noto Serif Georgian', serif;
+      --font-mono:     'JetBrains Mono', monospace;
+
+      /* Spacing (4px grid) */
+      --s4:  4px;
+      --s8:  8px;
+      --s12: 12px;
+      --s16: 16px;
+      --s24: 24px;
+      --s32: 32px;
+      --s48: 48px;
+
+      --header-height: 64px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
       padding: 0;
-      background-color: var(--color-iron);
-      color: var(--color-bone-light);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--iron);
+      color: var(--bone);
+      font-family: var(--font-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Dot-grid texture ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(var(--iron-line) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: .18;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #root {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Typography hierarchy ── */
+    h1, h2, h3, h4, h5, h6,
+    .brand-title, .sector-title, .card-title {
+      font-family: var(--font-heading);
+    }
+
+    .card-value, .stat-value, .metric-value,
+    td.number, .mono, [class*="mono"] {
+      font-family: var(--font-mono);
+    }
+
+    /* ── Brandbook accent bar ── */
+    .pg-accent-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* ── Brandbook chapter tag ── */
+    .ch-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--fed-blue);
+      margin-bottom: 8px;
+    }
+
+    /* ── Spec callout ── */
+    .spec-box {
+      background: var(--fed-blue-04);
+      border-left: 2px solid var(--fed-blue);
+      padding: 10px 13px;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 10px;
+    }
+    .spec-box .spec-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--fed-blue);
+      margin-bottom: 5px;
+    }
+    .spec-box .spec-text {
+      font-size: 10px;
+      line-height: 1.65;
+      color: var(--bone-60);
+    }
+
+    /* ── Module card ── */
+    .mod-card {
+      background: var(--iron-1);
+      border: 1px solid var(--iron-line);
+      border-radius: 6px;
+      padding: 10px 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .mod-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px; height: 100%;
+      background: var(--fed-blue);
+    }
+
+    /* ── Uptime badge ── */
+    .uptime-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,230,118,.08);
+      border: 1px solid rgba(0,230,118,.25);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--emerald);
+      letter-spacing: 1px;
+    }
+    .uptime-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+    }
+
+    /* ── Tables ── */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    tr {
+      border-bottom: 1px solid var(--iron-line);
+    }
+    th, td {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    /* ── Crisis gradient utility ── */
+    .bg-crisis-matrix,
+    .btn-admin.warning,
+    .btn-mobile.warning {
+      background: linear-gradient(135deg, var(--crisis-from) 0%, var(--crisis-to) 100%);
+      color: var(--bone);
     }
     .print-only {
       display: none;
@@ -258,26 +437,28 @@
       }
     }
 
+    /* ═══ ANIMATIONS ═══ */
     @keyframes fadeIn {
       from { opacity: 0; }
-      to { opacity: 1; }
+      to   { opacity: 1; }
     }
     @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-        max-height: 0;
-        overflow: hidden;
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-        max-height: 1000px;
-      }
+      from { opacity: 0; transform: translateY(-10px); max-height: 0; overflow: hidden; }
+      to   { opacity: 1; transform: translateY(0); max-height: 1000px; }
     }
     .animate-slide-down {
       animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+    @keyframes pulseEmerald {
+      0%, 100% { opacity: 0.35; transform: scale(0.9); }
+      50%       { opacity: 1;    transform: scale(1.35); }
+    }
+    .animate-pulse-emerald {
+      animation: pulseEmerald 3s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    /* ═══ LAYOUT HELPERS ═══ */
     .profile-dual-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -285,9 +466,7 @@
       align-items: start;
     }
     @media (min-width: 1024px) {
-      .profile-dual-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .profile-dual-grid { grid-template-columns: repeat(2, 1fr); }
     }
     .settings-dual-grid {
       display: grid;
@@ -296,90 +475,58 @@
       align-items: start;
     }
     @media (min-width: 768px) {
-      .settings-dual-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .settings-dual-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
+    /* ═══ SIDEBAR TOGGLE BUTTON ═══ */
     .sidebar-toggle-btn {
       position: absolute;
-      top: 24px;
-      right: -12px;
+      top: 24px; right: -12px;
       z-index: 100;
-      width: 24px;
-      height: 24px;
+      width: 24px; height: 24px;
       border-radius: 50%;
-      background-color: var(--color-iron);
-      border: 1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent);
+      background-color: var(--iron);
+      border: 1px solid var(--iron-line);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: var(--color-emerald-core);
-      box-shadow: 0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent);
+      color: var(--fed-blue);
+      box-shadow: 0 0 8px rgba(8,133,237,.20);
       transition: all 0.2s ease-in-out;
       outline: none;
     }
     .sidebar-toggle-btn:hover {
-      border-color: var(--color-emerald-core);
-      box-shadow: 0 0 12px color-mix(in oklab, var(--color-emerald-core) 60%, transparent);
+      border-color: var(--fed-blue);
+      box-shadow: 0 0 14px rgba(8,133,237,.50);
       transform: scale(1.1);
     }
+
+    /* ═══ MAP ═══ */
     .is-fullscreen-map .leaflet-top.leaflet-left {
-      top: auto !important;
-      bottom: 20px !important;
-      left: auto !important;
-      right: 20px !important;
+      top: auto !important; bottom: 20px !important;
+      left: auto !important; right: 20px !important;
       transition: all 0.3s ease;
     }
 
-    .inner-table-container {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    /* Webkit ბრაუზერებისთვის (Chrome, Safari, Edge) */
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 4px; /* ძალიან თხელი ვერტიკალური სქროლი */
-      height: 4px; /* ძალიან თხელი ჰორიზონტალური სქროლი */
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: var(--color-iron); /* დეშბორდის ფონის ფერი */
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: var(--color-iron-border); /* ოდნავ ღია ნაცრისფერი/ლურჯი ზოლი */
-      border-radius: 2px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: var(--color-emerald-core); /* მაუსის მიტანისას ხდება ნეონისფერი */
-    }
-
-    /* Custom scrollbar utility classes */
-    .scrollbar-thin {
-      scrollbar-width: thin;
-    }
+    /* ═══ SCROLLBARS ═══ */
+    .inner-table-container { width: 100%; overflow-x: auto; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: var(--iron); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--iron-line); border-radius: 2px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--fed-blue); }
+    .scrollbar-thin { scrollbar-width: thin; }
     .scrollbar-thumb-zinc-800 {
       --scrollbar-thumb: #27272a;
       --scrollbar-track: transparent;
       scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
     }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+    .scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
 
-    /* Webkit fallback for custom scrollbar color and thin size */
-    .scrollbar-thin::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .scrollbar-thin::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb {
-      background: #27272a;
-      border-radius: 3px;
-    }
-    .scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb:hover {
-      background: #3f3f46;
-    }
-
-    /* Responsive Profile Header Grid */
+    /* ═══ PROFILE HEADER GRID ═══ */
     .profile-header-grid {
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -389,30 +536,17 @@
     .profile-header-grid .vertical-separator {
       grid-column: span 1;
       height: 48px;
-      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 1px solid rgba(255,255,255,.08);
       justify-self: center;
     }
     .profile-header-grid .medical-grid-section {
-      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 1px solid rgba(255,255,255,.08);
       padding-left: 16px;
     }
-
     @media (max-width: 1200px) {
-      .profile-header-grid {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-      }
-      .profile-header-grid .vertical-separator {
-        display: none;
-      }
-      .profile-header-grid .medical-grid-section {
-        border-left: none;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding-left: 0;
-        padding-top: 16px;
-      }
+      .profile-header-grid { display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
+      .profile-header-grid .vertical-separator { display: none; }
+      .profile-header-grid .medical-grid-section { border-left: none; border-top: 1px solid rgba(255,255,255,.08); padding-left: 0; padding-top: 16px; }
     }
   </style>
 </head>

@@ -1,53 +1,175 @@
+/* ══════════════════════════════════════════════════════════
+   ARTRON FEDERATION — BRANDBOOK DESIGN SYSTEM
+   index.css — Global styles & design tokens
+   ══════════════════════════════════════════════════════════ */
+
 :root {
-  /* Tempered Iron // ნაწვრთობი რკინა (ბაზისი) */
-  --color-iron: #121418;
-  --color-iron-surface: #1A1D23;
-  --color-iron-border: #232730;
+  /* Core Palette */
+  --fed-blue:    #0885ed;
+  --fed-blue-20: rgba(8,133,237,.20);
+  --fed-blue-08: rgba(8,133,237,.08);
+  --fed-blue-04: rgba(8,133,237,.04);
 
-  /* Silver Structure // ძველი ვერცხლი (სტრუქტურა) */
-  --color-silver-structure: #9CA3AF;
+  /* Forged Iron Scale */
+  --iron:        #121418;
+  --iron-1:      #15181e;
+  --iron-2:      #1a1e26;
+  --iron-3:      #20252f;
+  --iron-line:   #232c3d;
 
-  /* Emerald Core // ზურმუხტისფერი ბირთვი (აქტივაცია და ენერგია) */
-  --color-emerald-core: #00E676;
+  /* Status & Semantic */
+  --emerald:     #00E676;
+  --crisis-from: #b40307;
+  --crisis-to:   #5b0204;
+  --gold:        #D4AF37;
+  --copper:      #D97736;
 
-  /* Active Node Elements // კვანძების აქტიური ფერები */
-  --color-sapphire: #0F52BA;
-  --color-copper: #D97736;
-  --color-gold-raw: #D4AF37;
-  --color-bone-light: #F5F5F7;
-  --header-height: 70px;
+  /* Neutral */
+  --silver:      #9CA3AF;
+  --bone:        #F5F5F7;
+  --bone-60:     rgba(245,245,247,.60);
+  --bone-30:     rgba(245,245,247,.30);
+  --bone-10:     rgba(245,245,247,.10);
+
+  /* Legacy aliases */
+  --color-iron:             var(--iron);
+  --color-iron-surface:     var(--iron-1);
+  --color-iron-border:      var(--iron-line);
+  --color-silver-structure: var(--silver);
+  --color-emerald-core:     var(--fed-blue);
+  --color-sapphire:         var(--fed-blue);
+  --color-copper:           var(--copper);
+  --color-gold-raw:         var(--gold);
+  --color-bone-light:       var(--bone);
+
+  /* Typography */
+  --font-primary: 'Inter', 'Noto Sans Georgian', sans-serif;
+  --font-heading: 'Outfit', 'Noto Serif Georgian', serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* Spacing (4px grid) */
+  --s4:  4px;
+  --s8:  8px;
+  --s12: 12px;
+  --s16: 16px;
+  --s24: 24px;
+  --s32: 32px;
+  --s48: 48px;
+
+  --header-height: 64px;
 }
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-iron);
-  color: var(--color-bone-light);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--iron);
+  color: var(--bone);
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
 }
-.print-only {
-  display: none;
+
+/* ── Brandbook accent bar ── */
+.pg-accent-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%);
+  z-index: 20;
+  pointer-events: none;
 }
-.athlete-print-doc, .bulk-print-doc {
-  display: none;
+
+/* ── Chapter tag ── */
+.ch-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--fed-blue);
+  margin-bottom: 8px;
 }
+
+/* ── Spec callout box ── */
+.spec-box {
+  background: var(--fed-blue-04);
+  border-left: 2px solid var(--fed-blue);
+  padding: 10px 13px;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 10px;
+}
+.spec-box .spec-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--fed-blue);
+  margin-bottom: 5px;
+}
+.spec-box .spec-text {
+  font-size: 10px;
+  line-height: 1.65;
+  color: var(--bone-60);
+}
+
+/* ── Module card (left blue accent) ── */
+.mod-card {
+  background: var(--iron-1);
+  border: 1px solid var(--iron-line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+}
+.mod-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 2px; height: 100%;
+  background: var(--fed-blue);
+}
+
+/* ── Uptime badge ── */
+.uptime-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,230,118,.08);
+  border: 1px solid rgba(0,230,118,.25);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--emerald);
+  letter-spacing: 1px;
+}
+.uptime-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--emerald);
+}
+
+/* ── Print-only & hidden ── */
+.print-only { display: none; }
+.athlete-print-doc, .bulk-print-doc { display: none; }
+
+/* ═══════════════════════════════════════
+   PRINT STYLES (preserved verbatim)
+   ═══════════════════════════════════════ */
 @media print {
-  #root {
-    display: none !important;
-  }
+  #root { display: none !important; }
   body {
     background-color: white !important;
     color: black !important;
   }
-  body.printing-bulk .athlete-print-doc {
-    display: none !important;
-  }
-  .no-print {
-    display: none !important;
-  }
-  .print-only {
-    display: block !important;
-  }
+  body.printing-bulk .athlete-print-doc { display: none !important; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
   .memorial-print-doc {
     background-color: white !important;
     color: black !important;
@@ -94,20 +216,9 @@ body {
     margin-bottom: 24px;
     text-align: center;
   }
-  .print-header h1 {
-    font-size: 20px;
-    margin: 0;
-    text-transform: uppercase;
-    font-weight: bold;
-  }
-  .print-header p {
-    font-size: 14px;
-    margin: 4px 0 0 0;
-    color: #555;
-  }
-  .print-section {
-    margin-bottom: 20px;
-  }
+  .print-header h1 { font-size: 20px; margin: 0; text-transform: uppercase; font-weight: bold; }
+  .print-header p  { font-size: 14px; margin: 4px 0 0 0; color: #555; }
+  .print-section   { margin-bottom: 20px; }
   .print-section-title {
     font-size: 14px;
     font-weight: bold;
@@ -116,42 +227,18 @@ body {
     margin-bottom: 10px;
     text-transform: uppercase;
   }
-  .print-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  .print-field {
-    font-size: 13px;
-    line-height: 1.4;
-  }
-  .print-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-  }
+  .print-grid   { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .print-field  { font-size: 13px; line-height: 1.4; }
+  .print-table  { width: 100%; border-collapse: collapse; margin-top: 8px; }
   .print-table th, .print-table td {
     border: 1px solid #000;
     padding: 8px;
     font-size: 12px;
     text-align: left;
   }
-  .print-table th {
-    background-color: #f2f2f2 !important;
-    font-weight: bold;
-  }
-  .print-bio-row {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-    align-items: center;
-  }
-  .print-avatar {
-    width: 80px;
-    height: 80px;
-    border: 1px solid #000;
-    object-fit: cover;
-  }
+  .print-table th { background-color: #f2f2f2 !important; font-weight: bold; }
+  .print-bio-row  { display: flex; gap: 20px; margin-bottom: 20px; align-items: center; }
+  .print-avatar   { width: 80px; height: 80px; border: 1px solid #000; object-fit: cover; }
   .bulk-print-doc {
     background-color: white !important;
     color: black !important;
@@ -173,36 +260,19 @@ body {
     text-align: center;
   }
   .bulk-print-header h1 {
-    font-size: 18px;
-    margin: 0;
-    text-transform: uppercase;
-    font-weight: bold;
-    line-height: 1.4;
+    font-size: 18px; margin: 0;
+    text-transform: uppercase; font-weight: bold; line-height: 1.4;
   }
-  .bulk-print-header p {
-    font-size: 12px;
-    margin: 4px 0 0 0;
-    color: #555;
-  }
-  .bulk-print-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
+  .bulk-print-header p { font-size: 12px; margin: 4px 0 0 0; color: #555; }
+  .bulk-print-table   { width: 100%; border-collapse: collapse; margin-top: 10px; }
   .bulk-print-table th, .bulk-print-table td {
     border: 1px solid #000 !important;
-    padding: 6px 8px;
-    font-size: 11px;
-    text-align: left;
+    padding: 6px 8px; font-size: 11px; text-align: left;
   }
-  .bulk-print-table th {
-    background-color: #f2f2f2 !important;
-    font-weight: bold;
-  }
+  .bulk-print-table th { background-color: #f2f2f2 !important; font-weight: bold; }
 }
-.warehouse-print-doc {
-  display: none;
-}
+
+.warehouse-print-doc { display: none; }
 @media print {
   .warehouse-print-doc {
     display: block !important;
@@ -221,40 +291,32 @@ body {
   }
 }
 
+/* ═══════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════ */
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-    max-height: 0;
-    overflow: hidden;
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    max-height: 1000px;
-  }
+  from { opacity: 0; transform: translateY(-10px); max-height: 0; overflow: hidden; }
+  to   { opacity: 1; transform: translateY(0);     max-height: 1000px; }
 }
 .animate-slide-down {
   animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes pulseEmerald {
-  0%, 100% {
-    opacity: 0.35;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.35);
-  }
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50%       { opacity: 1;    transform: scale(1.35); }
 }
 .animate-pulse-emerald {
   animation: pulseEmerald 3s ease-in-out infinite;
   transform-origin: center;
 }
+
+/* ═══════════════════════════════════════
+   LAYOUT HELPERS
+   ═══════════════════════════════════════ */
 .profile-dual-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -262,90 +324,60 @@ body {
   align-items: start;
 }
 @media (min-width: 1024px) {
-  .profile-dual-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .profile-dual-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── Sidebar toggle button ── */
 .sidebar-toggle-btn {
   position: absolute;
-  top: 24px;
-  right: -12px;
+  top: 24px; right: -12px;
   z-index: 100;
-  width: 24px;
-  height: 24px;
+  width: 24px; height: 24px;
   border-radius: 50%;
-  background-color: var(--color-iron);
-  border: 1px solid color-mix(in oklab, var(--color-emerald-core) 40%, transparent);
+  background-color: var(--iron);
+  border: 1px solid var(--iron-line);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--color-emerald-core);
-  box-shadow: 0 0 8px color-mix(in oklab, var(--color-emerald-core) 20%, transparent);
+  color: var(--fed-blue);
+  box-shadow: 0 0 8px rgba(8,133,237,.20);
   transition: all 0.2s ease-in-out;
   outline: none;
 }
 .sidebar-toggle-btn:hover {
-  border-color: var(--color-emerald-core);
-  box-shadow: 0 0 12px color-mix(in oklab, var(--color-emerald-core) 60%, transparent);
+  border-color: var(--fed-blue);
+  box-shadow: 0 0 14px rgba(8,133,237,.50);
   transform: scale(1.1);
 }
+
+/* ── Fullscreen map ── */
 .is-fullscreen-map .leaflet-top.leaflet-left {
-  top: auto !important;
-  bottom: 20px !important;
-  left: auto !important;
-  right: 20px !important;
+  top: auto !important; bottom: 20px !important;
+  left: auto !important; right: 20px !important;
   transition: all 0.3s ease;
 }
 
-.inner-table-container {
-  width: 100%;
-  overflow-x: auto;
-}
+/* ── Scrollbars ── */
+.inner-table-container { width: 100%; overflow-x: auto; }
 
-/* Webkit ბრაუზერებისთვის (Chrome, Safari, Edge) */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px; /* ძალიან თხელი ვერტიკალური სქროლი */
-  height: 4px; /* ძალიან თხელი ჰორიზონტალური სქროლი */
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--color-iron); /* დეშბორდის ფონის ფერი */
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--color-iron-border); /* ოდნავ ღია ნაცრისფერი/ლურჯი ზოლი */
-  border-radius: 2px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--color-emerald-core); /* მაუსის მიტანისას ხდება ნეონისფერი ლურჯი */
-}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: var(--iron); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--iron-line); border-radius: 2px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--fed-blue); }
 
-/* Custom scrollbar utility classes */
-.scrollbar-thin {
-  scrollbar-width: thin;
-}
+.scrollbar-thin { scrollbar-width: thin; }
 .scrollbar-thumb-zinc-800 {
   --scrollbar-thumb: #27272a;
   --scrollbar-track: transparent;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+.scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
 
-/* Webkit fallback for custom scrollbar color and thin size */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-.scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 3px;
-}
-.scrollbar-thumb-zinc-800::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
-}
-
-/* Responsive Profile Header Grid */
+/* ── Profile header grid ── */
 .profile-header-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -355,14 +387,13 @@ body {
 .profile-header-grid .vertical-separator {
   grid-column: span 1;
   height: 48px;
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid rgba(255,255,255,.08);
   justify-self: center;
 }
 .profile-header-grid .medical-grid-section {
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid rgba(255,255,255,.08);
   padding-left: 16px;
 }
-
 @media (max-width: 1200px) {
   .profile-header-grid {
     display: flex;
@@ -370,17 +401,16 @@ body {
     align-items: stretch;
     gap: 16px;
   }
-  .profile-header-grid .vertical-separator {
-    display: none;
-  }
+  .profile-header-grid .vertical-separator { display: none; }
   .profile-header-grid .medical-grid-section {
     border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255,255,255,.08);
     padding-left: 0;
     padding-top: 16px;
   }
 }
 
+/* ── Settings dual grid ── */
 .settings-dual-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -388,7 +418,5 @@ body {
   align-items: start;
 }
 @media (min-width: 768px) {
-  .settings-dual-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .settings-dual-grid { grid-template-columns: repeat(2, 1fr); }
 }

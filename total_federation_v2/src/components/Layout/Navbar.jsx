@@ -5,7 +5,7 @@ import { useTranslation } from '../../context/LanguageContext.jsx';
 const Navbar = ({ federation, onLogout }) => {
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   // Notification engine states
   const [notifications, setNotifications] = React.useState([]);
@@ -25,15 +25,13 @@ const Navbar = ({ federation, onLogout }) => {
       }
     };
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setIsDropdownOpen(false);
-      }
+      if (event.key === 'Escape') setIsDropdownOpen(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -47,10 +45,9 @@ const Navbar = ({ federation, onLogout }) => {
           setNotifications(data);
         }
       } catch (err) {
-        console.error("Failed to fetch notifications:", err);
+        console.error('Failed to fetch notifications:', err);
       }
     };
-
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
@@ -70,282 +67,212 @@ const Navbar = ({ federation, onLogout }) => {
     });
   };
 
-  const headerStyle = {
-    height: "70px",
-    backgroundColor: "var(--color-iron)",
-    borderBottom: "1px solid var(--color-iron-border)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 30px",
-    color: "var(--color-bone-light)",
-    position: "relative"
-  };
-
-  const searchContainerStyle = {
-    position: "relative",
-    width: "100%",
-    maxWidth: "400px",
-    display: "flex",
-    alignItems: "center"
-  };
-
-  const searchInputStyle = {
-    width: "100%",
-    backgroundColor: "var(--color-iron)",
-    color: "var(--color-bone-light)",
-    paddingLeft: "40px",
-    paddingRight: "16px",
-    paddingTop: "8px",
-    paddingBottom: "8px",
-    borderRadius: "8px",
-    border: `1px solid ${isFocused ? 'var(--color-emerald-core)' : 'var(--color-iron-border)'}`,
-    boxShadow: isFocused ? "0 0 10px var(--color-emerald-core)" : "none",
-    outline: "none",
-    fontSize: "14px",
-    transition: "all 0.2s ease-in-out",
-    fontFamily: "sans-serif"
-  };
-
-  const svgColor = isFocused ? "var(--color-emerald-core)" : "var(--color-silver-structure)";
-
-  const logoIconStyle = {
-    position: "absolute",
-    left: "12px",
-    display: "flex",
-    alignItems: "center",
-    pointerEvents: "none",
-    transition: "color 0.2s ease-in-out",
-    color: svgColor
-  };
-
-  const userStyle = {
-    color: "var(--color-emerald-core)",
-    textShadow: "0 0 5px var(--color-emerald-core)",
-    fontWeight: "bold",
-    fontFamily: "sans-serif",
-    display: "flex",
-    alignItems: "center",
-    gap: "15px"
-  };
-
-  // Bell container styles
-  const bellContainerStyle = {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
-    border: `1px solid ${isBellHovered || isDropdownOpen ? 'var(--color-emerald-core)' : 'var(--color-iron-border)'}`,
-    backgroundColor: isDropdownOpen ? 'color-mix(in oklab, var(--color-emerald-core) 10%, transparent)' : 'transparent',
-    color: isBellHovered || isDropdownOpen ? 'var(--color-emerald-core)' : 'var(--color-silver-structure)',
-    boxShadow: isBellHovered || isDropdownOpen ? '0 0 10px var(--color-emerald-core)' : 'none',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
-    textShadow: 'none', // Strip glow from bell icon
-  };
-
-  const dotStyle = {
-    position: 'absolute',
-    top: '2px',
-    right: '2px',
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    backgroundColor: 'var(--color-emerald-core)', // bg-emerald-core
-    boxShadow: '0 0 8px var(--color-emerald-core)',
-  };
-
-  const dropdownStyle = {
-    position: 'absolute',
-    right: 0,
-    top: '100%',
-    marginTop: '8px',
-    width: '340px',
-    backgroundColor: '#09090b', // bg-zinc-950
-    border: '1px solid #27272a', // border-zinc-800
-    borderRadius: '8px',
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.7)',
-    zIndex: 100,
-    padding: '12px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    boxSizing: 'border-box',
-    height: 'auto', // h-auto
-    textShadow: 'none', // Remove neon glow
-  };
-
-  const dropdownHeaderStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingBottom: '8px',
-    borderBottom: '1px solid #27272a',
-    color: 'var(--color-bone-light)',
-    fontSize: '13px',
-    fontWeight: '600',
-    fontFamily: 'sans-serif',
-  };
-
-  const countBadgeStyle = {
-    backgroundColor: 'color-mix(in oklab, var(--color-emerald-core) 15%, transparent)',
-    color: 'var(--color-emerald-core)',
-    padding: '2px 6px',
-    borderRadius: '10px',
-    fontSize: '10px',
-    fontWeight: 'bold',
-  };
-
-  const dropdownListStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    maxHeight: '300px',
-    overflowY: 'auto',
-  };
-
-  const emptyStateStyle = {
-    padding: '20px 10px',
-    textAlign: 'center',
-    color: 'var(--color-silver-structure)',
-    fontSize: '12px',
-    fontFamily: 'sans-serif',
-  };
-
-  const getNotificationItemStyle = (type) => ({
-    display: 'flex',
-    gap: '10px',
-    padding: '10px',
-    borderRadius: '6px',
-    backgroundColor: type === 'critical' 
-      ? 'rgba(239, 68, 68, 0.08)' // Subtle red bg
-      : 'rgba(217, 119, 54, 0.08)', // Subtle orange bg (--color-copper)
-    border: type === 'critical'
-      ? '1px solid rgba(239, 68, 68, 0.2)'
-      : '1px solid rgba(217, 119, 54, 0.2)',
-    fontSize: '11px',
-    lineHeight: '1.4',
-    fontFamily: 'sans-serif',
-    alignItems: 'flex-start',
-    boxSizing: 'border-box'
-  });
-
-  const notifIconStyle = (type) => ({
-    color: type === 'critical' ? '#ef4444' : 'var(--color-copper)',
-    fontSize: '14px',
-    marginTop: '1px',
-  });
-
-  const notifTextStyle = {
-    color: 'var(--color-bone-light)',
-    flex: 1,
-    textShadow: 'none',
-    fontWeight: 'normal',
-    textAlign: 'left'
-  };
+  const bellActive = isBellHovered || isDropdownOpen;
 
   return (
-    <div style={headerStyle}>
-      <div style={searchContainerStyle}>
-        <div style={logoIconStyle}>
-          <svg 
-            style={{ width: "20px", height: "20px" }}
-            viewBox="0 0 24 24"
-          >
+    <div style={{
+      position: 'relative',
+      height: '64px',
+      backgroundColor: 'var(--iron)',
+      borderBottom: '1px solid var(--iron-line)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 28px',
+      flexShrink: 0,
+    }}>
+      {/* Blue top accent bar */}
+      <div className="pg-accent-bar" />
+
+      {/* ── Search ── */}
+      <div style={{ position: 'relative', width: '100%', maxWidth: '380px', display: 'flex', alignItems: 'center' }}>
+        {/* 9-node SVG icon */}
+        <div style={{
+          position: 'absolute', left: '12px',
+          display: 'flex', alignItems: 'center',
+          pointerEvents: 'none',
+          transition: 'color 0.2s',
+          color: isFocused ? 'var(--fed-blue)' : 'var(--silver)',
+        }}>
+          <svg width="18" height="18" viewBox="0 0 24 24">
             <defs>
               <filter id="neon-glow-focus" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              <filter id="neon-glow-blur" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
+                <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
             </defs>
-            {/* 8 white outer dots */}
-            <circle cx="5" cy="5" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="12" cy="5" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="19" cy="5" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            
-            <circle cx="5" cy="12" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="19" cy="12" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            
-            <circle cx="5" cy="19" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="12" cy="19" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            <circle cx="19" cy="19" r="2" fill={isFocused ? "var(--color-bone-light)" : "var(--color-silver-structure)"} style={{ transition: "all 0.2s" }} />
-            
-            {/* 1 neon middle dot */}
-            <circle 
-              cx="12" 
-              cy="12" 
-              r="2" 
-              fill="var(--color-emerald-core)" 
-              filter={isFocused ? "url(#neon-glow-focus)" : "url(#neon-glow-blur)"}
-              style={{ transition: "all 0.2s" }}
+            {[
+              [5,5],[12,5],[19,5],
+              [5,12],       [19,12],
+              [5,19],[12,19],[19,19],
+            ].map(([cx,cy], i) => (
+              <circle key={i} cx={cx} cy={cy} r="2"
+                fill={isFocused ? 'var(--bone)' : 'var(--silver)'}
+                style={{ transition: 'fill 0.2s' }}
+              />
+            ))}
+            <circle cx="12" cy="12" r="2"
+              fill="var(--fed-blue)"
+              filter={isFocused ? 'url(#neon-glow-focus)' : 'none'}
+              style={{ transition: 'all 0.2s' }}
             />
           </svg>
         </div>
+
         <input
           type="text"
-          style={searchInputStyle}
+          style={{
+            width: '100%',
+            backgroundColor: 'var(--iron-1)',
+            color: 'var(--bone)',
+            paddingLeft: '40px',
+            paddingRight: '16px',
+            paddingTop: '8px',
+            paddingBottom: '8px',
+            borderRadius: '4px',
+            border: `1px solid ${isFocused ? 'var(--fed-blue)' : 'var(--iron-line)'}`,
+            boxShadow: isFocused ? '0 0 10px rgba(8,133,237,.25)' : 'none',
+            outline: 'none',
+            fontSize: '13px',
+            transition: 'all 0.2s ease',
+            fontFamily: 'var(--font-primary)',
+          }}
           placeholder={t('navbar.search_placeholder')}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={e => setSearchQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
       </div>
-      
-      <div style={userStyle}>
-        {/* Notification Bell Widget */}
+
+      {/* ── Right side controls ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+
+        {/* Notification Bell */}
         <div ref={bellRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <div 
-            style={bellContainerStyle}
+          <div
+            style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '34px',
+              height: '34px',
+              borderRadius: '4px',
+              border: `1px solid ${bellActive ? 'var(--fed-blue)' : 'var(--iron-line)'}`,
+              backgroundColor: isDropdownOpen ? 'rgba(8,133,237,.10)' : 'transparent',
+              color: bellActive ? 'var(--fed-blue)' : 'var(--silver)',
+              boxShadow: bellActive ? '0 0 10px rgba(8,133,237,.25)' : 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
             onClick={toggleDropdown}
             onMouseEnter={() => setIsBellHovered(true)}
             onMouseLeave={() => setIsBellHovered(false)}
             title={t('navbar.notifications')}
           >
-            <i className="fa-solid fa-bell" style={{ fontSize: "16px" }}></i>
-            {hasUnread && <div style={dotStyle}></div>}
+            <i className="fa-solid fa-bell" style={{ fontSize: '14px' }} />
+            {hasUnread && (
+              <div style={{
+                position: 'absolute',
+                top: '4px', right: '4px',
+                width: '7px', height: '7px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--fed-blue)',
+                boxShadow: '0 0 6px var(--fed-blue)',
+              }} />
+            )}
           </div>
 
+          {/* Notifications dropdown */}
           {isDropdownOpen && (
-            <div style={dropdownStyle}>
-              <div style={dropdownHeaderStyle}>
-                <span>{t('navbar.notifications')}</span>
+            <div style={{
+              position: 'absolute',
+              right: 0, top: '100%',
+              marginTop: '8px',
+              width: '340px',
+              backgroundColor: 'var(--iron-1)',
+              border: '1px solid var(--iron-line)',
+              borderRadius: '6px',
+              boxShadow: '0 12px 32px -4px rgba(0,0,0,.7)',
+              zIndex: 100,
+              padding: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              boxSizing: 'border-box',
+            }}>
+              {/* Dropdown accent bar */}
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%)', borderRadius: '6px 6px 0 0' }} />
+
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingBottom: '8px',
+                borderBottom: '1px solid var(--iron-line)',
+                color: 'var(--bone)',
+                fontSize: '12px',
+                fontFamily: 'var(--font-heading)',
+                fontWeight: '700',
+                letterSpacing: '0.5px',
+              }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--fed-blue)' }}>
+                  // {t('navbar.notifications')}
+                </span>
                 {notifications.length > 0 && (
-                  <span style={countBadgeStyle}>
+                  <span style={{
+                    backgroundColor: 'rgba(8,133,237,.15)',
+                    color: 'var(--fed-blue)',
+                    padding: '2px 7px',
+                    borderRadius: '3px',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    fontFamily: 'var(--font-mono)',
+                  }}>
                     {notifications.length}
                   </span>
                 )}
               </div>
-              
-              <div style={dropdownListStyle}>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '280px', overflowY: 'auto' }} className="custom-scrollbar">
                 {notifications.length === 0 ? (
-                  <div style={emptyStateStyle}>
+                  <div style={{
+                    padding: '20px 10px',
+                    textAlign: 'center',
+                    color: 'var(--bone-30)',
+                    fontSize: '12px',
+                    fontFamily: 'var(--font-mono)',
+                    letterSpacing: '0.5px',
+                  }}>
                     {t('navbar.no_notifications')}
                   </div>
                 ) : (
                   notifications.slice(0, 5).map((notif) => (
-                    <div key={notif.id} style={getNotificationItemStyle(notif.type)}>
-                      <div style={notifIconStyle(notif.type)}>
-                        {notif.type === 'critical' ? (
-                          <i className="fa-solid fa-triangle-exclamation"></i>
-                        ) : (
-                          <i className="fa-solid fa-circle-exclamation"></i>
-                        )}
+                    <div key={notif.id} style={{
+                      display: 'flex',
+                      gap: '10px',
+                      padding: '10px 12px',
+                      borderRadius: '4px',
+                      backgroundColor: notif.type === 'critical'
+                        ? 'rgba(180,3,7,.08)'
+                        : 'rgba(217,119,54,.08)',
+                      border: notif.type === 'critical'
+                        ? '1px solid rgba(180,3,7,.25)'
+                        : '1px solid rgba(217,119,54,.25)',
+                      fontSize: '12px',
+                      lineHeight: '1.5',
+                      fontFamily: 'var(--font-primary)',
+                      alignItems: 'flex-start',
+                      boxSizing: 'border-box',
+                    }}>
+                      <div style={{ color: notif.type === 'critical' ? 'var(--crisis-from)' : 'var(--copper)', fontSize: '13px', marginTop: '1px' }}>
+                        {notif.type === 'critical'
+                          ? <i className="fa-solid fa-triangle-exclamation" />
+                          : <i className="fa-solid fa-circle-exclamation" />
+                        }
                       </div>
-                      <div style={notifTextStyle}>
+                      <div style={{ color: 'var(--bone-60)', flex: 1 }}>
                         {notif.text}
                       </div>
                     </div>
@@ -356,6 +283,7 @@ const Navbar = ({ federation, onLogout }) => {
           )}
         </div>
 
+        {/* User widget */}
         <UserHeaderWidget onLogout={onLogout} />
       </div>
     </div>

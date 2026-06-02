@@ -19,225 +19,223 @@ const UserHeaderWidget = ({ onLogout }) => {
       }
     };
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
+      if (event.key === 'Escape') setIsOpen(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  const toggleDropdown = () => setIsOpen(!isOpen);
+
+  const isActive = isHovered || isOpen;
+
+  /* ── Dropdown item hover helpers ── */
+  const handleItemEnter = (e) => {
+    e.currentTarget.style.backgroundColor = 'rgba(8,133,237,.08)';
+    e.currentTarget.style.color = 'var(--fed-blue)';
+  };
+  const handleItemLeave = (e) => {
+    e.currentTarget.style.backgroundColor = 'transparent';
+    e.currentTarget.style.color = 'var(--silver)';
+  };
+  const handleLogoutEnter = (e) => {
+    e.currentTarget.style.backgroundColor = 'rgba(180,3,7,.12)';
+    e.currentTarget.style.color = 'var(--crisis-from)';
+  };
+  const handleLogoutLeave = (e) => {
+    e.currentTarget.style.backgroundColor = 'transparent';
+    e.currentTarget.style.color = 'var(--copper)';
   };
 
-  const widgetStyle = {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    padding: "6px 12px",
-    borderRadius: "24px",
-    border: `1px solid ${isHovered || isOpen ? "var(--color-emerald-core)" : "var(--color-iron-border)"}`,
-    backgroundColor: isOpen ? "color-mix(in oklab, var(--color-emerald-core) 10%, transparent)" : "transparent",
-    boxShadow: isHovered || isOpen ? "0 0 10px var(--color-emerald-core)" : "none",
-    cursor: "pointer",
-    transition: "all 0.2s ease-in-out",
-    userSelect: "none"
+  /* ── Shared menu item base ── */
+  const menuItemBase = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    width: '100%',
+    padding: '8px 10px',
+    backgroundColor: 'transparent',
+    border: 'none',
+    borderRadius: '3px',
+    color: 'var(--silver)',
+    fontSize: '13px',
+    cursor: 'pointer',
+    textAlign: 'left',
+    transition: 'all 0.15s',
+    outline: 'none',
+    fontFamily: 'var(--font-heading)',
   };
 
-  const avatarStyle = {
-    width: "30px",
-    height: "30px",
-    borderRadius: "50%",
-    backgroundColor: "var(--color-iron-surface)",
-    border: "1.5px solid var(--color-iron-border)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden"
-  };
-
-  const dropdownMenuStyle = {
-    position: "absolute",
-    right: 0,
-    top: "100%",
-    marginTop: "8px",
-    width: "224px",
-    backgroundColor: "var(--color-iron-surface)",
-    border: "1px solid var(--color-iron-border)",
-    borderRadius: "12px",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-    zIndex: 50,
-    padding: "12px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px",
-    boxSizing: "border-box"
-  };
-
-  const dropdownItemStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    width: "100%",
-    padding: "8px 10px",
-    backgroundColor: "transparent",
-    border: "none",
-    borderRadius: "6px",
-    color: "var(--color-silver-structure)",
-    fontSize: "13px",
-    cursor: "pointer",
-    textAlign: "left",
-    transition: "all 0.2s",
-    outline: "none",
-    fontFamily: "sans-serif"
-  };
-
-  const handleItemMouseOver = (e) => {
-    e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-emerald-core) 8%, transparent)";
-    e.currentTarget.style.color = "var(--color-emerald-core)";
-    if (e.currentTarget.firstElementChild) {
-      e.currentTarget.firstElementChild.style.color = "var(--color-emerald-core)";
-    }
-  };
-
-  const handleItemMouseOut = (e) => {
-    e.currentTarget.style.backgroundColor = "transparent";
-    e.currentTarget.style.color = "var(--color-silver-structure)";
-    if (e.currentTarget.firstElementChild) {
-      e.currentTarget.firstElementChild.style.color = "var(--color-silver-structure)";
-    }
-  };
-
+  /* ── Overlay + modal ── */
   const overlayStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    backdropFilter: "blur(4px)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 9999
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,.75)',
+    backdropFilter: 'blur(4px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
   };
 
-  const modalStyle = {
-    backgroundColor: "var(--color-iron-surface)",
-    border: "1px solid var(--color-iron-border)",
-    borderRadius: "12px",
-    width: "450px",
-    boxShadow: "0 0 30px var(--color-iron-border)",
-    overflow: "hidden"
+  const modalBase = {
+    backgroundColor: 'var(--iron-1)',
+    border: '1px solid var(--iron-line)',
+    borderRadius: '6px',
+    boxShadow: '0 20px 50px rgba(0,0,0,.7)',
+    overflow: 'hidden',
+    position: 'relative',
   };
 
   const modalHeaderStyle = {
-    padding: "15px 20px",
-    borderBottom: "1px solid var(--color-iron-border)",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
-  };
-
-  const modalContentStyle = {
-    padding: "20px"
+    padding: '14px 20px',
+    borderBottom: '1px solid var(--iron-line)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
   };
 
   return (
-    <div ref={widgetRef} style={{ position: "relative" }}>
-      <div 
-        style={widgetStyle}
+    <div ref={widgetRef} style={{ position: 'relative' }}>
+
+      {/* ── Widget button ── */}
+      <div
+        style={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          padding: '5px 10px',
+          borderRadius: '4px',
+          border: `1px solid ${isActive ? 'var(--fed-blue)' : 'var(--iron-line)'}`,
+          backgroundColor: isOpen ? 'rgba(8,133,237,.08)' : 'transparent',
+          boxShadow: isActive ? '0 0 10px rgba(8,133,237,.2)' : 'none',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          userSelect: 'none',
+        }}
         onClick={toggleDropdown}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div style={avatarStyle}>
-          <img 
-            src="https://i.pravatar.cc/150?img=12" 
-            alt="დავით მაისურაძე" 
-            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+        {/* Avatar */}
+        <div style={{
+          width: '28px', height: '28px',
+          borderRadius: '50%',
+          border: '1px solid var(--iron-line)',
+          overflow: 'hidden',
+          flexShrink: 0,
+        }}>
+          <img
+            src="https://i.pravatar.cc/150?img=12"
+            alt="დავით მაისურაძე"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </div>
-        <span style={{ fontSize: "14px", color: "var(--color-bone-light)", fontWeight: "normal" }}>დავით მ.</span>
-        <i className="fa-solid fa-chevron-down" style={{ fontSize: "10px", color: "var(--color-silver-structure)", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}></i>
+
+        <span style={{ fontSize: '13px', color: 'var(--bone)', fontFamily: 'var(--font-heading)', fontWeight: '500' }}>
+          დავით მ.
+        </span>
+        <i
+          className="fa-solid fa-chevron-down"
+          style={{
+            fontSize: '10px',
+            color: 'var(--silver)',
+            transform: isOpen ? 'rotate(180deg)' : 'none',
+            transition: 'transform 0.2s',
+          }}
+        />
       </div>
 
+      {/* ── Dropdown ── */}
       {isOpen && (
-        <div style={dropdownMenuStyle}>
-          <div style={{ padding: "4px 8px 8px 8px", borderBottom: "1px solid var(--color-iron-border)", display: "flex", flexDirection: "column" }}>
-            <span style={{ color: "var(--color-bone-light)", fontWeight: "500", fontSize: "13px" }}>დავით მაისურაძე</span>
+        <div style={{
+          position: 'absolute',
+          right: 0, top: '100%',
+          marginTop: '8px',
+          width: '220px',
+          backgroundColor: 'var(--iron-1)',
+          border: '1px solid var(--iron-line)',
+          borderRadius: '6px',
+          boxShadow: '0 16px 40px rgba(0,0,0,.6)',
+          zIndex: 50,
+          padding: '10px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+        }}>
+          {/* Accent bar */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%)' }} />
+
+          {/* User info */}
+          <div style={{ padding: '4px 8px 8px', borderBottom: '1px solid var(--iron-line)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span style={{ color: 'var(--bone)', fontWeight: '600', fontSize: '13px', fontFamily: 'var(--font-heading)' }}>
+              დავით მაისურაძე
+            </span>
             <span style={{
-              backgroundColor: "var(--color-iron)",
-              color: "var(--color-silver-structure)",
-              fontSize: "10px",
-              padding: "2px 6px",
-              borderRadius: "4px",
-              width: "fit-content",
-              fontWeight: "normal",
-              marginTop: "4px"
+              backgroundColor: 'var(--iron)',
+              color: 'var(--silver)',
+              fontSize: '10px',
+              padding: '2px 7px',
+              borderRadius: '3px',
+              width: 'fit-content',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.5px',
             }}>
               {t('user.role')}
             </span>
           </div>
 
-          <button 
-            style={dropdownItemStyle}
+          {/* Settings */}
+          <button
+            style={menuItemBase}
             onClick={() => { setShowSettingsModal(true); setIsOpen(false); }}
-            onMouseOver={handleItemMouseOver}
-            onMouseOut={handleItemMouseOut}
+            onMouseOver={handleItemEnter}
+            onMouseOut={handleItemLeave}
           >
-            <i className="fa-solid fa-gear" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
+            <i className="fa-solid fa-gear" style={{ width: '14px', fontSize: '13px', transition: 'color 0.15s' }} />
             <span>{t('user.profile_settings')}</span>
           </button>
 
-          <button 
-            style={dropdownItemStyle}
+          {/* Logs */}
+          <button
+            style={menuItemBase}
             onClick={() => { setShowLogsModal(true); setIsOpen(false); }}
-            onMouseOver={handleItemMouseOver}
-            onMouseOut={handleItemMouseOut}
+            onMouseOver={handleItemEnter}
+            onMouseOut={handleItemLeave}
           >
-            <i className="fa-solid fa-scroll" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
+            <i className="fa-solid fa-scroll" style={{ width: '14px', fontSize: '13px', transition: 'color 0.15s' }} />
             <span>{t('user.security_logs')}</span>
           </button>
 
-          <hr style={{ border: "0", borderTop: "1px solid var(--color-iron-border)", margin: "4px 0" }} />
-          <button 
-            style={{
-              ...dropdownItemStyle,
-              color: "var(--color-copper)"
-            }}
+          <hr style={{ border: '0', borderTop: '1px solid var(--iron-line)', margin: '2px 0' }} />
+
+          {/* Logout */}
+          <button
+            style={{ ...menuItemBase, color: 'var(--copper)' }}
             onClick={onLogout}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "color-mix(in oklab, var(--color-copper) 20%, transparent)";
-              e.currentTarget.style.color = "var(--color-copper)";
-              if (e.currentTarget.firstElementChild) {
-                e.currentTarget.firstElementChild.style.color = "var(--color-copper)";
-              }
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = "var(--color-copper)";
-              if (e.currentTarget.firstElementChild) {
-                e.currentTarget.firstElementChild.style.color = "var(--color-silver-structure)";
-              }
-            }}
+            onMouseOver={handleLogoutEnter}
+            onMouseOut={handleLogoutLeave}
           >
-            <i className="fa-solid fa-right-from-bracket" style={{ width: "14px", color: "var(--color-silver-structure)", fontSize: "14px", transition: "color 0.2s" }}></i>
+            <i className="fa-solid fa-right-from-bracket" style={{ width: '14px', fontSize: '13px' }} />
             <span>{t('user.logout')}</span>
           </button>
         </div>
       )}
 
+      {/* ── Settings Modal ── */}
       {showSettingsModal && ReactDOM.createPortal(
         <div style={overlayStyle}>
-          <div style={{ ...modalStyle, width: "90%", maxWidth: "700px" }}>
-            <div style={modalContentStyle}>
+          <div style={{ ...modalBase, width: '90%', maxWidth: '700px' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%)' }} />
+            <div style={{ padding: '16px' }}>
               <ProfileSettings onClose={() => setShowSettingsModal(false)} />
             </div>
           </div>
@@ -245,60 +243,76 @@ const UserHeaderWidget = ({ onLogout }) => {
         document.body
       )}
 
+      {/* ── Security Logs Modal ── */}
       {showLogsModal && ReactDOM.createPortal(
         <div style={overlayStyle}>
-          <div style={{ ...modalStyle, width: "600px" }}>
+          <div style={{ ...modalBase, width: '600px' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%)' }} />
             <div style={modalHeaderStyle}>
-              <h3 style={{ color: "var(--color-emerald-core)", margin: 0, textShadow: "0 0 10px color-mix(in oklab, var(--color-emerald-core) 30%, transparent)" }}>{t('logs.title')}</h3>
-              <button 
+              <div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--fed-blue)', marginBottom: '2px' }}>
+                  // SECURITY
+                </div>
+                <h3 style={{ color: 'var(--bone)', margin: 0, fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700' }}>
+                  {t('logs.title')}
+                </h3>
+              </div>
+              <button
                 onClick={() => setShowLogsModal(false)}
-                style={{ backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px" }}
+                style={{ backgroundColor: 'transparent', border: '1px solid var(--iron-line)', borderRadius: '4px', color: 'var(--silver)', cursor: 'pointer', fontSize: '16px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--fed-blue)'; e.currentTarget.style.color = 'var(--fed-blue)'; }}
+                onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--iron-line)'; e.currentTarget.style.color = 'var(--silver)'; }}
               >
                 &times;
               </button>
             </div>
-            <div style={{ ...modalContentStyle, maxHeight: "400px", overflowY: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", color: "var(--color-silver-structure)", fontSize: "12px", textAlign: "left" }}>
+
+            <div style={{ padding: '16px', maxHeight: '400px', overflowY: 'auto' }} className="custom-scrollbar">
+              <table style={{ width: '100%', borderCollapse: 'collapse', color: 'var(--silver)', fontSize: '12px', textAlign: 'left' }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.date_time')}</th>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.action')}</th>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.status')}</th>
-                    <th style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.ip')}</th>
+                  <tr style={{ borderBottom: '1px solid var(--iron-line)' }}>
+                    <th style={{ padding: '8px 10px', color: 'var(--fed-blue)', fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: '700' }}>{t('logs.date_time')}</th>
+                    <th style={{ padding: '8px 10px', color: 'var(--fed-blue)', fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: '700' }}>{t('logs.action')}</th>
+                    <th style={{ padding: '8px 10px', color: 'var(--fed-blue)', fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: '700' }}>{t('logs.status')}</th>
+                    <th style={{ padding: '8px 10px', color: 'var(--fed-blue)', fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: '700' }}>{t('logs.ip')}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
-                    <td style={{ padding: "10px 5px" }}>2026-05-22 21:15:46</td>
-                    <td style={{ padding: "10px 5px" }}>სისტემაში ავტორიზაცია</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
-                    <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
-                  </tr>
-                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
-                    <td style={{ padding: "10px 5px" }}>2026-05-22 17:11:34</td>
-                    <td style={{ padding: "10px 5px" }}>სპორტსმენის რედაქტირება (გიორგი ბერიძე)</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
-                    <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
-                  </tr>
-                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
-                    <td style={{ padding: "10px 5px" }}>2026-05-22 15:48:49</td>
-                    <td style={{ padding: "10px 5px" }}>ექსპორტი (სპორტსმენები)</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
-                    <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
-                  </tr>
-                  <tr style={{ borderBottom: "1px solid var(--color-iron-border)" }}>
-                    <td style={{ padding: "10px 5px" }}>2026-05-21 16:24:30</td>
-                    <td style={{ padding: "10px 5px" }}>სისტემაში შესვლა</td>
-                    <td style={{ padding: "10px 5px", color: "var(--color-emerald-core)" }}>{t('logs.success')}</td>
-                    <td style={{ padding: "10px 5px" }}>192.168.1.15</td>
-                  </tr>
+                  {[
+                    { date: '2026-05-22 21:15:46', action: 'სისტემაში ავტორიზაცია',                    status: t('logs.success'), ip: '192.168.1.15' },
+                    { date: '2026-05-22 17:11:34', action: 'სპორტსმენის რედაქტირება (გიორგი ბერიძე)', status: t('logs.success'), ip: '192.168.1.15' },
+                    { date: '2026-05-22 15:48:49', action: 'ექსპორტი (სპორტსმენები)',                 status: t('logs.success'), ip: '192.168.1.15' },
+                    { date: '2026-05-21 16:24:30', action: 'სისტემაში შესვლა',                        status: t('logs.success'), ip: '192.168.1.15' },
+                  ].map((row, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid var(--iron-line)' }}>
+                      <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--bone-60)' }}>{row.date}</td>
+                      <td style={{ padding: '8px 10px', color: 'var(--bone-60)' }}>{row.action}</td>
+                      <td style={{ padding: '8px 10px', color: 'var(--emerald)', fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{row.status}</td>
+                      <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--bone-60)' }}>{row.ip}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
-            <div style={{ padding: "15px 20px", borderTop: "1px solid var(--color-iron-border)", display: "flex", justifyContent: "flex-end" }}>
-              <button 
+
+            <div style={{ padding: '12px 16px', borderTop: '1px solid var(--iron-line)', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
                 onClick={() => setShowLogsModal(false)}
-                style={{ padding: "8px 16px", backgroundColor: "var(--color-emerald-core)", border: "none", borderRadius: "6px", color: "var(--color-iron)", fontWeight: "bold", cursor: "pointer" }}
+                style={{
+                  padding: '8px 20px',
+                  backgroundColor: 'var(--fed-blue)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: 'var(--iron)',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: '700',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  letterSpacing: '0.5px',
+                  transition: 'all 0.2s',
+                }}
+                onMouseOver={e => { e.currentTarget.style.boxShadow = '0 0 14px rgba(8,133,237,.5)'; }}
+                onMouseOut={e => { e.currentTarget.style.boxShadow = 'none'; }}
               >
                 {t('user.close')}
               </button>

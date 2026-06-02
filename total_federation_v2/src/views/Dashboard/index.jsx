@@ -502,195 +502,176 @@ const Dashboard = ({ incidents = [] }) => {
   }, [incidents]);
 
   return (
-    <div style={containerStyle}>
+    <div style={{
+      flex: 1,
+      padding: '28px',
+      backgroundColor: 'var(--iron)',
+      color: 'var(--bone)',
+      fontFamily: 'var(--font-primary)',
+      overflowY: 'auto',
+    }} className="custom-scrollbar">
       <style>{`
         @keyframes skeleton-pulse {
-          0% { background-color: rgba(255, 255, 255, 0.05); }
-          50% { background-color: rgba(255, 255, 255, 0.15); }
-          100% { background-color: rgba(255, 255, 255, 0.05); }
+          0%   { background-color: rgba(255,255,255,.05); }
+          50%  { background-color: rgba(255,255,255,.12); }
+          100% { background-color: rgba(255,255,255,.05); }
         }
-        .skeleton-loading {
-          animation: skeleton-pulse 1.4s infinite ease-in-out;
-        }
+        .skeleton-loading { animation: skeleton-pulse 1.4s infinite ease-in-out; }
+
         .dashboard-sectors-container {
-          display: flex;
-          flex-direction: column;
-          gap: 40px;
-          margin-bottom: 40px;
+          display: flex; flex-direction: column; gap: 32px; margin-bottom: 32px;
         }
         .dashboard-sector {
-          border-bottom: 1px solid var(--color-iron-border);
-          padding-bottom: 35px;
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
+          border-bottom: 1px solid var(--iron-line);
+          padding-bottom: 32px;
+          display: flex; flex-direction: column; gap: 16px;
         }
-        .dashboard-sector:last-child {
-          border-bottom: none;
-          padding-bottom: 0;
-        }
+        .dashboard-sector:last-child { border-bottom: none; padding-bottom: 0; }
+
         .sector-header {
-          display: flex;
-          align-items: center;
-          gap: 10px;
+          display: flex; align-items: center; gap: 10px;
         }
-        .sector-icon {
-          color: var(--color-emerald-core);
-          font-size: 14px;
-        }
+        .sector-icon { color: var(--fed-blue); font-size: 13px; }
         .sector-title {
-          font-size: 11px;
-          font-weight: 600;
+          font-family: var(--font-mono);
+          font-size: 9px;
+          font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 1.5px;
-          color: var(--color-silver-structure);
+          letter-spacing: 2.5px;
+          color: var(--silver);
           margin: 0;
         }
         .sector-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          gap: 16px;
         }
+
+        /* ── Dashboard Card (brandbook mod-card) ── */
         .dashboard-card {
-          background-color: var(--color-iron-surface);
-          border: 1px solid var(--color-iron-border);
-          border-radius: 12px;
-          padding: 20px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px var(--color-iron-border);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          min-height: 125px;
+          background-color: var(--iron-1);
+          border: 1px solid var(--iron-line);
+          border-radius: 6px;
+          padding: 18px 20px 14px;
+          position: relative;
+          overflow: hidden;
+          transition: border-color .2s, box-shadow .2s, transform .2s;
+          display: flex; flex-direction: column; justify-content: space-between;
+          min-height: 110px;
           box-sizing: border-box;
         }
+        .dashboard-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0;
+          width: 2px; height: 100%;
+          background: var(--fed-blue);
+        }
         .dashboard-card:hover {
-          border-color: var(--color-emerald-core);
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px var(--color-emerald-core), inset 0 0 15px var(--color-iron-border);
-          transform: translateY(-2px);
+          border-color: rgba(8,133,237,.4);
+          box-shadow: 0 4px 20px rgba(0,0,0,.4), 0 0 12px rgba(8,133,237,.12);
+          transform: translateY(-1px);
         }
         .card-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          width: 100%;
+          display: flex; justify-content: space-between; align-items: flex-start; width: 100%;
         }
         .card-title {
-          color: var(--color-silver-structure);
-          font-size: 12px;
-          font-weight: 600;
+          color: var(--silver);
+          font-family: var(--font-mono);
+          font-size: 9px;
+          font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 1px;
+          letter-spacing: 1.5px;
           margin-bottom: 8px;
         }
         .card-value {
-          font-size: 28px;
-          font-weight: bold;
-          margin-bottom: 4px;
+          font-family: var(--font-mono);
+          font-size: 32px;
+          font-weight: 700;
+          color: var(--bone);
+          margin-bottom: 2px;
+          line-height: 1;
         }
         .card-subtitle {
-          color: var(--color-silver-structure);
+          color: var(--bone-30);
           font-size: 11px;
-          margin-top: 2px;
+          margin-top: 4px;
+          font-family: var(--font-primary);
         }
         .card-bottom {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          width: 100%;
+          display: flex; flex-direction: column; align-items: flex-start; width: 100%;
         }
         .card-visual-container {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          display: flex; align-items: center; justify-content: center;
         }
-        @keyframes status-pulse {
-          0% { transform: scale(0.95); opacity: 0.6; }
-          50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px var(--color-emerald-core); }
-          100% { transform: scale(0.95); opacity: 0.6; }
-        }
-        .status-dot-active {
-          width: 8px;
-          height: 8px;
-          background-color: var(--color-emerald-core);
-          border-radius: 50%;
-          display: inline-block;
-          box-shadow: 0 0 8px var(--color-emerald-core);
-          animation: status-pulse 2s infinite ease-in-out;
-        }
+
+        /* incident ─ */
         @keyframes copper-neon-glow {
-          0% {
-            border-color: color-mix(in oklab, var(--color-copper) 20%, transparent);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px color-mix(in oklab, var(--color-copper) 5%, transparent);
-          }
-          50% {
-            border-color: color-mix(in oklab, var(--color-copper) 60%, transparent);
-            box-shadow: 0 4px 30px color-mix(in oklab, var(--color-copper) 25%, transparent), 0 0 15px color-mix(in oklab, var(--color-copper) 20%, transparent), inset 0 0 15px color-mix(in oklab, var(--color-copper) 15%, transparent);
-          }
-          100% {
-            border-color: color-mix(in oklab, var(--color-copper) 20%, transparent);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px color-mix(in oklab, var(--color-copper) 5%, transparent);
-          }
+          0%,100% { border-color: rgba(180,3,7,.25); box-shadow: 0 4px 20px rgba(0,0,0,.5); }
+          50%      { border-color: rgba(180,3,7,.7);  box-shadow: 0 4px 30px rgba(180,3,7,.25), 0 0 15px rgba(180,3,7,.2); }
         }
         .incident-card-active {
           animation: copper-neon-glow 2s infinite ease-in-out;
-          background: linear-gradient(135deg, var(--color-iron-surface) 0%, color-mix(in oklab, var(--color-copper) 4%, transparent) 100%) !important;
+          background: linear-gradient(135deg, rgba(180,3,7,.08) 0%, var(--iron-1) 100%) !important;
         }
-        .incident-card-active:hover {
-          border-color: var(--color-copper) !important;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px var(--color-copper), inset 0 0 20px color-mix(in oklab, var(--color-copper) 20%, transparent) !important;
+        .incident-card-active::before { background: var(--crisis-from) !important; }
+        .incident-card-active:hover { border-color: var(--crisis-from) !important; }
+
+        .warning-card-active { border-color: rgba(217,119,54,.25) !important; }
+        .warning-card-active::before { background: var(--copper) !important; }
+        .warning-card-active:hover { border-color: var(--copper) !important; }
+
+        /* status dot */
+        @keyframes status-pulse {
+          0%   { transform: scale(.95); opacity: .6; }
+          50%  { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--emerald); }
+          100% { transform: scale(.95); opacity: .6; }
         }
-        .warning-card-active {
-          border-color: color-mix(in oklab, var(--color-copper) 20%, transparent) !important;
-          background: linear-gradient(135deg, var(--color-iron-surface) 0%, color-mix(in oklab, var(--color-copper) 2%, transparent) 100%) !important;
+        .status-dot-active {
+          width: 8px; height: 8px;
+          background-color: var(--emerald);
+          border-radius: 50%;
+          display: inline-block;
+          box-shadow: 0 0 8px var(--emerald);
+          animation: status-pulse 2s infinite ease-in-out;
         }
-        .warning-card-active:hover {
-          border-color: var(--color-copper) !important;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 15px var(--color-copper), inset 0 0 15px color-mix(in oklab, var(--color-copper) 8%, transparent) !important;
-        }
+
+        /* sparkline dot */
         @keyframes spark-pulse {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.5); opacity: 0.6; }
+          0%   { transform: scale(1); opacity: 1; }
+          50%  { transform: scale(1.5); opacity: .6; }
           100% { transform: scale(1); opacity: 1; }
         }
-        .pulse-dot {
-          animation: spark-pulse 1.8s infinite ease-in-out;
-          transform-origin: center;
-        }
+        .pulse-dot { animation: spark-pulse 1.8s infinite ease-in-out; transform-origin: center; }
+
+        /* radar */
         @keyframes radar-ping {
-          0% { transform: scale(0.8); opacity: 0.5; }
+          0%   { transform: scale(.8); opacity: .5; }
           100% { transform: scale(2.2); opacity: 0; }
         }
         .incident-radar-container {
-          position: relative;
-          width: 12px;
-          height: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          position: relative; width: 12px; height: 12px;
+          display: flex; align-items: center; justify-content: center;
         }
         .incident-radar {
-          width: 8px;
-          height: 8px;
-          background-color: var(--color-copper);
-          border-radius: 50%;
-          position: relative;
+          width: 8px; height: 8px;
+          background-color: var(--crisis-from);
+          border-radius: 50%; position: relative;
         }
         .incident-radar::after {
           content: '';
-          position: absolute;
-          top: -4px;
-          left: -4px;
-          width: 16px;
-          height: 16px;
-          border: 2px solid var(--color-copper);
+          position: absolute; top: -4px; left: -4px;
+          width: 16px; height: 16px;
+          border: 2px solid var(--crisis-from);
           border-radius: 50%;
           animation: radar-ping 1.5s infinite ease-out;
         }
       `}</style>
-      
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "15px" }}>
-        <h2 style={{ color: "var(--color-bone-light)", margin: 0, textShadow: "0 0 10px var(--color-emerald-core)" }}>
+
+      {/* ── Page Header ── */}
+      <div style={{ marginBottom: '20px' }}>
+        <div className="ch-tag">// 570 — პანელის მიმოხილვა</div>
+        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: '800', color: 'var(--bone)', margin: 0 }}>
           პანელის მიმოხილვა
         </h2>
       </div>
@@ -829,13 +810,24 @@ const Dashboard = ({ incidents = [] }) => {
         </div>
       </div>
 
-      <div style={cardStyle}>
-        <div style={statTitleStyle}>ბოლო აქტივობები</div>
-        <p style={{ color: "rgba(226, 232, 240, 0.7)", marginTop: "10px" }}>ბოლო აქტივობები არ ფიქსირდება.</p>
+      {/* Recent Activities */}
+      <div style={{
+        background: 'var(--iron-1)',
+        border: '1px solid var(--iron-line)',
+        borderRadius: '6px',
+        padding: '18px 20px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '2px', height: '100%', background: 'var(--fed-blue)' }} />
+        <div className="ch-tag" style={{ marginBottom: '6px' }}>// აქტივობა</div>
+        <div style={{ fontFamily: 'var(--font-heading)', fontWeight: '700', fontSize: '14px', color: 'var(--bone)', marginBottom: '10px' }}>ბოლო აქტივობები</div>
+        <p style={{ color: 'var(--bone-30)', marginTop: 0, marginBottom: 0, fontSize: '13px', fontFamily: 'var(--font-mono)', letterSpacing: '0.3px' }}>
+          ბოლო აქტივობები არ ფიქსირდება.
+        </p>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
-
