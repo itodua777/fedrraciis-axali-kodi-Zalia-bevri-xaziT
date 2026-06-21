@@ -22,14 +22,24 @@ import RoutePlanningDashboard from './views/RoutePlanning/index.jsx';
 import PeaksDashboard from './views/Peaks/index.jsx';
 import SettingsDashboard from './views/Settings/index.jsx';
 import CalendarDashboard from './views/Calendar/index.jsx';
+import FederationProfileWrapper from './views/FederationProfile/FederationProfileWrapper.jsx';
 
 import { LanguageProvider } from './context/LanguageContext.jsx';
 
 import { MOCK_ATHLETES, MOCK_CLUBS, MOCK_INCIDENTS } from './utils/mockData.js';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [selectedFederation, setSelectedFederation] = React.useState("");
+  const [isAuthenticated, setIsAuthenticated] = React.useState(() => {
+    return !!localStorage.getItem('accessToken');
+  });
+  const [selectedFederation, setSelectedFederation] = React.useState(() => {
+    try {
+      const activeUser = JSON.parse(localStorage.getItem('activeUser') || '{}');
+      return activeUser?.companyName || "";
+    } catch (e) {
+      return "";
+    }
+  });
   const [currentView, setCurrentView] = React.useState("dashboard");
   const [athletes, setAthletes] = React.useState([]);
   const [clubs, setClubs] = React.useState(MOCK_CLUBS);
@@ -37,14 +47,48 @@ const App = () => {
   const [incidents, setIncidents] = React.useState(MOCK_INCIDENTS);
   const isLoadedRef = React.useRef(false);
 
+  const [isProfileComplete, setIsProfileComplete] = React.useState(true);
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      fetch('http://localhost:5005/companies/profile', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to fetch profile");
+          return res.json();
+        })
+        .then(data => {
+          setIsProfileComplete(data.isProfileComplete ?? true);
+        })
+        .catch(err => {
+          console.error("Error checking profile completion:", err);
+        });
+    }
+  }, [isAuthenticated]);
+
+  React.useEffect(() => {
+    if (isAuthenticated && !isProfileComplete && currentView !== 'federation_profile') {
+      setCurrentView('federation_profile');
+    }
+  }, [isAuthenticated, isProfileComplete, currentView]);
+
   const handleClubClick = (clubId) => {
     setSelectedClubId(clubId);
     setCurrentView("clubs");
   };
 
   const handleLogin = (federation) => {
+    try {
+      const activeUser = JSON.parse(localStorage.getItem('activeUser') || '{}');
+      setSelectedFederation(activeUser?.companyName || federation || "Total Federation");
+    } catch (e) {
+      setSelectedFederation(federation || "Total Federation");
+    }
     setIsAuthenticated(true);
-    setSelectedFederation(federation);
   };
 
   const handleAddAthlete = (newAthlete) => {
@@ -110,8 +154,12 @@ const App = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('activeUser');
     setIsAuthenticated(false);
     setSelectedFederation("");
+    setIsProfileComplete(true);
   };
 
   if (!isAuthenticated) {
@@ -120,7 +168,7 @@ const App = () => {
 
   return (
     <div style={{ display: "flex", height: "100vh", backgroundColor: "#121418", overflow: "hidden" }}>
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} federation={selectedFederation} />
+      <Sidebar currentView={currentView} onViewChange={setCurrentView} federation={selectedFederation} isProfileComplete={isProfileComplete} />
       <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
         <Header federation={selectedFederation} onLogout={handleLogout} />
         {currentView === 'dashboard' && <Dashboard incidents={incidents} />}
@@ -141,6 +189,12 @@ const App = () => {
         {currentView === 'peaks' && <PeaksDashboard athletes={athletes} onUpdateAthlete={handleUpdateAthlete} />}
         {currentView === 'settings' && <SettingsDashboard athletes={athletes} onUpdateAthlete={handleUpdateAthlete} />}
         {currentView === 'calendar' && <CalendarDashboard />}
+        {currentView === 'federation_profile' && (
+          <FederationProfileWrapper 
+            isProfileComplete={isProfileComplete} 
+            onProfileUpdate={setIsProfileComplete} 
+          />
+        )}
       </div>
     </div>
   );

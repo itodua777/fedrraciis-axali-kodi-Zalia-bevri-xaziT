@@ -11,6 +11,7 @@ const menuItems = [
   { id: 'spaces',       node: '570',  label: 'სავარჯიშო სივრცე',       icon: 'fa-solid fa-map-location-dot' },
   { id: 'medianews',    node: '570',  label: 'მედიანიუსი',             icon: 'fa-solid fa-photo-film' },
   { id: 'incidents',    node: '570',  label: 'ინციდენტი',              icon: 'fa-solid fa-triangle-exclamation' },
+  { id: 'federation_profile', node: '570',  label: 'ფედერაციის პროფილი',    icon: 'fa-solid fa-building' },
   { id: 'settings',     node: '570',  label: 'ფედერაციის პარამეტრები', icon: 'fa-solid fa-gear' },
 
   // 8849 Tab items
@@ -30,7 +31,7 @@ const getViewTab = (view) => {
   return item ? item.node : '570';
 };
 
-const Sidebar = ({ currentView, onViewChange, federation }) => {
+const Sidebar = ({ currentView, onViewChange, federation, isProfileComplete = true }) => {
   const { t } = useTranslation();
   const [activeNode, setActiveNode] = React.useState(() => getViewTab(currentView));
   const [isCollapsed, setIsCollapsed] = React.useState(() => {
@@ -126,6 +127,7 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
   /* Nav item */
   const navItemStyle = (itemId) => {
     const active = isViewActive(itemId);
+    const isLocked = !isProfileComplete && itemId !== 'federation_profile';
     return {
       display: 'flex',
       alignItems: 'center',
@@ -137,7 +139,7 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
       border: 'none',
       borderLeft: active ? '2px solid var(--fed-blue)' : '2px solid transparent',
       borderRadius: '0 4px 4px 0',
-      cursor: 'pointer',
+      cursor: isLocked ? 'not-allowed' : 'pointer',
       transition: 'all 0.18s ease',
       fontFamily: 'var(--font-heading)',
       fontSize: '13px',
@@ -147,6 +149,8 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
       width: '100%',
       textAlign: isCollapsed ? 'center' : 'left',
       boxShadow: active ? 'inset 0 0 12px rgba(8,133,237,.05)' : 'none',
+      opacity: isLocked ? 0.4 : 1,
+      pointerEvents: isLocked ? 'none' : 'auto',
     };
   };
 
@@ -296,7 +300,8 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
                 onClick={() => onViewChange(item.id)}
                 title={isCollapsed ? t('sidebar.' + item.id) : undefined}
                 onMouseEnter={e => {
-                  if (!active) {
+                  const isLocked = !isProfileComplete && item.id !== 'federation_profile';
+                  if (!active && !isLocked) {
                     e.currentTarget.style.backgroundColor = 'rgba(8,133,237,.05)';
                     e.currentTarget.style.color = 'var(--bone)';
                     e.currentTarget.style.borderLeftColor = 'rgba(8,133,237,.3)';
@@ -322,8 +327,9 @@ const Sidebar = ({ currentView, onViewChange, federation }) => {
                   }}
                 />
                 {!isCollapsed && (
-                  <span style={{ fontSize: '13px', lineHeight: '1.3' }}>
+                  <span style={{ fontSize: '13px', lineHeight: '1.3', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {t('sidebar.' + item.id)}
+                    {!isProfileComplete && item.id !== 'federation_profile' && <span>🔒</span>}
                   </span>
                 )}
               </button>

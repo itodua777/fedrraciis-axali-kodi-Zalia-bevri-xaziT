@@ -10,6 +10,38 @@ const UserHeaderWidget = ({ onLogout }) => {
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
   const [showLogsModal, setShowLogsModal] = React.useState(false);
 
+  const [activeUser, setActiveUser] = React.useState(null);
+
+  React.useEffect(() => {
+    const loadUser = () => {
+      try {
+        const stored = localStorage.getItem('activeUser');
+        if (stored) {
+          setActiveUser(JSON.parse(stored));
+        } else {
+          setActiveUser({});
+        }
+      } catch (e) {
+        setActiveUser({});
+      }
+    };
+    loadUser();
+
+    window.addEventListener('storage', loadUser);
+    
+    // Polling to keep the login state reactive in real-time
+    const interval = setInterval(loadUser, 300);
+
+    return () => {
+      window.removeEventListener('storage', loadUser);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const displayName = `${activeUser?.firstName || ''} ${activeUser?.lastName || ''}`.trim();
+  const positionSubtitle = activeUser?.position || '';
+  const hasUser = !!displayName;
+
   const widgetRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -28,6 +60,34 @@ const UserHeaderWidget = ({ onLogout }) => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  if (activeUser === null) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        padding: '5px 10px',
+        borderRadius: '4px',
+        border: '1px solid var(--iron-line)',
+        backgroundColor: 'transparent',
+      }}>
+        <div style={{
+          width: '28px', height: '28px',
+          borderRadius: '50%',
+          backgroundColor: 'var(--iron-line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <i className="fa-solid fa-circle-notch fa-spin" style={{ color: 'var(--silver)', fontSize: '12px' }} />
+        </div>
+        <span style={{ fontSize: '13px', color: 'var(--silver)', fontFamily: 'var(--font-heading)' }}>
+          Loading...
+        </span>
+      </div>
+    );
+  }
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -130,16 +190,24 @@ const UserHeaderWidget = ({ onLogout }) => {
           border: '1px solid var(--iron-line)',
           overflow: 'hidden',
           flexShrink: 0,
+          backgroundColor: 'var(--iron-line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}>
-          <img
-            src="https://i.pravatar.cc/150?img=12"
-            alt="დავით მაისურაძე"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          {hasUser ? (
+            <img
+              src="https://i.pravatar.cc/150?img=12"
+              alt={displayName}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            <i className="fa-solid fa-user" style={{ color: 'var(--silver)', fontSize: '13px' }} />
+          )}
         </div>
 
         <span style={{ fontSize: '13px', color: 'var(--bone)', fontFamily: 'var(--font-heading)', fontWeight: '500' }}>
-          დავით მ.
+          {`${activeUser?.firstName || ''} ${activeUser?.lastName || ''}`.trim() || 'მომხმარებელი'}
         </span>
         <i
           className="fa-solid fa-chevron-down"
@@ -177,20 +245,22 @@ const UserHeaderWidget = ({ onLogout }) => {
           {/* User info */}
           <div style={{ padding: '4px 8px 8px', borderBottom: '1px solid var(--iron-line)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span style={{ color: 'var(--bone)', fontWeight: '600', fontSize: '13px', fontFamily: 'var(--font-heading)' }}>
-              დავით მაისურაძე
+              {`${activeUser?.firstName || ''} ${activeUser?.lastName || ''}`.trim() || 'მომხმარებელი'}
             </span>
-            <span style={{
-              backgroundColor: 'var(--iron)',
-              color: 'var(--silver)',
-              fontSize: '10px',
-              padding: '2px 7px',
-              borderRadius: '3px',
-              width: 'fit-content',
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.5px',
-            }}>
-              {t('user.role')}
-            </span>
+            {activeUser?.position && (
+              <span style={{
+                backgroundColor: 'var(--iron)',
+                color: 'var(--silver)',
+                fontSize: '10px',
+                padding: '2px 7px',
+                borderRadius: '3px',
+                width: 'fit-content',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.5px',
+              }}>
+                {activeUser?.position}
+              </span>
+            )}
           </div>
 
           {/* Settings */}

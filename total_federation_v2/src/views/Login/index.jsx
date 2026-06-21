@@ -1,17 +1,83 @@
 import React from 'react';
+import RegisterWizard from './RegisterWizard.jsx';
 
 const Login = ({ onLogin }) => {
+  const [isRegistering, setIsRegistering] = React.useState(false);
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [federation, setFederation] = React.useState('');
   const [error, setError] = React.useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (username === '11' && password === '11' && federation) {
-      onLogin(federation);
-    } else {
-      setError('Invalid credentials or federation not selected.');
+    if (!username.trim() || !password) {
+      setError('Username and password are required.');
+      return;
+    }
+    setError('');
+    try {
+      const response = await fetch('http://localhost:5005/auth/login/user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: username,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Authentication failed. Please check your credentials.');
+      }
+
+      // Save tokens
+      localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
+
+      // Extract companyName and companyId from decoded token or response body
+      let companyName = data.companyName;
+      let decodedClaims = null;
+      try {
+        if (data.accessToken) {
+          const base64Url = data.accessToken.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const binaryString = window.atob(base64);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          decodedClaims = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+        }
+      } catch (e) {
+        console.error("Failed to decode token payload:", e);
+      }
+
+      // Safe optional chaining for claims
+      const companyId = decodedClaims?.companyId;
+      companyName = decodedClaims?.companyName || companyName;
+
+      // Set active user state in local storage
+      if (decodedClaims) {
+        const activeUser = {
+          userId: decodedClaims?.userId,
+          email: decodedClaims?.email,
+          firstName: decodedClaims?.firstName,
+          lastName: decodedClaims?.lastName,
+          roleId: decodedClaims?.roleId,
+          companyId: companyId,
+          companyName: companyName,
+          isSuperUser: decodedClaims?.isSuperUser,
+          position: decodedClaims?.position || ""
+        };
+        localStorage.setItem('activeUser', JSON.stringify(activeUser));
+      }
+
+      onLogin(companyName || 'Total Federation');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.message || 'Connection to authentication server failed.');
     }
   };
 
@@ -116,166 +182,177 @@ const Login = ({ onLogin }) => {
           opacity: .4, pointerEvents: 'none',
         }} />
 
-        {/* Login Card */}
-        <div style={{
-          position: 'relative',
-          backgroundColor: 'var(--iron-1)',
-          border: '1px solid var(--iron-line)',
-          borderRadius: '6px',
-          padding: '36px 40px 32px',
-          width: '400px',
-          boxShadow: '0 20px 60px rgba(0,0,0,.6), 0 0 30px rgba(8,133,237,.06)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0',
-          animation: 'loginFadeIn .5s cubic-bezier(0.16,1,0.3,1) both',
-          overflow: 'hidden',
-        }}>
-          {/* Card accent bar */}
+        {isRegistering ? (
+          <RegisterWizard onBackToLogin={() => setIsRegistering(false)} />
+        ) : (
+          /* Login Card */
           <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
-            background: 'linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%)',
-          }} />
-
-          {/* Eyebrow tag */}
-          <div style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '9px',
-            letterSpacing: '3px',
-            textTransform: 'uppercase',
-            color: 'var(--fed-blue)',
-            marginBottom: '20px',
+            position: 'relative',
+            backgroundColor: 'var(--iron-1)',
+            border: '1px solid var(--iron-line)',
+            borderRadius: '6px',
+            padding: '36px 40px 32px',
+            width: '400px',
+            boxShadow: '0 20px 60px rgba(0,0,0,.6), 0 0 30px rgba(8,133,237,.06)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0',
+            animation: 'loginFadeIn .5s cubic-bezier(0.16,1,0.3,1) both',
+            overflow: 'hidden',
           }}>
-            ARTRON · FEDERATION · PLATFORM
-          </div>
-
-          {/* 9-Node Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '10px',
-            width: '60px',
-            height: '60px',
-            margin: '0 auto 16px',
-          }}>
-            {[...Array(9)].map((_, i) => (
-              <div key={i} style={{
-                borderRadius: '50%',
-                backgroundColor: i === 4 ? 'var(--fed-blue)' : 'rgba(245,245,247,.65)',
-                boxShadow: i === 4 ? '0 0 14px var(--fed-blue), 0 0 28px rgba(8,133,237,.35)' : 'none',
-                animation: i === 4 ? 'loginPulse 3s ease-in-out infinite' : 'none',
-              }} />
-            ))}
-          </div>
-
-          {/* Wordmark */}
-          <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+            {/* Card accent bar */}
             <div style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: '28px',
-              fontWeight: '900',
-              letterSpacing: '6px',
-              textTransform: 'uppercase',
-              color: 'var(--bone)',
-              lineHeight: '1',
-            }}>
-              ART<span style={{ color: 'var(--fed-blue)' }}>R</span>ON
-            </div>
+              position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+              background: 'linear-gradient(90deg, var(--fed-blue) 0%, transparent 100%)',
+            }} />
+
+            {/* Eyebrow tag */}
             <div style={{
-              fontFamily: 'var(--font-heading)',
+              fontFamily: 'var(--font-mono)',
               fontSize: '9px',
-              fontWeight: '400',
-              letterSpacing: '8px',
+              letterSpacing: '3px',
               textTransform: 'uppercase',
-              color: 'var(--bone-30)',
-              marginTop: '4px',
+              color: 'var(--fed-blue)',
+              marginBottom: '20px',
             }}>
-              FEDERATION
+              ARTRON · FEDERATION · PLATFORM
             </div>
-          </div>
 
-          {/* Divider */}
-          <div style={{ width: '48px', height: '1px', background: 'linear-gradient(90deg, transparent, var(--fed-blue), transparent)', margin: '16px auto' }} />
-
-          {/* Sub-text */}
-          <p style={{
-            color: 'var(--bone-30)',
-            textAlign: 'center',
-            margin: '0 0 20px',
-            fontSize: '12px',
-            fontFamily: 'var(--font-mono)',
-            letterSpacing: '0.5px',
-          }}>
-            AUTHENTICATE TO CONTINUE
-          </p>
-
-          {/* Error */}
-          {error && (
+            {/* 9-Node Grid */}
             <div style={{
-              color: 'var(--crisis-from)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '10px',
+              width: '60px',
+              height: '60px',
+              margin: '0 auto 16px',
+            }}>
+              {[...Array(9)].map((_, i) => (
+                <div key={i} style={{
+                  borderRadius: '50%',
+                  backgroundColor: i === 4 ? 'var(--fed-blue)' : 'rgba(245,245,247,.65)',
+                  boxShadow: i === 4 ? '0 0 14px var(--fed-blue), 0 0 28px rgba(8,133,237,.35)' : 'none',
+                  animation: i === 4 ? 'loginPulse 3s ease-in-out infinite' : 'none',
+                }} />
+              ))}
+            </div>
+
+            {/* Wordmark */}
+            <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+              <div style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '28px',
+                fontWeight: '900',
+                letterSpacing: '6px',
+                textTransform: 'uppercase',
+                color: 'var(--bone)',
+                lineHeight: '1',
+              }}>
+                ART<span style={{ color: 'var(--fed-blue)' }}>R</span>ON
+              </div>
+              <div style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '9px',
+                fontWeight: '400',
+                letterSpacing: '8px',
+                textTransform: 'uppercase',
+                color: 'var(--bone-30)',
+                marginTop: '4px',
+              }}>
+                FEDERATION
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div style={{ width: '48px', height: '1px', background: 'linear-gradient(90deg, transparent, var(--fed-blue), transparent)', margin: '16px auto' }} />
+
+            {/* Sub-text */}
+            <p style={{
+              color: 'var(--bone-30)',
               textAlign: 'center',
+              margin: '0 0 20px',
               fontSize: '12px',
               fontFamily: 'var(--font-mono)',
               letterSpacing: '0.5px',
-              backgroundColor: 'rgba(180,3,7,.08)',
-              border: '1px solid rgba(180,3,7,.25)',
-              borderRadius: '4px',
-              padding: '8px 12px',
-              marginBottom: '16px',
             }}>
-              {error}
-            </div>
-          )}
+              AUTHENTICATE TO CONTINUE
+            </p>
 
-          {/* Form */}
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--bone-30)' }}>
-                USERNAME
-              </label>
-              <input
-                type="text"
-                className="login-input"
-                placeholder="username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-              />
-            </div>
+            {/* Error */}
+            {error && (
+              <div style={{
+                color: 'var(--crisis-from)',
+                textAlign: 'center',
+                fontSize: '12px',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.5px',
+                backgroundColor: 'rgba(180,3,7,.08)',
+                border: '1px solid rgba(180,3,7,.25)',
+                borderRadius: '4px',
+                padding: '8px 12px',
+                marginBottom: '16px',
+              }}>
+                {error}
+              </div>
+            )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--bone-30)' }}>
-                PASSWORD
-              </label>
-              <input
-                type="password"
-                className="login-input"
-                placeholder="••••••••"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
+            {/* Form */}
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--bone-30)' }}>
+                  USERNAME
+                </label>
+                <input
+                  type="text"
+                  className="login-input"
+                  placeholder="username"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                />
+              </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--bone-30)' }}>
-                FEDERATION
-              </label>
-              <select
-                className="login-input"
-                value={federation}
-                onChange={e => setFederation(e.target.value)}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--bone-30)' }}>
+                  PASSWORD
+                </label>
+                <input
+                  type="password"
+                  className="login-input"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
+
+
+
+              <button type="submit" className="login-btn" style={{ marginTop: '8px' }}>
+                AUTHENTICATE
+              </button>
+            </form>
+
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <button
+                type="button"
+                onClick={() => setIsRegistering(true)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--fed-blue)',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1.5px',
+                  textDecoration: 'underline',
+                  padding: '4px',
+                }}
               >
-                <option value="" disabled>Select Federation</option>
-                <option value="mountaineering">Mountaineering Federation</option>
-                <option value="judo">Judo Federation</option>
-                <option value="rugby">Rugby Federation</option>
-              </select>
+                Register New Sports Federation
+              </button>
             </div>
-
-            <button type="submit" className="login-btn" style={{ marginTop: '8px' }}>
-              AUTHENTICATE
-            </button>
-          </form>
-        </div>
+          </div>
+        )}
 
         {/* Footer */}
         <footer style={{

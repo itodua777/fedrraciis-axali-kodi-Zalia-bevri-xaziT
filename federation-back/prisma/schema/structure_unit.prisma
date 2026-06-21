@@ -1,0 +1,17 @@
+model StructureUnit {
+  id              String          @id @default(uuid())
+  companyId       String
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name            String
+  unitType        String          // e.g., 'ფილიალი', 'დეპარტამენტი', 'კომიტეტი'
+  compositionType String?
+  termDuration    String?
+  actNumber       String?
+  issueDate       String?
+  parentId        String?
+  parent          StructureUnit?  @relation("SubUnits", fields: [parentId], references: [id], onDelete: Cascade)
+  children        StructureUnit[] @relation("SubUnits")
+  users           User[]          // Members mapped to this specific unit
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
