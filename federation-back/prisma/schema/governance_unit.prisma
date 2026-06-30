@@ -1,0 +1,11 @@
+model GovernanceUnit {
+  id        String           @id @default(uuid())
+  companyId String
+  name      String
+  parentId  String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  parent    GovernanceUnit?  @relation("SubGovernanceUnits", fields: [parentId], references: [id], onDelete: Cascade)
+  children  GovernanceUnit[] @relation("SubGovernanceUnits")
+  company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}

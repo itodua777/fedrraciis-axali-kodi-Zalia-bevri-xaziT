@@ -14,7 +14,11 @@ export class RolesController {
 
     @Post()
     @CheckPolicies((ability) => ability.can('create', 'Role'))
-    create(@Body() createRoleDto: CreateRoleDto) {
+    create(
+        @Body() createRoleDto: CreateRoleDto,
+        @ActiveUser('companyId') companyId: string,
+    ) {
+        createRoleDto.companyId = companyId;
         return this.rolesService.create(createRoleDto);
     }
 

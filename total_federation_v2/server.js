@@ -36,6 +36,35 @@ function executeSql(sql) {
     }
 }
 
+function extractCompanyId(req) {
+    // 1. Check headers
+    let companyId = req.headers['x-company-id'] || req.headers['company-id'];
+    if (companyId) return companyId;
+
+    // 2. Check query params
+    try {
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        companyId = urlObj.searchParams.get('companyId') || urlObj.searchParams.get('company_id');
+        if (companyId) return companyId;
+    } catch (e) {}
+
+    // 3. Check auth header JWT token
+    const auth = req.headers['authorization'];
+    if (auth && auth.startsWith('Bearer ')) {
+        const token = auth.substring(7);
+        try {
+            const parts = token.split('.');
+            if (parts.length >= 2) {
+                const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
+                if (payload && payload.companyId) {
+                    return payload.companyId;
+                }
+            }
+        } catch (e) {}
+    }
+    return null;
+}
+
 // Synchronously initialize database schemas and seed default records
 function initializeDatabase() {
     console.log("Initializing SQLite database...");
@@ -66,7 +95,8 @@ function initializeDatabase() {
             achievements TEXT,
             medical_certificate_expiry TEXT,
             membership_status TEXT,
-            gender TEXT
+            gender TEXT,
+            company_id TEXT
         );
 
         CREATE TABLE IF NOT EXISTS warehouse_items (
@@ -301,7 +331,7 @@ function initializeDatabase() {
 }
 
 // Synchronize database state with client-side state
-function syncDatabase(data) {
+function syncDatabase(data, companyId = 'default') {
     let sql = 'BEGIN TRANSACTION;\n';
 
     if (data.settings) {
@@ -316,7 +346,7 @@ function syncDatabase(data) {
     }
 
     if (Array.isArray(data.athletes)) {
-        sql += 'DELETE FROM athletes;\n';
+        sql += `DELETE FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}';\n`;
         for (const a of data.athletes) {
             const isFed = a.isFederationMember ? 1 : 0;
             const isNat = a.isNationalTeamMember ? 1 : 0;
@@ -324,7 +354,7 @@ function syncDatabase(data) {
             const achievementsStr = a.achievements ? JSON.stringify(a.achievements).replace(/'/g, "''") : '[]';
             const medicalExpiryVal = a.medicalCertificateExpiry || '';
             
-            sql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements, medical_certificate_expiry, membership_status, gender) VALUES (` +
+            sql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements, medical_certificate_expiry, membership_status, gender, company_id) VALUES (` +
                 `'${a.id.replace(/'/g, "''")}', ` +
                 `'${(a.firstName || '').replace(/'/g, "''")}', ` +
                 `'${(a.lastName || '').replace(/'/g, "''")}', ` +
@@ -338,15 +368,16 @@ function syncDatabase(data) {
                 `'${achievementsStr}', ` +
                 `'${medicalExpiryVal.replace(/'/g, "''")}', ` +
                 `'${(a.membershipStatus || 'Active').replace(/'/g, "''")}', ` +
-                `'${(a.gender || '').replace(/'/g, "''")}'` +
+                `'${(a.gender || '').replace(/'/g, "''")}', ` +
+                `'${companyId.replace(/'/g, "''")}'` +
                 `);\n`;
         }
     }
 
     // Always clear and rebuild ranks, titles, awards tables based on full athlete achievements to keep databases clean and synced
-    sql += 'DELETE FROM athlete_ranks;\n';
-    sql += 'DELETE FROM athlete_titles;\n';
-    sql += 'DELETE FROM athlete_awards;\n';
+    sql += `DELETE FROM athlete_ranks WHERE athlete_id IN (SELECT id FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}');\n`;
+    sql += `DELETE FROM athlete_titles WHERE athlete_id IN (SELECT id FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}');\n`;
+    sql += `DELETE FROM athlete_awards WHERE athlete_id IN (SELECT id FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}');\n`;
     if (Array.isArray(data.athletes)) {
         for (const a of data.athletes) {
             if (Array.isArray(a.achievements)) {
@@ -563,6 +594,11 @@ try {
 } catch (e) {
     // Column already exists, safe to ignore
 }
+try {
+    executeSql("ALTER TABLE athletes ADD COLUMN company_id TEXT;");
+} catch (e) {
+    // Column already exists, safe to ignore
+}
 
 // Create joining tables for honorary titles and awards
 executeSql(`
@@ -730,12 +766,21 @@ http.createServer((req, res) => {
 
     // GET /api/v1/dashboard/summary
     if (req.url === '/api/v1/dashboard/summary' && req.method === 'GET') {
+        const companyId = extractCompanyId(req) || 'default';
         const warehouseRaw = queryDb('SELECT * FROM view_warehouse_pulse;');
         const warehousePulse = warehouseRaw[0] || { overdue_count: 0, recent_incidents: 0, active_gear_outside: 0 };
         
         const overdueItems = queryDb('SELECT * FROM view_overdue_items;');
         
-        const memberRaw = queryDb('SELECT * FROM view_member_analytics;');
+        const memberRaw = queryDb(`
+            SELECT
+                (SELECT COUNT(*) FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}') AS total_active_members,
+                (SELECT COUNT(*) FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}' AND location_status = 'მთაშია') AS in_the_mountains,
+                (SELECT COUNT(*) FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}' AND location_status = 'ბაზაზეა') AS at_base,
+                (SELECT COUNT(*) FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}' AND mountaineer_rank IN ('BADGE', 'RANK_3', 'RANK_2')) AS beginner,
+                (SELECT COUNT(*) FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}' AND mountaineer_rank = 'RANK_1') AS first_rank,
+                (SELECT COUNT(*) FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}' AND mountaineer_rank IN ('CANDIDATE', 'MASTER', 'INT_MASTER')) AS master;
+        `);
         const memberAnalytics = memberRaw[0] || { total_active_members: 0, in_the_mountains: 0, at_base: 0, beginner: 0, first_rank: 0, master: 0 };
         
         // Settings checks
@@ -746,7 +791,7 @@ http.createServer((req, res) => {
         
         let topAthletes = [];
         if (isRatingEnabledSetting) {
-            const athletesRaw = queryDb('SELECT first_name || " " || last_name AS name, points FROM athletes ORDER BY points DESC LIMIT 3;');
+            const athletesRaw = queryDb(`SELECT first_name || " " || last_name AS name, points FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}' ORDER BY points DESC LIMIT 3;`);
             topAthletes = athletesRaw.map((ath, idx) => ({
                 position: idx + 1,
                 name: ath.name,
@@ -897,8 +942,9 @@ http.createServer((req, res) => {
         req.on('data', chunk => { body += chunk; });
         req.on('end', () => {
             try {
+                const companyId = extractCompanyId(req) || 'default';
                 const data = JSON.parse(body);
-                syncDatabase(data);
+                syncDatabase(data, companyId);
                 res.writeHead(200, {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
@@ -932,12 +978,96 @@ http.createServer((req, res) => {
             const titleIdVal = (titleId && titleId !== 'all') ? `'${titleId.replace(/'/g, "''")}'` : 'NULL';
             const awardIdVal = (awardId && awardId !== 'all') ? `'${awardId.replace(/'/g, "''")}'` : 'NULL';
 
+            const companyId = extractCompanyId(req) || 'default';
+
+            // Auto-populate mock athletes scoped to companyId if none exist yet
+            const countCheck = queryDb(`SELECT COUNT(*) as count FROM athletes WHERE company_id = '${companyId.replace(/'/g, "''")}';`);
+            if (countCheck[0] && countCheck[0].count === 0) {
+                const nullAthletes = queryDb(`SELECT id FROM athletes WHERE company_id IS NULL OR company_id = '' OR company_id = 'default';`);
+                if (nullAthletes.length > 0) {
+                    executeSql(`UPDATE athletes SET company_id = '${companyId.replace(/'/g, "''")}' WHERE company_id IS NULL OR company_id = '' OR company_id = 'default';`);
+                } else {
+                    const firstNames = [
+                      "დავით", "გიორგი", "ლუკა", "ირაკლი", "ნიკოლოზ", "ალექსანდრე", "შალვა", "ლევან", "მიხეილ", "ზურაბ",
+                      "ანდრია", "ოთარ", "თეიმურაზ", "ზვიად", "მერაბ", "აკაკი", "კონსტანტინე", "ვაჟა", "ნოდარ", "ემზარ",
+                      "თორნიკე", "გიგა", "ბექა", "საბა", "ილია", "თამაზ", "ჯაბა", "გელა", "რეზო", "ბაჩო",
+                      "ანზორ", "ვახტანგ", "ნუკრი", "მალხაზ", "რევაზ", "თენგიზ", "ოთარი", "ზაზა", "გოჩა"
+                    ];
+                    const lastNames = [
+                      "ბადრიაშვილი", "ბერიძე", "მაისურაძე", "ლეკიშვილი", "ყიფიანი", "გელოვანი", "ლომიძე", "მარგიანი",
+                      "ნემსაძე", "კოხრეიძე", "კიკნაძე", "დევდარიანი", "აფრასიძე", "ჭელიძე", "გვენეტაძე", "აბაშიძე",
+                      "ჩხეიძე", "გაბუნია", "ქარდავა", "კვარაცხელია", "გორგაძე", "შენგელია", "მჟავანაძე", "ჯაფარიძე",
+                      "თვალავაძე", "ახალკაცი", "გოგიჩაიშვილი", "თოდუა", "ცინცაძე", "კალანდაძე", "მესხი", "გაბრიჩიძე"
+                    ];
+                    const remainingRanks = [
+                      ...Array(14).fill("BADGE"), ...Array(14).fill("RANK_3"), ...Array(9).fill("RANK_2"),
+                      ...Array(14).fill("RANK_1"), ...Array(2).fill("CANDIDATE"), ...Array(1).fill("MASTER"),
+                      ...Array(88).fill("NONE")
+                    ];
+                    for (let i = remainingRanks.length - 1; i > 0; i--) {
+                      const j = (i * 9301 + 49297) % 233280 % (i + 1);
+                      const temp = remainingRanks[i];
+                      remainingRanks[i] = remainingRanks[j];
+                      remainingRanks[j] = temp;
+                    }
+                    let seedSql = 'BEGIN TRANSACTION;\n';
+                    for (let i = 0; i < 148; i++) {
+                      const locationStatus = i < 12 ? "მთაშია" : "ბაზაზეა";
+                      const firstName = firstNames[i % firstNames.length];
+                      const lastName = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
+                      let finalFirstName = firstName;
+                      let finalLastName = lastName;
+                      let finalRank;
+                      if (i === 0) {
+                        finalFirstName = "გიორგი";
+                        finalLastName = "ლეკიშვილი";
+                        finalRank = "RANK_3";
+                      } else if (i === 1) {
+                        finalFirstName = "დავით";
+                        finalLastName = "მაისურაძე";
+                        finalRank = "MASTER";
+                      } else if (i === 2) {
+                        finalFirstName = "არჩილ";
+                        finalLastName = "ბადრიაშვილი";
+                        finalRank = "INT_MASTER";
+                      } else if (i === 3) {
+                        finalFirstName = "ლუკა";
+                        finalLastName = "ლომიძე";
+                        finalRank = "RANK_1";
+                      } else if (i === 4) {
+                        finalFirstName = "ნიკოლოზ";
+                        finalLastName = "ყიფიანი";
+                        finalRank = "RANK_2";
+                      } else if (i === 5) {
+                        finalFirstName = "ირაკლი";
+                        finalLastName = "გელოვანი";
+                        finalRank = "BADGE";
+                      } else {
+                        finalRank = remainingRanks[i - 6];
+                      }
+                      const athleteId = String(860640 + i) + "-" + companyId;
+                      const personalId = "010" + String(10000000 + i);
+                      let points = 50 + (i % 20) * 10;
+                      if (finalFirstName === "დავით" && finalLastName === "მაისურაძე") points = 450;
+                      else if (finalFirstName === "გიორგი" && finalLastName === "ლეკიშვილი") points = 310;
+                      else if (finalFirstName === "ლუკა" && finalLastName === "ლომიძე") points = 380;
+                      
+                      seedSql += `INSERT INTO athletes (id, first_name, last_name, personal_id, status, member_since, is_federation_member, is_national_team_member, mountaineer_rank, location_status, points, achievements, membership_status, gender, company_id) VALUES (` +
+                          `'${athleteId}', '${finalFirstName}', '${finalLastName}', '${personalId}', 'აქტიური', '15/01/2020', 1, ${finalRank !== 'NONE' ? 1 : 0}, ` +
+                          `'${finalRank}', '${locationStatus}', ${points}, '[]', 'Active', '${i % 2 === 0 ? 'male' : 'female'}', '${companyId.replace(/'/g, "''")}');\n`;
+                    }
+                    seedSql += 'COMMIT;\n';
+                    executeSql(seedSql);
+                }
+            }
+
             const sql = `
                 SELECT DISTINCT a.* FROM athletes a
                 LEFT JOIN athlete_ranks r ON a.id = r.athlete_id
                 LEFT JOIN athlete_titles t ON a.id = t.athlete_id
                 LEFT JOIN athlete_awards aw ON a.id = aw.athlete_id
-                WHERE (${statusVal} IS NULL OR a.membership_status = ${statusVal})
+                WHERE a.company_id = '${companyId.replace(/'/g, "''")}'
+                  AND (${statusVal} IS NULL OR a.membership_status = ${statusVal})
                   AND (${genderVal} IS NULL OR a.gender = ${genderVal})
                   AND (${rankIdVal} IS NULL OR r.rank_id = ${rankIdVal})
                   AND (${titleIdVal} IS NULL OR t.title_id = ${titleIdVal})

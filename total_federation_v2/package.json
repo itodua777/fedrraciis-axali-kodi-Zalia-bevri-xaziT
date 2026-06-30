@@ -1,0 +1,13 @@
+{
+  "name": "total-federation-v2",
+  "version": "1.0.0",
+  "description": "Total Federation Frontend (React + Custom Transpilation Server)",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo \"[Frontend Build] Custom transpilation server serves JSX on-the-fly. No production build required.\""
+  },
+  "dependencies": {
+    "puppeteer": "^25.2.1"
+  }
+}

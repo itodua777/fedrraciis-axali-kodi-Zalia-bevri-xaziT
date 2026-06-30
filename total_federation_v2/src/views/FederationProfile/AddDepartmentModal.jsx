@@ -6,39 +6,43 @@ const AddDepartmentModal = ({ isOpen, onClose, onSubmit, activeUnit, flatUnits }
   const isGeo = i18n.language === 'GEO';
 
   const [name, setName] = React.useState("");
-  const [unitType, setUnitType] = React.useState("დეპარტამენტი");
-  const [compositionType, setCompositionType] = React.useState("");
-  const [termDuration, setTermDuration] = React.useState("");
-  const [actNumber, setActNumber] = React.useState("");
-  const [issueDate, setIssueDate] = React.useState("");
+  const [unitType, setUnitType] = React.useState("თანამდებობა/საშტატო ერთეული");
   const [parentId, setParentId] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
     if (isOpen) {
       setName("");
-      setUnitType("დეპარტამენტი");
-      setCompositionType("");
-      setTermDuration("");
-      setActNumber("");
-      setIssueDate("");
-      setParentId(activeUnit ? activeUnit.id : "");
+      setUnitType("დეპარტამენტი/სამსახური");
+      setIsSubmitting(false);
+      
+      if (flatUnits && flatUnits.length === 1) {
+        setParentId(flatUnits[0].id);
+      } else if (activeUnit) {
+        setParentId((activeUnit.unitType === 'თანამდებობა' || activeUnit.unitType === 'თანამდებობა/საშტატო ერთეული') ? (activeUnit.parentId || "") : activeUnit.id);
+      } else {
+        setParentId("");
+      }
     }
-  }, [isOpen, activeUnit]);
+  }, [isOpen, activeUnit, flatUnits]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    onSubmit({
-      name,
-      unitType,
-      compositionType: compositionType || null,
-      termDuration: termDuration || null,
-      actNumber: actNumber || null,
-      issueDate: issueDate || null,
-      parentId: parentId || null
-    });
+    if (!name.trim() || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onSubmit({
+        name,
+        unitType: "თანამდებობა/საშტატო ერთეული"
+      });
+      // Modal is closed on success by the parent component
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const backdropStyle = {
@@ -162,7 +166,7 @@ const AddDepartmentModal = ({ isOpen, onClose, onSubmit, activeUnit, flatUnits }
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255, 255, 255, 0.05)", paddingBottom: "12px" }}>
           <h3 style={titleStyle}>
-            {isGeo ? "ქვედანაყოფის დამატება" : "Add Structure Unit"}
+            {isGeo ? "ორგანიზაციული როლის დამატება" : "Add Organizational Role"}
           </h3>
           <button style={closeBtnStyle} onClick={onClose}>
             <i className="fa-solid fa-xmark"></i>
@@ -173,93 +177,62 @@ const AddDepartmentModal = ({ isOpen, onClose, onSubmit, activeUnit, flatUnits }
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           
           <div>
-            <label style={labelStyle}>{isGeo ? "ქვედანაყოფის დასახელება *" : "Unit Name *"}</label>
-            <input 
-              type="text" 
+            <label style={labelStyle}>{isGeo ? "როლის დასახელება *" : "Role Name *"}</label>
+            <select
               required
-              placeholder={isGeo ? "მაგ. მარკეტინგის დეპარტამენტი" : "e.g. Marketing Department"}
+              disabled={isSubmitting}
               value={name} 
               onChange={e => setName(e.target.value)} 
-              style={inputStyle} 
-            />
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-            <div>
-              <label style={labelStyle}>{isGeo ? "ტიპი *" : "Type *"}</label>
-              <select value={unitType} onChange={e => setUnitType(e.target.value)} style={selectStyle}>
-                <option value="ფილიალი">{isGeo ? "ფილიალი" : "Branch"}</option>
-                <option value="დეპარტამენტი">{isGeo ? "დეპარტამენტი" : "Department"}</option>
-                <option value="კომიტეტი">{isGeo ? "კომიტეტი" : "Committee"}</option>
-                <option value="კომისია">{isGeo ? "კომისია" : "Commission"}</option>
-                <option value="სამსახური">{isGeo ? "სამსახური" : "Office/Service"}</option>
-              </select>
-            </div>
-            <div>
-              <label style={labelStyle}>{isGeo ? "მშობელი ქვედანაყოფი" : "Parent Unit"}</label>
-              <select value={parentId} onChange={e => setParentId(e.target.value)} style={selectStyle}>
-                <option value="">{isGeo ? "[არცერთი - ძირითადი]" : "[None - Root]"}</option>
-                {flatUnits.map(unit => (
-                  <option key={unit.id} value={unit.id}>
-                    {unit.name} ({unit.unitType})
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-            <div>
-              <label style={labelStyle}>{isGeo ? "შემადგენლობის ტიპი" : "Composition Type"}</label>
-              <input 
-                type="text" 
-                placeholder={isGeo ? "მაგ. კოლეგიური" : "e.g. Collegial"}
-                value={compositionType} 
-                onChange={e => setCompositionType(e.target.value)} 
-                style={inputStyle} 
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>{isGeo ? "უფლებამოსილების ვადა" : "Term Duration"}</label>
-              <input 
-                type="text" 
-                placeholder={isGeo ? "მაგ. 4 წელი" : "e.g. 4 Years"}
-                value={termDuration} 
-                onChange={e => setTermDuration(e.target.value)} 
-                style={inputStyle} 
-              />
-            </div>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-            <div>
-              <label style={labelStyle}>{isGeo ? "აქტის ნომერი" : "Act Number"}</label>
-              <input 
-                type="text" 
-                placeholder="N-120"
-                value={actNumber} 
-                onChange={e => setActNumber(e.target.value)} 
-                style={inputStyle} 
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>{isGeo ? "გაცემის თარიღი" : "Issue Date"}</label>
-              <input 
-                type="date" 
-                value={issueDate} 
-                onChange={e => setIssueDate(e.target.value)} 
-                style={inputStyle} 
-              />
-            </div>
+              style={{
+                ...selectStyle,
+                cursor: isSubmitting ? "not-allowed" : "pointer",
+                opacity: isSubmitting ? 0.6 : 1
+              }}
+            >
+              <option value="">{isGeo ? "აირჩიეთ როლი" : "Select Role"}</option>
+              <option value="პრეზიდენტი">{isGeo ? "პრეზიდენტი" : "President"}</option>
+              <option value="ვიცე-პრეზიდენტი">{isGeo ? "ვიცე-პრეზიდენტი" : "Vice-President"}</option>
+              <option value="აღმასრულებელი დირექტორი">{isGeo ? "აღმასრულებელი დირექტორი" : "Executive Director"}</option>
+              <option value="ფინანსური დირექტორი">{isGeo ? "ფინანსური დირექტორი" : "Financial Director"}</option>
+              <option value="გამგეობის თავმჯდომარე">{isGeo ? "გამგეობის თავმჯდომარე" : "Board Chairman"}</option>
+              <option value="ყრილობის თავმჯდომარე">{isGeo ? "ყრილობის თავმჯდომარე" : "Assembly Chairman"}</option>
+              <option value="ტექნიკური მენეჯერი">{isGeo ? "ტექნიკური მენეჯერი" : "Technical Manager"}</option>
+              <option value="უსაფრთხოების მენეჯერი">{isGeo ? "უსაფრთხოების მენეჯერი" : "Security Manager"}</option>
+              <option value="მატერიალური ქონების მართვის მენეჯერი">{isGeo ? "მატერიალური ქონების მართვის მენეჯერი" : "Property Manager"}</option>
+            </select>
           </div>
 
           {/* Footer */}
           <div style={footerStyle}>
-            <button type="button" style={cancelBtnStyle} onClick={onClose}>
+            <button 
+              type="button" 
+              style={{
+                ...cancelBtnStyle,
+                cursor: isSubmitting ? "not-allowed" : "pointer",
+                opacity: isSubmitting ? 0.6 : 1
+              }} 
+              onClick={onClose} 
+              disabled={isSubmitting}
+            >
               {isGeo ? "გაუქმება" : "Cancel"}
             </button>
-            <button type="submit" style={submitBtnStyle}>
-              {isGeo ? "დამატება" : "Add"}
+            <button 
+              type="submit" 
+              style={{
+                ...submitBtnStyle,
+                cursor: isSubmitting ? "not-allowed" : "pointer",
+                opacity: isSubmitting ? 0.6 : 1
+              }} 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: "6px" }}></i>
+                  {isGeo ? "ინახება..." : "Saving..."}
+                </>
+              ) : (
+                isGeo ? "დამატება" : "Add"
+              )}
             </button>
           </div>
 

@@ -12,7 +12,7 @@ import AddIncidentForm from './views/Incidents/AddIncidentForm.jsx';
 import WarehouseDashboard from './views/Warehouse/index.jsx';
 import MediaNewsDashboard from './views/MediaNews/index.jsx';
 import PartnershipsDashboard from './views/Partners/index.jsx';
-import ManagementDashboard from './views/Management/index.jsx';
+// import ManagementDashboard from './views/Management/index.jsx';
 import MemorialRegistryDashboard from './views/Memorial/index.jsx';
 import MentorsDashboard from './views/Mentors/index.jsx';
 import AddMentorForm from './views/Mentors/MentorForm.jsx';
@@ -41,13 +41,23 @@ const App = () => {
     }
   });
   const [currentView, setCurrentView] = React.useState("dashboard");
+  const [currentSubView, setCurrentSubView] = React.useState("general_info");
+
+  const handleViewChange = (view, subView = null) => {
+    setCurrentView(view);
+    if (subView) {
+      setCurrentSubView(subView);
+    }
+  };
   const [athletes, setAthletes] = React.useState([]);
   const [clubs, setClubs] = React.useState(MOCK_CLUBS);
   const [selectedClubId, setSelectedClubId] = React.useState(null);
   const [incidents, setIncidents] = React.useState(MOCK_INCIDENTS);
   const isLoadedRef = React.useRef(false);
 
-  const [isProfileComplete, setIsProfileComplete] = React.useState(true);
+  const [isProfileComplete, setIsProfileComplete] = React.useState(() => {
+    return !localStorage.getItem('accessToken');
+  });
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -114,7 +124,18 @@ const App = () => {
       })
       .catch(err => console.error("Failed to load settings in App.jsx:", err));
 
-    fetch('/api/v1/athletes')
+    const activeUserStr = localStorage.getItem('activeUser');
+    const activeUser = activeUserStr ? JSON.parse(activeUserStr) : null;
+    const companyId = activeUser?.companyId || '';
+
+    fetch('/api/v1/athletes', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        'Content-Type': 'application/json',
+        'x-company-id': companyId,
+        'company-id': companyId
+      }
+    })
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -137,13 +158,20 @@ const App = () => {
       return;
     }
 
+    const activeUserStr = localStorage.getItem('activeUser');
+    const activeUser = activeUserStr ? JSON.parse(activeUserStr) : null;
+    const companyId = activeUser?.companyId || '';
+
     const syncData = {
       athletes: athletes
     };
     fetch('/api/v1/dashboard/sync', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        'x-company-id': companyId,
+        'company-id': companyId
       },
       body: JSON.stringify(syncData)
     }).catch(err => console.error("Database sync failed from App.jsx:", err));
@@ -168,21 +196,21 @@ const App = () => {
 
   return (
     <div style={{ display: "flex", height: "100vh", backgroundColor: "#121418", overflow: "hidden" }}>
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} federation={selectedFederation} isProfileComplete={isProfileComplete} />
+      <Sidebar currentView={currentView} currentSubView={currentSubView} onViewChange={handleViewChange} federation={selectedFederation} isProfileComplete={isProfileComplete} />
       <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
         <Header federation={selectedFederation} onLogout={handleLogout} />
         {currentView === 'dashboard' && <Dashboard incidents={incidents} />}
-        {currentView === 'athletes' && <AthletesLibrary onViewChange={setCurrentView} athletes={athletes} onUpdateAthlete={handleUpdateAthlete} clubs={clubs} onClubClick={handleClubClick} />}
-        {currentView === 'add_athlete' && <AddAthleteForm onViewChange={setCurrentView} federation={selectedFederation} onAdd={handleAddAthlete} clubs={clubs} />}
-        {currentView === 'incidents' && <IncidentsDashboard onViewChange={setCurrentView} incidents={incidents} athletes={athletes} />}
-        {currentView === 'add_incident' && <AddIncidentForm onViewChange={setCurrentView} onAdd={handleAddIncident} athletes={athletes} />}
+        {currentView === 'athletes' && <AthletesLibrary onViewChange={handleViewChange} athletes={athletes} onUpdateAthlete={handleUpdateAthlete} clubs={clubs} onClubClick={handleClubClick} />}
+        {currentView === 'add_athlete' && <AddAthleteForm onViewChange={handleViewChange} federation={selectedFederation} onAdd={handleAddAthlete} clubs={clubs} />}
+        {currentView === 'incidents' && <IncidentsDashboard onViewChange={handleViewChange} incidents={incidents} athletes={athletes} />}
+        {currentView === 'add_incident' && <AddIncidentForm onViewChange={handleViewChange} onAdd={handleAddIncident} athletes={athletes} />}
         {currentView === 'warehouse' && <WarehouseDashboard athletes={athletes} onUpdateAthlete={handleUpdateAthlete} />}
         {currentView === 'medianews' && <MediaNewsDashboard />}
         {currentView === 'partnerships' && <PartnershipsDashboard />}
-        {currentView === 'management' && <ManagementDashboard athletes={athletes} />}
+        // {currentView === 'management' && <ManagementDashboard athletes={athletes} />}
         {currentView === 'memorial' && <MemorialRegistryDashboard athletes={athletes} onUpdateAthlete={handleUpdateAthlete} />}
-        {currentView === 'mentors' && <MentorsDashboard onViewChange={setCurrentView} athletes={athletes} />}
-        {currentView === 'add_mentor' && <AddMentorForm onViewChange={setCurrentView} />}
+        {currentView === 'mentors' && <MentorsDashboard onViewChange={handleViewChange} athletes={athletes} />}
+        {currentView === 'add_mentor' && <AddMentorForm onViewChange={handleViewChange} />}
         {currentView === 'clubs' && <ClubsRegistryDashboard clubs={clubs} setClubs={setClubs} selectedClubId={selectedClubId} setSelectedClubId={setSelectedClubId} />}
         {currentView === 'spaces' && <TrainingSpacesDashboard />}
         {currentView === 'routes' && <RoutePlanningDashboard />}
@@ -191,6 +219,7 @@ const App = () => {
         {currentView === 'calendar' && <CalendarDashboard />}
         {currentView === 'federation_profile' && (
           <FederationProfileWrapper 
+            currentSubView={currentSubView}
             isProfileComplete={isProfileComplete} 
             onProfileUpdate={setIsProfileComplete} 
           />

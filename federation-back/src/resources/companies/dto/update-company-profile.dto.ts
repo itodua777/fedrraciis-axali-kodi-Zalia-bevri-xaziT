@@ -17,13 +17,6 @@ export class UpdateCompanyProfileDto {
   @IsOptional()
   publicEmail?: string;
 
-  @IsString()
-  @IsOptional()
-  bankName?: string;
-
-  @IsString()
-  @IsOptional()
-  iban?: string;
 
   @IsBoolean()
   @IsOptional()

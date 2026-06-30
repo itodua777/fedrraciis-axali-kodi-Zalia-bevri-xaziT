@@ -52,5 +52,16 @@
   "logs.action": "Action",
   "logs.status": "Status",
   "logs.ip": "IP Address",
-  "logs.success": "Success"
+  "logs.success": "Success",
+  "sidebar.general": "General Information",
+  "sidebar.structure": "Organizational Role",
+  "sidebar.banking": "Banking Requisites",
+  "sidebar.governance": "Governance Hierarchy",
+  "sidebar.founders": "Founders Registry",
+  "sidebar.status_registry": "Status Registry",
+  "sidebar.compliance": "Legal Documents",
+  "sidebar.general_info": "General Information",
+  "sidebar.org_roles": "Organizational Role",
+  "sidebar.bank_details": "Banking Requisites",
+  "sidebar.legal_docs": "Legal Documents"
 }

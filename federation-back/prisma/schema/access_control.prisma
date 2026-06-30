@@ -2,27 +2,47 @@ model Role {
   id           String       @id @default(uuid())
   name         String
   departmentId String
-  department   Department   @relation(fields: [departmentId], references: [id])
   companyId    String
-  company      Company      @relation(fields: [companyId], references: [id])
-  permissions  Permission[]
-  users        User[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  permissions  Permission[]
+  company      Company      @relation(fields: [companyId], references: [id])
+  department   Department   @relation(fields: [departmentId], references: [id])
+  users        User[]
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  id              String         @id @default(uuid())
+  structureUnitId String?
+  roleId          String?
+  module          String         // e.g., 'athletes', 'calendar', 'finance', 'roles'
+  create          Boolean        @default(false)
+  read            Boolean        @default(false)
+  update          Boolean        @default(false)
+  delete          Boolean        @default(false)
+  fullControl     Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  structureUnit   StructureUnit? @relation(fields: [structureUnitId], references: [id], onDelete: Cascade)
+  role            Role?          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([structureUnitId, module])
+  @@unique([roleId, module])
 }
 
 model Permission {
   id         String   @id @default(uuid())
-  action     String // e.g. "read", "create", "manage"
-  subject    String // e.g. "User", "Client", "all"
-  conditions String? // CASL conditions
-  fields     String? // Permitted fields (or excluded fields if inverted?) - CASL uses fields for "can read only these fields"
-  inverted   Boolean  @default(false) // e.g. "cannot"
-  reason     String? // Optional explanation
+  action     String
+  subject    String
+  conditions String?
+  fields     String?
+  inverted   Boolean  @default(false)
+  reason     String?
   roleId     String
-  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
   companyId  String
-  company    Company  @relation(fields: [companyId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  company    Company  @relation(fields: [companyId], references: [id])
+  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
 }

@@ -40,34 +40,78 @@ export class CompaniesService {
     const company = await this.companiesRepository.findById(companyId);
     if (!company) return null;
     const isProfileComplete = !!(
-      company.bankName &&
-      company.bankName.trim() !== '' &&
-      company.iban &&
-      company.iban.trim() !== '' &&
-      company.publicEmail &&
-      company.publicEmail.trim() !== ''
+      company.name &&
+      company.name.trim() !== '' &&
+      company.identificationCode &&
+      company.identificationCode.trim() !== '' &&
+      company.sportsDomain &&
+      company.sportsDomain.trim() !== '' &&
+      company.legalForm &&
+      company.legalForm.trim() !== '' &&
+      company.branches &&
+      company.branches.length > 0 &&
+      company.branches[0].legalAddress &&
+      company.branches[0].legalAddress.trim() !== ''
     );
+    
+    // Extract first user (owner) details
+    const owner = company.users?.find((u: any) => u.role?.name === 'company_admin') || company.users?.[0] || null;
+    const ownerInfo = owner ? {
+      firstName: owner.firstName,
+      lastName: owner.lastName,
+      email: owner.email,
+      createdAt: owner.createdAt,
+    } : null;
+
     return {
       ...company,
+      bankAccounts: company.bankAccounts || [],
+      documents: company.documents || [],
       isProfileComplete,
+      owner: ownerInfo,
     };
   }
 
   async updateProfile(companyId: string, dto: UpdateCompanyProfileDto) {
     const company = await this.companiesRepository.update(companyId, dto);
     if (!company) return null;
-    const isProfileComplete = !!(
-      company.bankName &&
-      company.bankName.trim() !== '' &&
-      company.iban &&
-      company.iban.trim() !== '' &&
-      company.publicEmail &&
-      company.publicEmail.trim() !== ''
-    );
-    return {
-      ...company,
-      isProfileComplete,
-    };
+    return this.getProfile(companyId);
+  }
+
+  async addBankAccount(companyId: string, bankName: string, iban: string) {
+    await this.companiesRepository.addBankAccount(companyId, bankName, iban);
+    return this.getProfile(companyId);
+  }
+
+  async deleteBankAccount(companyId: string, id: string) {
+    await this.companiesRepository.deleteBankAccount(companyId, id);
+    return this.getProfile(companyId);
+  }
+
+  async addDocument(companyId: string, title: string, fileName: string, fileUrl: string, format: string) {
+    await this.companiesRepository.addDocument(companyId, title, fileName, fileUrl, format);
+    return this.getProfile(companyId);
+  }
+
+  async deleteDocument(companyId: string, id: string) {
+    const company = await this.companiesRepository.findById(companyId);
+    if (company && company.documents) {
+      const doc = company.documents.find(d => d.id === id);
+      if (doc) {
+        const { existsSync, unlinkSync } = require('fs');
+        const { join } = require('path');
+        const filePath = join(process.cwd(), doc.fileUrl.startsWith('/') ? doc.fileUrl.substring(1) : doc.fileUrl);
+        try {
+          if (existsSync(filePath)) {
+            unlinkSync(filePath);
+          }
+        } catch (err) {
+          console.error('Error deleting file from disk:', err);
+        }
+      }
+    }
+    await this.companiesRepository.deleteDocument(companyId, id);
+    return this.getProfile(companyId);
   }
 
   async updateLogo(companyId: string, logoUrl: string) {

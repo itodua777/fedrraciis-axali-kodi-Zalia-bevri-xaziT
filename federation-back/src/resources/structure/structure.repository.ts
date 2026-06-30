@@ -47,6 +47,7 @@ export class StructureRepository {
         return this.prisma.structureUnit.findMany({
             where: { companyId },
             include: {
+                permissions: true,
                 users: {
                     select: {
                         id: true,
@@ -54,6 +55,11 @@ export class StructureRepository {
                         lastName: true,
                         email: true,
                         position: true,
+                        phone: true,
+                        personalId: true,
+                        address: true,
+                        bio: true,
+                        photo: true,
                     },
                 },
             },
@@ -64,6 +70,7 @@ export class StructureRepository {
         return this.prisma.structureUnit.findUnique({
             where: { id },
             include: {
+                permissions: true,
                 users: {
                     select: {
                         id: true,
@@ -71,6 +78,11 @@ export class StructureRepository {
                         lastName: true,
                         email: true,
                         position: true,
+                        phone: true,
+                        personalId: true,
+                        address: true,
+                        bio: true,
+                        photo: true,
                     },
                 },
             },
@@ -107,6 +119,11 @@ export class StructureRepository {
                 email: true,
                 position: true,
                 structureUnitId: true,
+                phone: true,
+                personalId: true,
+                address: true,
+                bio: true,
+                photo: true,
             },
         });
     }

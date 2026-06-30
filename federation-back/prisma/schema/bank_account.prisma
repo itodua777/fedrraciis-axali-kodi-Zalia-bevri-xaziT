@@ -1,0 +1,9 @@
+model BankAccount {
+  id        String   @id @default(uuid())
+  bankName  String
+  iban      String
+  companyId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}

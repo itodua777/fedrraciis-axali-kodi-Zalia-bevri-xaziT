@@ -1,26 +1,27 @@
 model Company {
-  id                 String       @id @default(uuid())
-  name               String
-  identificationCode String?
-  sportsDomain       String?
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  id                   String          @id @default(uuid())
+  name                 String
+  identificationCode   String?
+  sportsDomain         String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
   website              String?
   facebook             String?
   instagram            String?
   publicEmail          String?
-  bankName             String?
-  iban                 String?
-  isMinistryRecognized Boolean      @default(false)
+  isMinistryRecognized Boolean         @default(false)
   licenseNumber        String?
   recognitionDate      DateTime?
   legalForm            String?
   logoUrl              String?
-
-  branches           Branch[]
-  departments        Department[]
-  roles              Role[]
-  permissions        Permission[]
-  users              User[]
-  structureUnits     StructureUnit[]
+  bankAccounts         BankAccount[]
+  branches             Branch[]
+  departments          Department[]
+  documents            Document[]
+  permissions          Permission[]
+  roles                Role[]
+  structureUnits       StructureUnit[]
+  users                User[]
+  governanceUnits      GovernanceUnit[]
+  founders             Founder[]
 }

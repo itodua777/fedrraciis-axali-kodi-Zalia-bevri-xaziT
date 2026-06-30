@@ -4,14 +4,28 @@ import { useTranslation } from '../../context/LanguageContext.jsx';
 const menuItems = [
   // 570 Tab items
   { id: 'dashboard',    node: '570',  label: 'მთავარი',                icon: 'fa-solid fa-chart-line' },
-  { id: 'management',   node: '570',  label: 'მენეჯმენტი',             icon: 'fa-solid fa-sitemap' },
+  // { id: 'management',   node: '570',  label: 'მენეჯმენტი',             icon: 'fa-solid fa-sitemap' },
   { id: 'calendar',     node: '570',  label: 'აქტივობის კალენდარი',    icon: 'fa-solid fa-calendar-days' },
   { id: 'partnerships', node: '570',  label: 'პარტნიორობა',           icon: 'fa-solid fa-handshake-angle' },
   { id: 'warehouse',    node: '570',  label: 'საწყობი (Warehouse)',    icon: 'fa-solid fa-box' },
   { id: 'spaces',       node: '570',  label: 'სავარჯიშო სივრცე',       icon: 'fa-solid fa-map-location-dot' },
   { id: 'medianews',    node: '570',  label: 'მედიანიუსი',             icon: 'fa-solid fa-photo-film' },
   { id: 'incidents',    node: '570',  label: 'ინციდენტი',              icon: 'fa-solid fa-triangle-exclamation' },
-  { id: 'federation_profile', node: '570',  label: 'ფედერაციის პროფილი',    icon: 'fa-solid fa-building' },
+  { 
+    id: 'federation_profile', 
+    node: '570',  
+    label: 'ფედერაციის პროფილი',    
+    icon: 'fa-solid fa-building',
+    children: [
+      { id: 'general_info', label: 'ზოგადი ინფორმაცია', icon: 'fa-solid fa-circle-info' },
+      { id: 'org_roles', label: 'ორგანიზაციული როლი', icon: 'fa-solid fa-sitemap' },
+      { id: 'bank_details', label: 'საბანკო რეკვიზიტები', icon: 'fa-solid fa-credit-card' },
+      { id: 'governance', label: 'მმართველობითი იერარქია', icon: 'fa-solid fa-network-wired' },
+      { id: 'founders', label: 'დამფუძნებლები', icon: 'fa-solid fa-users-cog' },
+      { id: 'status_registry', label: 'სტატუსის რეესტრი', icon: 'fa-solid fa-id-badge' },
+      { id: 'legal_docs', label: 'იურიდიული დოკუმენტები', icon: 'fa-solid fa-gavel' }
+    ]
+  },
   { id: 'settings',     node: '570',  label: 'ფედერაციის პარამეტრები', icon: 'fa-solid fa-gear' },
 
   // 8849 Tab items
@@ -31,12 +45,21 @@ const getViewTab = (view) => {
   return item ? item.node : '570';
 };
 
-const Sidebar = ({ currentView, onViewChange, federation, isProfileComplete = true }) => {
+const Sidebar = ({ currentView, currentSubView, onViewChange, federation, isProfileComplete = true }) => {
   const { t } = useTranslation();
   const [activeNode, setActiveNode] = React.useState(() => getViewTab(currentView));
   const [isCollapsed, setIsCollapsed] = React.useState(() => {
     return localStorage.getItem('sidebar_collapsed') === 'true';
   });
+  const [isProfileSubmenuOpen, setIsProfileSubmenuOpen] = React.useState(() => {
+    return currentView === 'federation_profile';
+  });
+
+  React.useEffect(() => {
+    if (currentView === 'federation_profile') {
+      setIsProfileSubmenuOpen(true);
+    }
+  }, [currentView]);
 
   React.useEffect(() => {
     const resolvedTab = getViewTab(currentView);
@@ -127,7 +150,7 @@ const Sidebar = ({ currentView, onViewChange, federation, isProfileComplete = tr
   /* Nav item */
   const navItemStyle = (itemId) => {
     const active = isViewActive(itemId);
-    const isLocked = !isProfileComplete && itemId !== 'federation_profile';
+    const isLocked = false;
     return {
       display: 'flex',
       alignItems: 'center',
@@ -151,6 +174,33 @@ const Sidebar = ({ currentView, onViewChange, federation, isProfileComplete = tr
       boxShadow: active ? 'inset 0 0 12px rgba(8,133,237,.05)' : 'none',
       opacity: isLocked ? 0.4 : 1,
       pointerEvents: isLocked ? 'none' : 'auto',
+    };
+  };
+
+  /* Sub Nav item style */
+  const subNavItemStyle = (subId) => {
+    const active = currentView === 'federation_profile' && currentSubView === subId;
+    return {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: isCollapsed ? 'center' : 'flex-start',
+      gap: isCollapsed ? '0' : '10px',
+      padding: isCollapsed ? '8px 0' : '8px 14px 8px 36px',
+      backgroundColor: active ? 'rgba(0, 230, 118, 0.06)' : 'transparent',
+      color: active ? 'var(--emerald)' : 'var(--silver)',
+      border: 'none',
+      borderLeft: active ? '2px solid var(--emerald)' : '2px solid transparent',
+      borderRadius: '0 4px 4px 0',
+      cursor: 'pointer',
+      transition: 'all 0.18s ease',
+      fontFamily: 'var(--font-heading)',
+      fontSize: '12px',
+      fontWeight: '500',
+      lineHeight: '1.4',
+      outline: 'none',
+      width: '100%',
+      textAlign: isCollapsed ? 'center' : 'left',
+      opacity: 1,
     };
   };
 
@@ -293,46 +343,116 @@ const Sidebar = ({ currentView, onViewChange, federation, isProfileComplete = tr
           .filter(item => item.node === activeNode)
           .map(item => {
             const active = isViewActive(item.id);
+            const hasChildren = item.children && item.children.length > 0;
             return (
-              <button
-                key={item.id}
-                style={navItemStyle(item.id)}
-                onClick={() => onViewChange(item.id)}
-                title={isCollapsed ? t('sidebar.' + item.id) : undefined}
-                onMouseEnter={e => {
-                  const isLocked = !isProfileComplete && item.id !== 'federation_profile';
-                  if (!active && !isLocked) {
-                    e.currentTarget.style.backgroundColor = 'rgba(8,133,237,.05)';
-                    e.currentTarget.style.color = 'var(--bone)';
-                    e.currentTarget.style.borderLeftColor = 'rgba(8,133,237,.3)';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!active) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = 'var(--silver)';
-                    e.currentTarget.style.borderLeftColor = 'transparent';
-                  }
-                }}
-              >
-                <i
-                  className={item.icon}
-                  style={{
-                    color: active ? 'var(--fed-blue)' : 'inherit',
-                    fontSize: '15px',
-                    width: '18px',
-                    textAlign: 'center',
-                    flexShrink: 0,
-                    transition: 'color 0.18s',
+              <React.Fragment key={item.id}>
+                <button
+                  style={navItemStyle(item.id)}
+                  onClick={() => {
+                    if (item.id === 'federation_profile') {
+                      setIsProfileSubmenuOpen(prev => !prev);
+                      if (currentView !== 'federation_profile') {
+                        onViewChange('federation_profile', 'general_info');
+                      }
+                    } else {
+                      onViewChange(item.id);
+                    }
                   }}
-                />
-                {!isCollapsed && (
-                  <span style={{ fontSize: '13px', lineHeight: '1.3', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {t('sidebar.' + item.id)}
-                    {!isProfileComplete && item.id !== 'federation_profile' && <span>🔒</span>}
-                  </span>
+                  title={isCollapsed ? t('sidebar.' + item.id) : undefined}
+                  onMouseEnter={e => {
+                    const isLocked = false;
+                    if (!active && !isLocked) {
+                      e.currentTarget.style.backgroundColor = 'rgba(8,133,237,.05)';
+                      e.currentTarget.style.color = 'var(--bone)';
+                      e.currentTarget.style.borderLeftColor = 'rgba(8,133,237,.3)';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!active) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = 'var(--silver)';
+                      e.currentTarget.style.borderLeftColor = 'transparent';
+                    }
+                  }}
+                >
+                  <i
+                    className={item.icon}
+                    style={{
+                      color: active ? 'var(--fed-blue)' : 'inherit',
+                      fontSize: '15px',
+                      width: '18px',
+                      textAlign: 'center',
+                      flexShrink: 0,
+                      transition: 'color 0.18s',
+                    }}
+                  />
+                  {!isCollapsed && (
+                    <span style={{ fontSize: '13px', lineHeight: '1.3', display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+                      {t('sidebar.' + item.id)}
+                    </span>
+                  )}
+                  {hasChildren && !isCollapsed && (
+                    <i 
+                      className={`fa-solid ${isProfileSubmenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}
+                      style={{ fontSize: '10px', marginLeft: 'auto', opacity: 0.6 }}
+                    />
+                  )}
+                </button>
+
+                {hasChildren && (
+                  <div style={{
+                    maxHeight: isProfileSubmenuOpen ? '500px' : '0px',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '2px',
+                    paddingLeft: isCollapsed ? '0' : '8px',
+                    flexShrink: 0,
+                  }}>
+                    {item.children.map(child => {
+                      const childActive = currentView === 'federation_profile' && currentSubView === child.id;
+                      return (
+                        <button
+                          key={child.id}
+                          style={subNavItemStyle(child.id)}
+                          onClick={() => onViewChange('federation_profile', child.id)}
+                          title={isCollapsed ? t('sidebar.' + child.id) : undefined}
+                          onMouseEnter={e => {
+                            if (!childActive) {
+                              e.currentTarget.style.backgroundColor = 'rgba(8,133,237,.03)';
+                              e.currentTarget.style.color = 'var(--bone)';
+                            }
+                          }}
+                          onMouseLeave={e => {
+                            if (!childActive) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = 'var(--silver)';
+                            }
+                          }}
+                        >
+                          <i
+                            className={child.icon}
+                            style={{
+                              color: childActive ? 'var(--emerald)' : 'inherit',
+                              fontSize: '13px',
+                              width: '18px',
+                              textAlign: 'center',
+                              flexShrink: 0,
+                              transition: 'color 0.18s',
+                            }}
+                          />
+                          {!isCollapsed && (
+                            <span style={{ fontSize: '12px', lineHeight: '1.3' }}>
+                              {t('sidebar.' + child.id)}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
-              </button>
+              </React.Fragment>
             );
           })}
       </div>

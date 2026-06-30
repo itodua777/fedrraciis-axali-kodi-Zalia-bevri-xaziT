@@ -11,6 +11,16 @@ export class ProfileCompletionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    if (
+      request.url.includes('/api/governance') ||
+      request.url.includes('/governance') ||
+      request.url.includes('/api/founders') ||
+      request.url.includes('/founders')
+    ) {
+      return true;
+    }
+
     // 1. Check if the route is public via the @Public() decorator
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
@@ -20,16 +30,25 @@ export class ProfileCompletionGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
     const path = request.path || request.url || '';
 
-    // 2. Bypass authentication, registration, and profile endpoints
+    // Normalize path by stripping query parameters and any duplicate leading/trailing slashes
+    const cleanPath = path.split('?')[0].replace(/^\/+|\/+$/g, '');
+
+    // 2. Bypass authentication, registration, profile, and structure/roles endpoints
     const bypassPaths = [
-      '/auth',
-      '/companies/profile',
-      '/companies/register',
+      'auth',
+      'companies/profile',
+      'companies/register',
+      'hr/structure',
+      'api/structure',
+      'hr/members',
+      'api/v1/hr/members',
+      'api/v1/hr/structure',
+      'api/governance',
+      'api/founders',
     ];
-    const isBypassed = bypassPaths.some((p) => path.startsWith(p));
+    const isBypassed = bypassPaths.some((p) => cleanPath === p || cleanPath.startsWith(p + '/'));
     if (isBypassed) {
       return true;
     }
@@ -66,13 +85,20 @@ export class ProfileCompletionGuard implements CanActivate {
       return true;
     }
 
-    // 4. Query company completeness status in the database
+    // 4. Query company completeness status in the database based on 5 foundational fields
     const company = await this.prisma.company.findUnique({
       where: { id: companyId },
       select: {
-        bankName: true,
-        iban: true,
-        publicEmail: true,
+        name: true,
+        identificationCode: true,
+        sportsDomain: true,
+        legalForm: true,
+        branches: {
+          take: 1,
+          select: {
+            legalAddress: true,
+          },
+        },
       },
     });
 
@@ -80,13 +106,20 @@ export class ProfileCompletionGuard implements CanActivate {
       return true;
     }
 
-    const isComplete =
-      company.bankName &&
-      company.bankName.trim() !== '' &&
-      company.iban &&
-      company.iban.trim() !== '' &&
-      company.publicEmail &&
-      company.publicEmail.trim() !== '';
+    const isComplete = !!(
+      company.name &&
+      company.name.trim() !== '' &&
+      company.identificationCode &&
+      company.identificationCode.trim() !== '' &&
+      company.sportsDomain &&
+      company.sportsDomain.trim() !== '' &&
+      company.legalForm &&
+      company.legalForm.trim() !== '' &&
+      company.branches &&
+      company.branches.length > 0 &&
+      company.branches[0].legalAddress &&
+      company.branches[0].legalAddress.trim() !== ''
+    );
 
     if (!isComplete) {
       throw new HttpException(

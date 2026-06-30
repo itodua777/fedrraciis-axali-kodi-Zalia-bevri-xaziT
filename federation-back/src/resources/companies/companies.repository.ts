@@ -127,6 +127,16 @@ export class CompaniesRepository {
         branches: {
           take: 1,
         },
+        bankAccounts: true,
+        documents: true,
+        users: {
+          include: {
+            role: true,
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
       },
     });
   }
@@ -144,6 +154,46 @@ export class CompaniesRepository {
     return this.prisma.company.update({
       where: { id },
       data: updateData,
+    });
+  }
+
+  async addBankAccount(companyId: string, bankName: string, iban: string) {
+    return this.prisma.bankAccount.create({
+      data: {
+        bankName,
+        iban,
+        companyId,
+      },
+    });
+  }
+
+  async deleteBankAccount(companyId: string, id: string) {
+    return this.prisma.bankAccount.deleteMany({
+      where: {
+        id,
+        companyId,
+      },
+    });
+  }
+
+  async addDocument(companyId: string, title: string, fileName: string, fileUrl: string, format: string) {
+    return this.prisma.document.create({
+      data: {
+        title,
+        fileName,
+        fileUrl,
+        format,
+        companyId,
+      },
+    });
+  }
+
+  async deleteDocument(companyId: string, id: string) {
+    return this.prisma.document.deleteMany({
+      where: {
+        id,
+        companyId,
+      },
     });
   }
 

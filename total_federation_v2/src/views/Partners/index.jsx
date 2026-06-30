@@ -12,9 +12,12 @@ const PartnershipsDashboard = () => {
         const compiled = window.Babel.transform(
           code
           .replace(/export\s+default\s+/g, 'window.PartnershipsDashboard = ')
-          .replace(/import\s+.*\s+from\s+['"].*['"];?/g, ''),
+          .replace(/import\s+(?:[\s\S]*?from\s+)?['"].*?['"];?/g, ''),
           {
-            presets: ['react', 'typescript'],
+            presets: [
+              ['react', { runtime: 'classic' }],
+              'typescript'
+            ],
             filename: 'PartnershipManagement.tsx',
           }
         ).code;

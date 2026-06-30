@@ -10,15 +10,13 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
   const [regTaxId, setRegTaxId] = React.useState("");
   const [regDomain, setRegDomain] = React.useState("");
   const [regAddress, setRegAddress] = React.useState("");
+  const [ownerInfo, setOwnerInfo] = React.useState(null);
 
   // Editable Profile Fields
   const [website, setWebsite] = React.useState("");
   const [facebook, setFacebook] = React.useState("");
   const [instagram, setInstagram] = React.useState("");
   const [publicEmail, setPublicEmail] = React.useState("");
-  
-  const [bankName, setBankName] = React.useState("");
-  const [iban, setIban] = React.useState("");
 
   const [isMinistryRecognized, setIsMinistryRecognized] = React.useState(false);
   const [licenseNumber, setLicenseNumber] = React.useState("");
@@ -52,29 +50,28 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
       const data = await response.json();
       
       // Map read-only fields
-      setRegName(data.name || "");
-      setRegTaxId(data.identificationCode || "");
-      setRegDomain(data.sportsDomain || "");
-      setRegAddress(data.branches?.[0]?.legalAddress || "");
+      setRegName(data?.name || "");
+      setRegTaxId(data?.identificationCode || "");
+      setRegDomain(data?.sportsDomain || "");
+      setRegAddress(data?.branches?.[0]?.legalAddress || "");
+      setOwnerInfo(data?.owner || null);
 
       // Map editable fields
-      setWebsite(data.website || "");
-      setFacebook(data.facebook || "");
-      setInstagram(data.instagram || "");
-      setPublicEmail(data.publicEmail || "");
-      setBankName(data.bankName || "");
-      setIban(formatIBAN(data.iban || ""));
-      setIsMinistryRecognized(data.isMinistryRecognized || false);
-      setLicenseNumber(data.licenseNumber || "");
-      setLegalForm(data.legalForm || "ააიპ");
-      setLogoUrl(data.logoUrl || "");
+      setWebsite(data?.website || "");
+      setFacebook(data?.facebook || "");
+      setInstagram(data?.instagram || "");
+      setPublicEmail(data?.publicEmail || "");
+      setIsMinistryRecognized(data?.isMinistryRecognized || false);
+      setLicenseNumber(data?.licenseNumber || "");
+      setLegalForm(data?.legalForm || "ააიპ");
+      setLogoUrl(data?.logoUrl || "");
 
       if (onProfileUpdate) {
-        onProfileUpdate(data.isProfileComplete ?? true);
+        onProfileUpdate(data?.isProfileComplete ?? true);
       }
 
       // Format date to YYYY-MM-DD
-      if (data.recognitionDate) {
+      if (data?.recognitionDate) {
         setRecognitionDate(data.recognitionDate.split('T')[0]);
       } else {
         setRecognitionDate("");
@@ -86,20 +83,8 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
     }
   };
 
-  // Format IBAN as GE00 AAAA 0000 0000 0000 00
-  const formatIBAN = (val) => {
-    const raw = val.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    const groups = raw.match(/.{1,4}/g);
-    return groups ? groups.join(' ') : raw;
-  };
 
-  const handleIbanChange = (e) => {
-    const formatted = formatIBAN(e.target.value);
-    // Limit to 22 characters + 5 spacing characters = 27 max length
-    if (formatted.replace(/\s/g, '').length <= 22) {
-      setIban(formatted);
-    }
-  };
+
 
   // Upload Logo handler
   const handleLogoUpload = async (file) => {
@@ -164,16 +149,7 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
     setIsSaving(true);
     setMessage("");
 
-    // IBAN format validation
-    const rawIban = iban.replace(/\s/g, '');
-    if (rawIban && (rawIban.length !== 22 || !rawIban.startsWith('GE'))) {
-      setIsSuccess(false);
-      setMessage(isGeo 
-        ? "IBAN-ის ფორმატი არასწორია (უნდა შედგებოდეს 22 სიმბოლოსგან და იწყებოდეს GE-ით)" 
-        : "Invalid IBAN format (must be 22 characters and start with GE)");
-      setIsSaving(false);
-      return;
-    }
+
 
     try {
       const response = await fetch('http://localhost:5005/companies/profile', {
@@ -187,8 +163,6 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
           facebook: facebook || null,
           instagram: instagram || null,
           publicEmail: publicEmail || null,
-          bankName: bankName || null,
-          iban: rawIban || null,
           isMinistryRecognized,
           licenseNumber: isMinistryRecognized ? licenseNumber : null,
           recognitionDate: isMinistryRecognized && recognitionDate ? new Date(recognitionDate).toISOString() : null,
@@ -241,8 +215,8 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
 
   const inputStyle = (fieldId, value = "dummy") => {
     const isEmpty = !value || (typeof value === 'string' && value.trim() === '');
-    const isRequired = ['bankName', 'iban', 'publicEmail'].includes(fieldId);
-    const showWarning = !isProfileComplete && isRequired && isEmpty;
+    const isRequired = false;
+    const showWarning = false;
 
     return {
       width: "100%",
@@ -365,6 +339,43 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
           </div>
         </div>
 
+        {/* SECTION: System Administrator / Creator (Read-only) */}
+        <div style={cardSectionStyle}>
+          <h3 style={sectionTitleStyle}>
+            <i className="fa-solid fa-user-shield" style={{ color: "var(--emerald)" }}></i>
+            <span>{isGeo ? "სისტემური ადმინისტრატორი / შემქმნელი" : "System Administrator / Creator"}</span>
+          </h3>
+          <div style={gridSectionStyle}>
+            <div>
+              <label style={labelStyle}>{isGeo ? "სახელი და გვარი" : "Full Name"}</label>
+              <input 
+                type="text" 
+                value={ownerInfo ? `${ownerInfo.firstName || ''} ${ownerInfo.lastName || ''}`.trim() : ""} 
+                readOnly 
+                style={readOnlyInputStyle} 
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>{isGeo ? "ელ-ფოსტა" : "Email"}</label>
+              <input 
+                type="text" 
+                value={ownerInfo?.email || ""} 
+                readOnly 
+                style={readOnlyInputStyle} 
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>{isGeo ? "რეგისტრაციის თარიღი" : "Registration Date"}</label>
+              <input 
+                type="text" 
+                value={ownerInfo?.createdAt ? new Date(ownerInfo.createdAt).toLocaleString(isGeo ? 'ka-GE' : 'en-US') : ""} 
+                readOnly 
+                style={readOnlyInputStyle} 
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Two-Column Grid: Section 1 & 2 Left, Section 3 & 4 Right */}
         <div style={{
           display: "grid",
@@ -383,7 +394,10 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
               </h3>
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div>
-                  <label style={labelStyle}>{isGeo ? "ვებ-გვერდი" : "Website"}</label>
+                  <label style={labelStyle}>
+                    {isGeo ? "ვებ-გვერდი" : "Website"}
+                    {!website && <span style={{ color: '#ff5252', marginLeft: '4px' }}>*</span>}
+                  </label>
                   <input 
                     type="url" 
                     placeholder="https://example.ge"
@@ -395,7 +409,10 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>{isGeo ? "ფეისბუქის გვერდი (Facebook)" : "Facebook Page"}</label>
+                  <label style={labelStyle}>
+                    {isGeo ? "ფეისბუქის გვერდი (Facebook)" : "Facebook Page"}
+                    {!facebook && <span style={{ color: '#ff5252', marginLeft: '4px' }}>*</span>}
+                  </label>
                   <input 
                     type="url" 
                     placeholder="https://facebook.com/federation"
@@ -407,7 +424,10 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>{isGeo ? "ინსტაგრამი (Instagram)" : "Instagram Username"}</label>
+                  <label style={labelStyle}>
+                    {isGeo ? "ინსტაგრამი (Instagram)" : "Instagram Username"}
+                    {!instagram && <span style={{ color: '#ff5252', marginLeft: '4px' }}>*</span>}
+                  </label>
                   <input 
                     type="url" 
                     placeholder="https://instagram.com/federation"
@@ -419,7 +439,10 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>{isGeo ? "საკონტაქტო ელ-ფოსტა (საზოგადოებრივი)" : "Public Email"}</label>
+                  <label style={labelStyle}>
+                    {isGeo ? "საკონტაქტო ელ-ფოსტა (საზოგადოებრივი)" : "Public Email"}
+                    {(!publicEmail || publicEmail.trim() === '') && <span style={{ color: '#ff5252', marginLeft: '4px' }}>*</span>}
+                  </label>
                   <input 
                     type="email" 
                     placeholder="info@federation.ge"
@@ -429,58 +452,6 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
                     onFocus={() => setActiveInput("publicEmail")}
                     onBlur={() => setActiveInput(null)}
                   />
-                  {!isProfileComplete && (!publicEmail || publicEmail.trim() === '') && (
-                    <div style={{ color: "#ff5252", fontSize: "11px", marginTop: "6px", fontWeight: "600" }}>
-                      ⚠️ ველი სავალდებულოა - გთხოვთ შეავსოთ.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Section 2: Banking Requisites */}
-            <div style={cardSectionStyle}>
-              <h3 style={sectionTitleStyle}>
-                <i className="fa-solid fa-money-check" style={{ color: "var(--emerald)" }}></i>
-                <span>{isGeo ? "საბანკო რეკვიზიტები" : "Banking Details"}</span>
-              </h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div>
-                  <label style={labelStyle}>{isGeo ? "ბანკის დასახელება" : "Bank Name"}</label>
-                  <input 
-                    type="text" 
-                    placeholder={isGeo ? "საქართველოს ბანკი, თიბისი ბანკი..." : "Bank of Georgia, TBC Bank..."}
-                    value={bankName} 
-                    onChange={e => setBankName(e.target.value)} 
-                    style={inputStyle("bankName", bankName)}
-                    onFocus={() => setActiveInput("bankName")}
-                    onBlur={() => setActiveInput(null)}
-                  />
-                  {!isProfileComplete && (!bankName || bankName.trim() === '') && (
-                    <div style={{ color: "#ff5252", fontSize: "11px", marginTop: "6px", fontWeight: "600" }}>
-                      ⚠️ ველი სავალდებულოა - გთხოვთ შეავსოთ.
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <label style={labelStyle}>{isGeo ? "IBAN ანგარიშის ნომერი" : "IBAN Code"}</label>
-                  <input 
-                    type="text" 
-                    placeholder="GE00 TB00 0000 0000 0000 00"
-                    value={iban} 
-                    onChange={handleIbanChange} 
-                    style={{ ...inputStyle("iban", iban), fontFamily: "var(--font-mono)", letterSpacing: "1px" }}
-                    onFocus={() => setActiveInput("iban")}
-                    onBlur={() => setActiveInput(null)}
-                  />
-                  {!isProfileComplete && (!iban || iban.trim() === '') && (
-                    <div style={{ color: "#ff5252", fontSize: "11px", marginTop: "6px", fontWeight: "600" }}>
-                      ⚠️ ველი სავალდებულოა - გთხოვთ შეავსოთ.
-                    </div>
-                  )}
-                  <div style={{ fontSize: "11px", color: "var(--silver)", marginTop: "4px" }}>
-                    {isGeo ? "ავტომატური დაჯგუფება ყოველ 4 სიმბოლოში" : "Auto character grouping every 4 indices"}
-                  </div>
                 </div>
               </div>
             </div>
@@ -560,7 +531,10 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
                     marginTop: "4px"
                   }}>
                     <div>
-                      <label style={labelStyle}>{isGeo ? "ლიცენზიის / ბრძანების ნომერი" : "License / decree ID"}</label>
+                      <label style={labelStyle}>
+                        {isGeo ? "ლიცენზიის / ბრძანების ნომერი" : "License / decree ID"}
+                        {!licenseNumber && <span style={{ color: '#ff5252', marginLeft: '4px' }}>*</span>}
+                      </label>
                       <input 
                         type="text" 
                         placeholder={isGeo ? "N-1002" : "ID-102"}
@@ -572,7 +546,10 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
                       />
                     </div>
                     <div>
-                      <label style={labelStyle}>{isGeo ? "აღიარების მინიჭების თარიღი" : "Date of Recognition"}</label>
+                      <label style={labelStyle}>
+                        {isGeo ? "აღიარების მინიჭების თარიღი" : "Date of Recognition"}
+                        {!recognitionDate && <span style={{ color: '#ff5252', marginLeft: '4px' }}>*</span>}
+                      </label>
                       <input 
                         type="date" 
                         value={recognitionDate} 
@@ -592,7 +569,10 @@ const GeneralInfoTab = ({ isProfileComplete = true, onProfileUpdate }) => {
             <div style={cardSectionStyle}>
               <h3 style={sectionTitleStyle}>
                 <i className="fa-solid fa-image" style={{ color: "var(--emerald)" }}></i>
-                <span>{isGeo ? "ბრენდინგი და ლოგო" : "Logo & Branding"}</span>
+                <span>
+                  {isGeo ? "ბრენდინგი და ლოგო" : "Logo & Branding"}
+                  {!logoUrl && <span style={{ color: '#ff5252', marginLeft: '4px' }}>*</span>}
+                </span>
               </h3>
               
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>

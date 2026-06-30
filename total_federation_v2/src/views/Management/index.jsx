@@ -29,7 +29,7 @@ const ManagementDashboard = ({ athletes }) => {
         let code = await res.text();
         
         // Strip imports and compile typescript React syntax
-        code = code.replace(/import\s+.*\s+from\s+['"].*['"];?/g, '');
+        code = code.replace(/import\s+(?:[\s\S]*?from\s+)?['"].*?['"];?/g, '');
         
         if (file.name === 'ManagementHub') {
           code = `
@@ -51,17 +51,25 @@ const ManagementDashboard = ({ athletes }) => {
         code = code.replace(/export\s+(const|let|var|class|function)\s+/g, '$1 ');
 
         const compiled = window.Babel.transform(code, {
-          presets: ['react', 'typescript'],
+          presets: [
+            ['react', { runtime: 'classic' }],
+            'typescript'
+          ],
           filename: file.name + '.tsx'
         }).code;
 
         const runnable = compiled.replace(/export\s*\{\s*\}?;?/g, '');
+        console.log(`[DEBUG] compiled code for ${file.name}:`, compiled);
+        console.log(`[DEBUG] runnable code for ${file.name}:`, runnable);
+        if (runnable.includes('import') || runnable.includes('export')) {
+          console.error("DEBUG: runnable still contains import or export!", runnable);
+        }
         eval(runnable);
 
         loadNext(index + 1);
       } catch (err) {
-        console.error(err);
-        setError(err.message);
+        console.error("Error loading file:", file.name, err);
+        setError(`შეცდომა ჩატვირთვისას (${file.name}): ${err.message}`);
       }
     };
 

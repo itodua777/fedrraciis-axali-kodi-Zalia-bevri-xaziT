@@ -52,5 +52,16 @@
   "logs.action": "მოქმედება",
   "logs.status": "სტატუსი",
   "logs.ip": "IP მისამართი",
-  "logs.success": "წარმატებული"
+  "logs.success": "წარმატებული",
+  "sidebar.general": "ზოგადი ინფორმაცია",
+  "sidebar.structure": "ორგანიზაციული როლი",
+  "sidebar.banking": "საბანკო რეკვიზიტები",
+  "sidebar.governance": "მმართველობითი იერარქია",
+  "sidebar.founders": "დამფუძნებლები",
+  "sidebar.status_registry": "სტატუსის რეესტრი",
+  "sidebar.compliance": "იურიდიული დოკუმენტები",
+  "sidebar.general_info": "ზოგადი ინფორმაცია",
+  "sidebar.org_roles": "ორგანიზაციული როლი",
+  "sidebar.bank_details": "საბანკო რეკვიზიტები",
+  "sidebar.legal_docs": "იურიდიული დოკუმენტები"
 }

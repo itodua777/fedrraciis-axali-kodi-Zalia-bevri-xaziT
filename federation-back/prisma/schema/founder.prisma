@@ -1,0 +1,27 @@
+model Founder {
+  id                       String   @id @default(uuid())
+  companyId                String
+  type                     String   // "INDIVIDUAL" | "LEGAL_ENTITY"
+  
+  // Individual fields (required if type == "INDIVIDUAL")
+  firstName                String?
+  lastName                 String?
+  phone                    String?
+  email                    String?
+  personalId               String?  // 11-digit Personal ID
+
+  // Legal Entity fields (required if type == "LEGAL_ENTITY")
+  companyName              String?
+  companyCode              String?  // 9-digit Corporate Code
+  representativeName       String?
+  representativePersonalId String? // 11-digit Representative Personal ID
+
+  // Membership & Voting Status
+  isActiveMember           Boolean  @default(true)
+  hasVotingRight           Boolean  @default(true)
+
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  company                  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}

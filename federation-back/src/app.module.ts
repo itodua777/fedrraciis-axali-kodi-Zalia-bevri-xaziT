@@ -11,6 +11,8 @@ import { DepartmentsModule } from './resources/departments/departments.module';
 import { UsersModule } from './resources/users/users.module';
 import { UserAuthModule } from './authentication/user.auth.module';
 import { StructureModule } from './resources/structure/structure.module';
+import { GovernanceModule } from './resources/governance/governance.module';
+import { FoundersModule } from './resources/founders/founders.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ProfileCompletionGuard } from './authentication/guard/profile.completion.guard';
 
@@ -27,6 +29,8 @@ import { ProfileCompletionGuard } from './authentication/guard/profile.completio
     UsersModule,
     UserAuthModule,
     StructureModule,
+    GovernanceModule,
+    FoundersModule,
   ],
   controllers: [],
   providers: [

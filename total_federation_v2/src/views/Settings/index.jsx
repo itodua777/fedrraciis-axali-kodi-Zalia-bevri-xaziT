@@ -16,7 +16,7 @@ const LazyRanksValidationEngine = ({ athletes, onUpdateAthlete }) => {
       .then(code => {
         // Strip imports and exports to make it compatible with Babel Standalone in the global window context
         const cleanedCode = code
-          .replace(/import\s+[\s\S]*?\s+from\s+['"].*?['"];?/g, '')
+          .replace(/import\s+(?:[\s\S]*?from\s+)?['"].*?['"];?/g, '')
           .replace(/export\s+default\s+/g, 'window.RanksValidationEngine = ')
           .replace(/export\s+const\s+/g, 'const ')
           .replace(/export\s+enum\s+/g, 'enum ')
@@ -24,7 +24,10 @@ const LazyRanksValidationEngine = ({ athletes, onUpdateAthlete }) => {
 
         const compiled = window.Babel.transform(cleanedCode, {
           filename: 'RanksValidationEngine.tsx',
-          presets: ['react', 'typescript']
+          presets: [
+            ['react', { runtime: 'classic' }],
+            'typescript'
+          ]
         }).code;
 
         const runCode = new Function(compiled);

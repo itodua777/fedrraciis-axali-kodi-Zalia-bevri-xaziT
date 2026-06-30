@@ -2,10 +2,15 @@ import React from '../../utils/react-shim.js';
 import { useTranslation } from '../../context/LanguageContext.jsx';
 import GeneralInfoTab from './GeneralInfoTab.jsx';
 import StructureTab from './StructureTab.jsx';
+import BankingRequisitesTab from './BankingRequisitesTab.jsx';
+import LegalDocumentsTab from './LegalDocumentsTab.jsx';
+import GovernanceHierarchyTab from './GovernanceHierarchyTab.jsx';
+import FoundersTab from './FoundersTab.jsx';
+import StatusRegistryTab from './StatusRegistryTab.jsx';
 
-const FederationProfileWrapper = ({ isProfileComplete, onProfileUpdate }) => {
+const FederationProfileWrapper = ({ isProfileComplete, onProfileUpdate, currentSubView = "general_info" }) => {
   const { t, i18n } = useTranslation();
-  const [activeTab, setActiveTab] = React.useState("general");
+  const activeTab = currentSubView || "general_info";
 
   const isGeo = i18n.language === 'GEO';
 
@@ -44,44 +49,6 @@ const FederationProfileWrapper = ({ isProfileComplete, onProfileUpdate }) => {
     margin: 0
   };
 
-  const splitContainerStyle = {
-    display: "flex",
-    gap: "30px",
-    alignItems: "flex-start",
-    flex: 1
-  };
-
-  const sidebarStyle = {
-    width: "240px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-    flexShrink: 0
-  };
-
-  const tabButtonStyle = (tabId, disabled = false) => {
-    const isActive = activeTab === tabId;
-    return {
-      width: "100%",
-      display: "flex",
-      alignItems: "center",
-      gap: "12px",
-      padding: "12px 16px",
-      backgroundColor: isActive ? "rgba(0, 230, 118, 0.08)" : "transparent",
-      color: isActive ? "var(--emerald)" : (disabled ? "var(--bone-30)" : "var(--silver)"),
-      border: "none",
-      borderLeft: isActive ? "3px solid var(--emerald)" : "3px solid transparent",
-      borderRadius: "0 6px 6px 0",
-      fontFamily: "var(--font-heading)",
-      fontSize: "14px",
-      fontWeight: isActive ? "700" : "500",
-      cursor: disabled ? "not-allowed" : "pointer",
-      textAlign: "left",
-      transition: "all 0.2s ease-in-out",
-      outline: "none"
-    };
-  };
-
   const contentStyle = {
     flex: 1,
     backgroundColor: "var(--iron-1)",
@@ -116,67 +83,36 @@ const FederationProfileWrapper = ({ isProfileComplete, onProfileUpdate }) => {
         </p>
       </div>
 
-      {/* Split Tab View */}
-      <div style={splitContainerStyle}>
-        {/* Left Tabs Sidebar */}
-        <div style={sidebarStyle}>
-          <button 
-            style={tabButtonStyle("general")} 
-            onClick={() => setActiveTab("general")}
-          >
-            <i className="fa-solid fa-circle-info" style={{ fontSize: "16px" }}></i>
-            <span>{isGeo ? "ზოგადი ინფორმაცია" : "General Information"}</span>
-          </button>
-          
-          <button 
-            style={tabButtonStyle("structure")} 
-            onClick={() => setActiveTab("structure")}
-          >
-            <i className="fa-solid fa-sitemap" style={{ fontSize: "16px" }}></i>
-            <span>{isGeo ? "ორგანიზაციული სტრუქტურა" : "Organizational Structure"}</span>
-          </button>
-          
-          <button 
-            style={tabButtonStyle("banking", true)} 
-            disabled 
-            title={isGeo ? "ხელმისაწვდომია შემდეგ ფაზაში" : "Available in next phase"}
-          >
-            <i className="fa-solid fa-credit-card" style={{ fontSize: "16px" }}></i>
-            <span>{isGeo ? "საბანკო ანგარიშები" : "Banking Accounts"}</span>
-            <i className="fa-solid fa-lock" style={{ marginLeft: "auto", fontSize: "11px", opacity: 0.5 }}></i>
-          </button>
-
-          <button 
-            style={tabButtonStyle("officers", true)} 
-            disabled 
-            title={isGeo ? "ხელმისაწვდომია შემდეგ ფაზაში" : "Available in next phase"}
-          >
-            <i className="fa-solid fa-users-gear" style={{ fontSize: "16px" }}></i>
-            <span>{isGeo ? "ხელმძღვანელი პირები" : "Executive Officers"}</span>
-            <i className="fa-solid fa-lock" style={{ marginLeft: "auto", fontSize: "11px", opacity: 0.5 }}></i>
-          </button>
-
-          <button 
-            style={tabButtonStyle("compliance", true)} 
-            disabled 
-            title={isGeo ? "ხელმისაწვდომია შემდეგ ფაზაში" : "Available in next phase"}
-          >
-            <i className="fa-solid fa-gavel" style={{ fontSize: "16px" }}></i>
-            <span>{isGeo ? "იურიდიული დოკუმენტები" : "Legal Documents"}</span>
-            <i className="fa-solid fa-lock" style={{ marginLeft: "auto", fontSize: "11px", opacity: 0.5 }}></i>
-          </button>
-        </div>
-
-        {/* Right Content Panel */}
-        <div style={contentStyle}>
-          {activeTab === "general" && (
-            <GeneralInfoTab 
-              isProfileComplete={isProfileComplete} 
-              onProfileUpdate={onProfileUpdate} 
-            />
-          )}
-          {activeTab === "structure" && <StructureTab />}
-        </div>
+      {/* Full-width Content Panel */}
+      <div style={contentStyle}>
+        {activeTab === "general_info" && (
+          <GeneralInfoTab 
+            isProfileComplete={isProfileComplete} 
+            onProfileUpdate={onProfileUpdate} 
+          />
+        )}
+        {activeTab === "org_roles" && <StructureTab />}
+        {activeTab === "bank_details" && (
+          <BankingRequisitesTab 
+            isProfileComplete={isProfileComplete} 
+            onProfileUpdate={onProfileUpdate} 
+          />
+        )}
+        {activeTab === "governance" && (
+          <GovernanceHierarchyTab />
+        )}
+        {activeTab === "founders" && (
+          <FoundersTab />
+        )}
+        {activeTab === "status_registry" && (
+          <StatusRegistryTab />
+        )}
+        {activeTab === "legal_docs" && (
+          <LegalDocumentsTab 
+            isProfileComplete={isProfileComplete} 
+            onProfileUpdate={onProfileUpdate} 
+          />
+        )}
       </div>
     </div>
   );
